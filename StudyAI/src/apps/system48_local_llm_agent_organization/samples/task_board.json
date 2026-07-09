@@ -1,0 +1,31 @@
+{
+  "task_id": "task-001",
+  "title": "学習教材の設計案を作る",
+  "status": "completed",
+  "current_role": "coordinator",
+  "mode": "mock",
+  "round": 1,
+  "max_rounds": 2,
+  "required_outputs": [
+    "plan.md",
+    "design_note.md",
+    "execution_proposal.md",
+    "review_report.md",
+    "qa_checklist.md",
+    "safety_report.md",
+    "decision_log.md",
+    "final_report.md"
+  ],
+  "blocked_reason": null,
+  "approval_required": [],
+  "completed_roles": [
+    "coordinator",
+    "planner",
+    "designer",
+    "executor",
+    "reviewer",
+    "qa",
+    "safety",
+    "recorder"
+  ]
+}

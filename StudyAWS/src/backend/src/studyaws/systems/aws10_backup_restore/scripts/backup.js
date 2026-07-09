@@ -1,0 +1,10 @@
+const fs = require("fs");
+const path = require("path");
+const root = path.join(__dirname, "..");
+const source = path.join(root, "data", "sample.json");
+const backupDir = path.join(root, "backups");
+fs.mkdirSync(backupDir, { recursive: true });
+const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+const target = path.join(backupDir, `sample-${stamp}.json`);
+fs.copyFileSync(source, target);
+console.log(JSON.stringify({ backup: path.relative(root, target) }));

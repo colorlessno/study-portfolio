@@ -1,0 +1,16 @@
+{
+  "name": "studydevops-devops04-playwright",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node app/src/server.js",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0"
+  },
+  "dependencies": {
+    "studydevops-devops04-playwright": "file:"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "run_id": "run-001",
+  "task_id": "task-001",
+  "mode": "mock",
+  "started_at": "2026-05-09T00:00:00+09:00",
+  "ended_at": "2026-05-09T00:00:10+09:00",
+  "roles": [
+    { "role": "planner", "status": "completed", "output": "plan.md", "notes": [] },
+    { "role": "designer", "status": "completed", "output": "design_note.md", "notes": [] },
+    { "role": "executor", "status": "completed", "output": "execution_proposal.md", "notes": [] },
+    { "role": "reviewer", "status": "completed", "output": "review_report.md", "notes": [] },
+    { "role": "qa", "status": "completed", "output": "qa_checklist.md", "notes": [] },
+    { "role": "safety", "status": "completed", "output": "safety_report.md", "notes": [] },
+    { "role": "recorder", "status": "completed", "output": "decision_log.md", "notes": [] }
+  ],
+  "checks": [
+    { "name": "check_task_board", "status": "passed", "message": "required fields exist" },
+    { "name": "check_role_outputs", "status": "passed", "message": "required outputs exist" },
+    { "name": "check_approval_boundary", "status": "passed", "message": "unsafe operations are not marked executed" }
+  ],
+  "failure_reason": null
+}

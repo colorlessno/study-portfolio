@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>web27 Nginx Static Reverse Proxy</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="panel">
+        <p class="label">web27</p>
+        <h1>Nginx 静的配信 + APIリバースプロキシ</h1>
+        <p>Nginx がこのHTML/CSSを配信し、APIリクエストだけを別コンテナへ転送します。</p>
+        <button id="healthButton" type="button">/api/health を確認</button>
+        <pre id="result">未確認</pre>
+      </section>
+    </main>
+    <script>
+      const button = document.querySelector("#healthButton");
+      const result = document.querySelector("#result");
+
+      button.addEventListener("click", async () => {
+        result.textContent = "確認中...";
+        const response = await fetch("/api/health");
+        const data = await response.json();
+        result.textContent = JSON.stringify(data, null, 2);
+      });
+    </script>
+  </body>
+</html>

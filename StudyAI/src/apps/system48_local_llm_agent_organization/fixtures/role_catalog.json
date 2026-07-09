@@ -1,0 +1,68 @@
+{
+  "roles": [
+    {
+      "id": "coordinator",
+      "name": "調整役",
+      "reads": ["task_board.json", "shared_memory.md"],
+      "writes": ["task_board.json", "final_report.md"],
+      "can_decide": ["ロール順序", "停止条件", "保留理由"],
+      "must_not_do": ["ファイル削除", "外部送信", "秘密情報利用"]
+    },
+    {
+      "id": "planner",
+      "name": "計画担当",
+      "reads": ["task_board.json", "shared_memory.md"],
+      "writes": ["plan.md"],
+      "can_decide": ["作業順序案", "対象外案", "不足情報"],
+      "must_not_do": ["ファイル変更", "コマンド実行", "外部送信"]
+    },
+    {
+      "id": "designer",
+      "name": "設計担当",
+      "reads": ["plan.md", "shared_memory.md"],
+      "writes": ["design_note.md"],
+      "can_decide": ["構成案", "データ境界", "失敗時の扱い"],
+      "must_not_do": ["ファイル変更", "コマンド実行", "外部送信"]
+    },
+    {
+      "id": "executor",
+      "name": "実行案担当",
+      "reads": ["design_note.md", "shared_memory.md"],
+      "writes": ["execution_proposal.md"],
+      "can_decide": ["実行手順案", "実行しない操作"],
+      "must_not_do": ["未承認のファイル変更", "未承認のコマンド実行", "外部送信"]
+    },
+    {
+      "id": "reviewer",
+      "name": "レビュー担当",
+      "reads": ["plan.md", "design_note.md", "execution_proposal.md"],
+      "writes": ["review_report.md"],
+      "can_decide": ["指摘事項", "重大度", "対応案"],
+      "must_not_do": ["ファイル変更", "コマンド実行", "外部送信"]
+    },
+    {
+      "id": "qa",
+      "name": "QA担当",
+      "reads": ["execution_proposal.md", "review_report.md"],
+      "writes": ["qa_checklist.md"],
+      "can_decide": ["確認観点", "受入条件", "機械的検査"],
+      "must_not_do": ["ファイル変更", "コマンド実行", "外部送信"]
+    },
+    {
+      "id": "safety",
+      "name": "安全確認担当",
+      "reads": ["task_board.json", "execution_proposal.md", "shared_memory.md"],
+      "writes": ["safety_report.md"],
+      "can_decide": ["承認待ち", "禁止操作", "停止理由"],
+      "must_not_do": ["危険操作の実行", "秘密情報利用", "外部送信"]
+    },
+    {
+      "id": "recorder",
+      "name": "記録担当",
+      "reads": ["review_report.md", "qa_checklist.md", "safety_report.md"],
+      "writes": ["decision_log.md"],
+      "can_decide": ["判断理由の整理", "次回引き継ぎ"],
+      "must_not_do": ["ファイル変更", "コマンド実行", "外部送信"]
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+{"scripts":{"demo":"node app/db_check.js","check":"node --check app/db_check.js"},"dependencies":{},"devDependencies":{}}

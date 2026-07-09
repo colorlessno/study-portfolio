@@ -1,0 +1,1 @@
+{"scripts":{"backup":"node scripts/backup.js","restore":"node scripts/restore.js","check":"node --check scripts/backup.js scripts/restore.js"},"dependencies":{},"devDependencies":{}}

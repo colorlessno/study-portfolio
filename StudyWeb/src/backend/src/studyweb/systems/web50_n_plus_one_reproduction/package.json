@@ -1,0 +1,1 @@
+{"name":"web50-n-plus-one","version":"1.0.0","private":true,"scripts":{"start":"node app/src/server.js","build":"node --check app/src/server.js"}}

@@ -1,0 +1,17 @@
+services:
+  web:
+    image: node:20-alpine
+    working_dir: /app
+    command: node web/server.js
+    volumes:
+      - ./:/app
+    ports:
+      - "4102:4102"
+  api:
+    image: node:20-alpine
+    working_dir: /app
+    command: node api/server.js
+    volumes:
+      - ./:/app
+    expose:
+      - "5102"

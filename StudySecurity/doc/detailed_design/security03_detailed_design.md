@@ -1,0 +1,39 @@
+# security03 RBAC 詳細設計
+## 0. 関連文書
+
+- `../requirements/security03_rbac_requirements.md`
+- `../basic_design/security03_basic_design.md`
+
+## 1. 製造対象
+
+```text
+src/backend/src/studysecurity/systems/security03_rbac/
+  README.md
+  Dockerfile
+  package.json
+  app/server.js
+  docs/role_matrix.md
+```
+
+## 2. 主要設計
+| 要素 | 内容 |
+|---|---|
+| ロール | `admin`, `operator`, `viewer`を定義する |
+| 権限表 | 操作ごとの許可ロールを行列で管理する |
+| `GET /orders` | 閲覧権限を確認する |
+| `POST /orders/:id/cancel` | 更新権限を確認する |
+
+## 3. 安全制約
+- ロール名だけでなく操作単位の許可表で判定する。
+- フロント表示制御を認可の代替にしない。
+- 権限不足時は403、未認証時は401として分ける。
+## 4. 確認手順
+1. `viewer`で閲覧できることを確認する。
+2. `viewer`で取消が403になることを確認する。
+3. `operator`で取消できることを確認する。
+4. 未認証が401になることを確認する。
+## 5. 完了条件
+
+- 認証と認可の違いを説明できる。
+- ロールと権限表の関係を説明できる。
+- 401と403の使い分けを確認できる。
