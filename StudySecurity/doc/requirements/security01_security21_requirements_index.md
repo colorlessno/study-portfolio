@@ -13,7 +13,7 @@ Web / API / AIシステムで必要になる認証認可、攻撃対策、鍵、
 | security01 | Session認証 | `security01_session_auth_requirements.md` |
 | security02 | JWT認証 | `security02_jwt_auth_requirements.md` |
 | security03 | RBAC認可 | `security03_rbac_authorization_requirements.md` |
-| security04 | owner_id / tenant_id 認可 | `security04_owner_tenant_authorization_requirements.md` |
+| security04 | ABAC | `security04_abac_requirements.md` |
 | security05 | 401 / 403 / 404 の使い分け | `security05_401_403_404_requirements.md` |
 | security06 | XSS体験と対策 | `security06_xss_requirements.md` |
 | security07 | CSRF体験と対策 | `security07_csrf_requirements.md` |

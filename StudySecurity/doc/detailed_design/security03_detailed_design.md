@@ -1,7 +1,7 @@
 # security03 RBAC 詳細設計
 ## 0. 関連文書
 
-- `../requirements/security03_rbac_requirements.md`
+- `../requirements/security03_rbac_authorization_requirements.md`
 - `../basic_design/security03_basic_design.md`
 
 ## 1. 製造対象
@@ -18,19 +18,21 @@ src/backend/src/studysecurity/systems/security03_rbac/
 ## 2. 主要設計
 | 要素 | 内容 |
 |---|---|
+| 学習用ユーザー | `X-User`をサーバー内の固定ユーザーへ対応付け、roleを取得する |
 | ロール | `admin`, `operator`, `viewer`を定義する |
 | 権限表 | 操作ごとの許可ロールを行列で管理する |
 | `GET /orders` | 閲覧権限を確認する |
-| `POST /orders/:id/cancel` | 更新権限を確認する |
+| `POST /orders/o-100/cancel` | 取消権限を確認する |
 
 ## 3. 安全制約
 - ロール名だけでなく操作単位の許可表で判定する。
 - フロント表示制御を認可の代替にしない。
 - 権限不足時は403、未認証時は401として分ける。
+- `X-User`は本物の認証ではなく、固定ユーザーを選択するローカル教材用入力に限定する。
 ## 4. 確認手順
-1. `viewer`で閲覧できることを確認する。
-2. `viewer`で取消が403になることを確認する。
-3. `operator`で取消できることを確認する。
+1. `v-viewer`で閲覧できることを確認する。
+2. `v-viewer`で取消が403になることを確認する。
+3. `o-operator`で取消できることを確認する。
 4. 未認証が401になることを確認する。
 ## 5. 完了条件
 
