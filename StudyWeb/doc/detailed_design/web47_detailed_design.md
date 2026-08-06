@@ -1,4 +1,5 @@
-# web47 PDFアップロード詳細設計
+# web47 PDFアップロード 詳細設計
+
 ## 0. 関連文書
 
 - `../requirements/web47_pdf_upload_requirements.md`
@@ -17,20 +18,54 @@ doc/learning_notes/web47_pdf_upload/
   docs/metadata_design.md
 ```
 
-## 2. 主要設計
-| 検証 | 内容|
+## 2. 現在の位置付け
+
+browserで選択したFile metadataをclient側で検証する静的サンプル。server upload、temporary storage、DB metadata保存は未実装。
+
+## 3. 入力
+
+| 項目 | 内容 |
 |---|---|
-| extension | `.pdf` |
-| MIME | `application/pdf` |
-| size | 学習用上限 |
-| metadata | name, size, type, hash |
+| file input | `accept="application/pdf"` |
+| name | 元filename |
+| size | byte数 |
+| type | browser提供MIME type |
 
-## 3. 確認手順
-1. PDFを選択する2. メタデータを表示する
-3. 不正拡張子を試い4. サイズ超えを試い5. AI/RAG前処理の注意点を確認する
-## 4. 完了条件
+## 4. Validation
 
-- PDF検証項目がある
-- メタデータを表示できる
-- 本体保存とメタデータ管理の違いを説明できる
+| 検証 | 条件 | Error |
+|---|---|---|
+| extension | 小文字化したnameが`.pdf`で終わる | `extension must be .pdf` |
+| MIME | typeが空でなく`application/pdf`以外 | `unexpected type ...` |
+| size | 1MiBを超える | `file too large for this sample` |
 
+## 5. 処理手順
+
+1. change eventで先頭のFileを取得する。
+2. Fileがなければ終了する。
+3. extension、MIME type、sizeを順に検証する。
+4. name・size・type・errorsをJSON表示する。
+
+## 6. 要件との差分・既知の課題
+
+- multipart upload APIとファイル本体保存がない。
+- hash、storage key、upload statusを作らない。
+- extension・MIMEは偽装可能で、PDF signatureを確認しない。
+- type空文字をerrorにしない。
+- malware scan、暗号化・破損PDF判定、OCR / RAG処理がない。
+- client validationだけで、server側再検証がない。
+
+## 7. 確認手順
+
+1. 1MiB以下のPDFでmetadataを確認する。
+2. 不正extension・MIME・size超過を個別に確認する。
+3. 1MiBちょうどと1byte超過の境界を確認する。
+4. hashまたはsignature確認を追加する。
+5. server側validationの順序を設計する。
+
+## 8. 完了条件
+
+- extension・MIME・sizeを区別できる。
+- client側だけでは安全性を保証できないと説明できる。
+- 本体とmetadataの保存先を分けて説明できる。
+- AI処理前に必要な安全確認を説明できる。

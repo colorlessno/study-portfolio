@@ -1,4 +1,5 @@
-# web51 indexあり/なし検索比較詳細設計
+# web51 indexあり/なし検索比較 詳細設計
+
 ## 0. 関連文書
 
 - `../requirements/web51_index_search_comparison_requirements.md`
@@ -19,22 +20,64 @@ doc/learning_notes/web51_index_search_comparison/
   docs/explain_note.md
 ```
 
-## 2. 主要設計
-| 比較| 内容|
+## 2. 現在の位置付け
+
+PostgreSQL sandboxで実行するSQL教材。Node.js scriptは実習案内を表示するだけで、DB server・接続・計測を自動化しない。
+
+## 3. Schema
+
+| Column | Type | 内容 |
+|---|---|---|
+| id | serial primary key | 識別子 |
+| name | text not null | 完全一致検索対象 |
+| status | text not null | active / archived |
+| created_at | timestamp | 作成日時 |
+
+seed.sqlは`generate_series`で10,000件を投入する。
+
+## 4. 比較対象
+
+```sql
+select * from products where name = 'product-9999';
+```
+
+| 条件 | Index |
 |---|---|
-| indexない| 通常検索 |
-| indexあり | 検索列にindex追加 |
-| 計測 | 実行時間。XPLAIN |
+| 比較前 | name indexなし |
+| 比較後 | `idx_products_name on products(name)` |
 
-## 3. 確認手順
-1. seedを投入する
-2. indexなしで検索する
-3. 実行時間とXPLAINを記録する
-4. indexを追加する
-5. 同じ検索を比較る
-## 4. 完了条件
+schema.sqlのindex作成行はcomment化され、比較開始時はindexなし。
 
-- indexあり/なしを比較きる
-- 検索条件とindexの関係を説明できる
-- indexの更新コストにも触れてい
+## 5. 確認項目
 
+- scan method
+- estimated / actual rows
+- planning / execution time
+- loops
+- buffers
+- 同じqueryを複数回実行したcache影響
+
+## 6. 要件との差分・既知の課題
+
+- PostgreSQLを起動するCompose等は付属しない。
+- package scriptはSQLを実行しない。
+- 計測結果の自動保存・比較を行わない。
+- 10,000件では環境により差が小さい場合がある。
+- name完全一致と単一B-tree indexだけを扱う。
+- write cost・storage増加は実測しない。
+
+## 7. 確認手順
+
+1. 学習用DBへschema・seedを適用する。
+2. ANALYZE後、indexなしでEXPLAIN ANALYZEを実行する。
+3. scan・rows・time・buffersを記録する。
+4. name indexを作り、再度ANALYZEする。
+5. 同じquery・同じ項目を記録して比較する。
+6. indexをdropし、学習環境を後片付けする。
+
+## 8. 完了条件
+
+- index作成前後の実行計画を比較できる。
+- 検索条件とindex列の関係を説明できる。
+- plannerが常にindexを選ぶわけではないと説明できる。
+- read benefitとwrite / storage costの両方を説明できる。
