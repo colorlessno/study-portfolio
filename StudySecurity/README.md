@@ -2,6 +2,12 @@
 
 StudySecurity は、セッション認証、JWT、認可、入力検証、Web攻撃対策、監査ログ、AI安全対策、データ保持、PIIマスキングを学ぶための実装群です。
 
+## 学習の入口
+
+- [リポジトリ全体の学習再開ガイド](../LEARNING_GUIDE.md)
+- [全テーマカタログ](../THEME_CATALOG.md)
+- [security01 Session認証 学習ハブ](./doc/learning_notes/security01_session_auth/README.md)
+
 ## 構成
 
 ```text
@@ -15,7 +21,7 @@ StudySecurity/
   doc/reviews/
 ```
 
-実装単位は backend/src/studysecurity/systems/ に集約していて、各番号の README と補足資料は doc/learning_notes/<securityXX_*>/ に配置しています。
+実装単位は `src/backend/src/studysecurity/systems/` に集約し、各番号のREADMEと補足資料は `doc/learning_notes/<securityXX_*>/` に配置しています。
 
 ## 実装一覧
 
