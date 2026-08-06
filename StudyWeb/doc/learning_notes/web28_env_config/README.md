@@ -1,31 +1,93 @@
-# web28_env_config
+# web28 環境変数による設定切替
 
-`.env` を使ってAPI URL、DB接続先、ポート番号を切り替えるサンプルです。
+Docker Compose、Vite、Node.jsで環境変数を受け渡し、公開可能な設定とバックエンド専用設定を分けるテーマです。
 
-## 起動
+## このテーマでできるようになること
 
-`.env.example` を `.env` にコピーしてから起動します。
+- `.env.example`とローカル`.env`の役割を区別できる
+- Composeの必須値・既定値構文を説明できる
+- ViteでBrowserへ公開される変数を判断できる
+- 起動時に必須環境変数とPORTを検証できる
+
+## 関連資料
+
+1. [要件定義](../../requirements/web28_env_config_requirements.md)
+2. [基本設計](../../basic_design/web28_basic_design.md)
+3. [詳細設計](../../detailed_design/web28_detailed_design.md)
+4. [Compose構成](../../../src/infra/compose/web28_env_config/docker-compose.yml)
+5. [環境変数例](../../../src/infra/env/web28_env_config/.env.example)
+6. [Backend実装](../../../src/backend/src/studyweb/systems/web28_env_config/backend/server.js)
+
+## 資料を見る前の確認問題
+
+- `VITE_`付き変数を秘密情報に使ってはいけない理由は何ですか。
+- Composeの`${NAME:?message}`と`${NAME:-default}`は何が違いますか。
+- `.env.example`へ本物のパスワードを書いてよいでしょうか。
+
+## 15分で再開する
+
+1. `.env.example`を指定してComposeを起動する。
+2. Webと`/config-check`を開く。
+3. Browserへ見える値と見えない値を分ける。
+4. APP_MESSAGEを別値にして再起動し、反映を確認する。
+
+## 起動方法
+
+`StudyWeb/src/infra/compose/web28_env_config`で、サンプル環境変数ファイルを明示して実行します。
 
 ```bash
-docker compose up --build
+docker compose --env-file ../../env/web28_env_config/.env.example up --build
 ```
+
+| 対象 | URL |
+|---|---|
+| Web | `http://localhost:5188` |
+| API health | `http://localhost:13028/health` |
+| 設定確認 | `http://localhost:13028/config-check` |
 
 ## 設定項目
 
-| 変数 | 使う場所 | 内容 |
+| 変数 | 利用場所 | Browserへ値が見えるか |
 |---|---|---|
-| `FRONTEND_PORT` | compose | ブラウザから開くWebポート |
-| `API_PORT` | compose | ブラウザから接続するAPIポート |
-| `API_INTERNAL_PORT` | backend/compose | コンテナ内APIポート |
-| `VITE_API_URL` | frontend | フロントから呼ぶAPI URL |
-| `DATABASE_URL` | backend | DB接続文字列の例 |
-| `APP_MESSAGE` | backend | 設定反映を確認する表示値 |
+| `FRONTEND_PORT` | Composeのport公開 | 接続先として分かる |
+| `API_PORT` | Composeのport公開 | 接続先として分かる |
+| `API_INTERNAL_PORT` | backendとCompose | config-checkに数値が出る |
+| `VITE_API_URL` | frontend bundle | 見える |
+| `DATABASE_URL` | backend | 値そのものは返さない |
+| `APP_MESSAGE` | backend | config-checkへ表示する |
 
-Viteではブラウザに公開する環境変数に `VITE_` prefix が必要です。`DATABASE_URL` のようなバックエンド専用値をフロントに渡さないようにします。
+BackendはDATABASE_URLの有無だけを`hasDatabaseUrl`として返し、接続文字列自体は返しません。現サンプルはDBへ実際には接続しません。
 
-## 確認
+## 観察ポイント
 
-- Web: `http://localhost:5188`
-- API: `http://localhost:13028/config-check`
+- 必須のFRONTEND_PORT、API_PORT、VITE_API_URL、DATABASE_URLがないとComposeが停止するか
+- API_INTERNAL_PORTとAPP_MESSAGEは既定値を持つか
+- VITE_API_URLが画面とBrowser bundleへ公開されるか
+- DATABASE_URLの内容がAPIレスポンスに出ないか
+- PORTが正の整数でない場合にbackendが終了するか
 
-`.env` はローカル設定用で、秘密情報を含む可能性があるためGit管理対象外にします。`.env.example` にはダミー値だけを書きます。
+## 壊して直す演習
+
+1. `--env-file`を外して起動し、必須変数エラーを読む。
+2. API_INTERNAL_PORTを不正な文字列へ変え、backendの起動検証を見る。
+3. VITE_API_URLのポートを誤らせ、Browserの接続エラーを見る。
+4. APP_MESSAGEだけを変更し、コード変更なしで表示が変わることを確認する。
+
+## 自分の言葉で説明する
+
+- Build時にBrowserへ埋め込む値と、backendだけが持つ値を説明してください。
+- `.env`と`.env.example`の公開範囲をどう分けますか。
+- DATABASE_URLを値ではなくbooleanだけ返す理由は何ですか。
+
+## うまく動かないとき
+
+- Compose開始前に失敗する場合は、必須変数と`--env-file`の相対パスを確認します。
+- frontendだけAPIへ接続できない場合は、VITE_API_URLとAPI_PORTを照合します。
+- backendが終了する場合は、missing envとInvalid PORTのログを確認します。
+
+## 学習完了の目安
+
+- [ ] sample envでWebとAPIを起動した
+- [ ] 必須値不足と不正PORTを観察した
+- [ ] VITE公開値とbackend専用値を分類した
+- [ ] APP_MESSAGEを環境変数だけで切り替えた
