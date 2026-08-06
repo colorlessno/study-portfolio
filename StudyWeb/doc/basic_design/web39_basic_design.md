@@ -51,4 +51,4 @@ doc/learning_notes/web39_error_boundary/
 - Error Boundaryの限界を説明できる
 ## 8. 後続工程への引き継ぎ
 
-詳細設計では、コンポーネント成、例外発生方法、fallback文言を定義する。
+詳細設計では、コンポーネント構成、例外発生方法、fallback文言を定義する。
