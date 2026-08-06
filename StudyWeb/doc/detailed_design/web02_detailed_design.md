@@ -1,95 +1,127 @@
-# web02 詳細設計## ブラウザ通信観察サンプル
+# web02 詳細設計
+## ブラウザ通信観察サンプル
 
----
+## 1. 実装対象
 
-## 1. 実装ディレクトリ構成
+ブラウザがHTMLからCSS、JavaScript、画像を追加取得する流れを、DevToolsのNetworkタブで観察する静的ページを実装する。
 
 ```text
 src/frontend/src/studyweb/systems/web02_browser_network/
 ├── index.html
 ├── styles/
-│  └── style.css
+│   └── style.css
 ├── scripts/
-│  └── main.js
-├── images/
-│  └── profile-placeholder.svg
-└── README.md
+│   └── main.js
+└── images/
+    ├── favicon.svg
+    └── profile-placeholder.svg
 ```
 
-## 2. モジュール詳細
+| ファイル | 役割 |
+|---|---|
+| `index.html` | 表示構造と各リソースへの相対パスを定義する |
+| `styles/style.css` | パネル、画像、ボタン、レスポンシブ表示を定義する |
+| `scripts/main.js` | ボタン操作を受け、JavaScriptの読込結果を表示する |
+| `images/favicon.svg` | ブラウザタブ用アイコンの通信を発生させる |
+| `images/profile-placeholder.svg` | 画面表示用画像の通信を発生させる |
 
-| モジュール | 役割 | 主な処理|
+## 2. HTML詳細
+
+### 2.1 外部リソース
+
+| ID | HTML要素 | 参照先 | Network上の主なType |
+|---|---|---|---|
+| `LOAD-001` | `link[rel="icon"]` | `./images/favicon.svg` | image |
+| `LOAD-002` | `link[rel="stylesheet"]` | `./styles/style.css` | stylesheet |
+| `LOAD-003` | `script[defer]` | `./scripts/main.js` | script |
+| `LOAD-004` | `img` | `./images/profile-placeholder.svg` | image |
+
+HTML自身はdocumentとして取得される。`script`には`defer`を付け、DOMの解析完了後にJavaScriptを実行する。
+
+### 2.2 主要要素
+
+| 要素 | 用途 | 設計上の注意 |
 |---|---|---|
-| HTML | CSS / JS / 画像を参照するページ本体| `<link>`, `<script>`, `<img>` |
-| CSS | 画面の見た目 | レイアウト、色、余白 |
-| JavaScript | 読み込み確認| ボタン操作、メテージ更新 |
-| 画像| Network確認対象 | Imageリクエスト発生|
-| README | 観察手順| DevTools Network の見る項目|
+| `main.page-shell` | ページ全体の表示幅を制御する | 最大幅840px、中央寄せとする |
+| `section.resource-panel` | 読込対象の一覧と画像を表示する | `aria-labelledby="resourceTitle"`で見出しと関連付ける |
+| `button#checkButton` | JavaScriptの動作確認を開始する | 送信操作ではないため`type="button"`とする |
+| `p#loadStatus` | 実行結果と時刻を表示する | `aria-live="polite"`で更新を通知可能にする |
 
-## 3. API 詳細
+## 3. CSS詳細
 
-HTTP API は使用しないブラウザによる静的リソース読み込みを観察対象とする。
-| リソース | パス | 期得ype |
+| セレクタ | 用途 |
+|---|---|
+| `.page-shell` | コンテンツ幅と中央配置 |
+| `.resource-panel` | 説明と画像を2列のGridで配置 |
+| `.check-panel` | JavaScript確認領域をカードとして表示 |
+| `button` / `button:hover` | 操作要素とポインター操作時の変化 |
+| `#loadStatus` | 動的メッセージ領域の高さと背景 |
+
+画面幅640px以下では`.resource-panel`を1列へ切り替える。画像や本文が横にはみ出さない構成とする。
+
+## 4. JavaScript詳細
+
+### 4.1 DOM参照
+
+| 変数 | 取得対象 | 用途 |
 |---|---|---|
-| HTML | `index.html` | document |
-| CSS | `styles/style.css` | stylesheet |
-| JS | `scripts/main.js` | script |
-| 画像| `images/profile-placeholder.svg` | image |
+| `checkButton` | `#checkButton` | clickイベントの登録先 |
+| `loadStatus` | `#loadStatus` | 読込確認メッセージの出力先 |
 
-## 4. 詳細API I/O 定義
+### 4.2 初期化とクリック処理
 
-### 4.1 ファイル読み込みI/O
+```text
+main.jsを実行
+  ↓
+2つのDOMを取得
+  ↓
+どちらかがnull ─ Yes → Consoleに固定エラーを出す
+  │
+  No
+  ↓
+clickイベントを登録
+  ↓
+現在時刻を含むメッセージをtextContentへ設定
+```
 
-| 呼び出し元 | 入力参照 | 出力|
+Consoleエラーは`web02: required element was not found.`とする。成功時の時刻は`new Date().toLocaleTimeString()`で、利用環境のロケールに従って表示する。
+
+## 5. エラーと観察ポイント
+
+| 状況 | 画面・DevTools上の結果 | 確認箇所 |
 |---|---|---|
-| `index.html` | `styles/style.css` | CSS適用 |
-| `index.html` | `scripts/main.js` | イベント登録 |
-| `index.html` | `images/profile-placeholder.svg` | 画像表示 |
+| CSSのパスが誤っている | 装飾が適用されず、通信が404になる | NetworkのStatusとName |
+| JavaScriptのパスが誤っている | ボタンを押しても表示が変わらない | NetworkとConsole |
+| 画像のパスが誤っている | 画像が表示されず、通信が404になる | NetworkのType=image |
+| 必須DOMが存在しない | イベントを登録せず固定エラーを出す | Console |
 
-### 4.2 DOM I/O
+HTTP API、データベース、AI処理、認証・認可は使用しない。ローカルファイルまたは簡易HTTPサーバーで動作し、外部ネットワークへ依存しない。
 
-| 項目| DOM | 用途|
+## 6. セキュリティとアクセシビリティ
+
+- 外部入力と外部通信を扱わない。
+- DOM更新には`textContent`を使用する。
+- 画像に内容を説明する`alt`を設定する。
+- 動的メッセージに`aria-live="polite"`を設定する。
+- 操作にはネイティブの`button`を使用する。
+
+## 7. 確認項目
+
+| ID | 操作 | 期待結果 |
 |---|---|---|
-| 確認ボタン | `#checkButton` | JS読み込み確認|
-| 出力領域 | `#loadStatus` | クリック後メテージ |
+| `CHK-001` | `index.html`を開きNetworkを確認する | document、stylesheet、script、imageが取得される |
+| `CHK-002` | 各通信のStatusを確認する | すべて成功ステータスになる |
+| `CHK-003` | 確認ボタンを押す | JavaScript読込済みの文言と確認時刻が表示される |
+| `CHK-004` | 640px以下へ画面を狭める | リソース領域が1列になる |
+| `CHK-005` | 画像パスを一時的に変更する | Networkで404を観察できる |
+| `CHK-006` | `Disable cache`を有効にして再読込する | 各リソースの通信が再度表示される |
 
-## 5. 入力チェック仕様
-| 対象 | チェック項目| ルール |
-|---|---|---|
-| ファイルパス | 存在 | CSS / JS / 画像が持つパスに存在する |
-| DOM | 要素存在 | `#checkButton`, `#loadStatus` が存在する |
-| Network確認| Status | 各ソースい200 で取得される |
+## 8. 実装との対応
 
-## 6. エラー応答仕様
-| error_code | 発生条件 | 確認場所 |
-|---|---|---|
-| `css_not_loaded` | CSSパス誤る| Network / 表示崩る|
-| `script_not_loaded` | JSパス誤る| Console / ボタン無反必要|
-| `image_not_loaded` | 画像パス誤る| Network / broken image |
+| 設計要素 | 実装箇所 |
+|---|---|
+| リソース参照と画面構造 | `index.html` |
+| 2列表示と640px以下の切替 | `styles/style.css` |
+| DOM存在確認とクリック処理 | `scripts/main.js` |
 
-## 7. バリデーション一覧
-
-| 対象 | ルール | 不正時挙動|
-|---|---|---|
-| CSS参照 | `styles/style.css` | 404 |
-| JS参照 | `scripts/main.js` + `defer` | イベント未登録 |
-| 画像参照 | `images/...` | 画像未表示 |
-
-## 8. データベース詳細
-
-DBは使用しない
-## 9. AI 処理詳細
-
-AI処理は使用しない
-## 10. エラー・監査設計
-- Network タブで URL / Status / Type / Size / Time を確認する
-- Console にエラーがあった場合はファイルパスとDOM IDを確認する
-- サーバーログや監査ログは扱わない
-## 11. DDL
-
-DBを使用しないるDDL はない
-## 12. 実装メモ
-
-- README に DevTools の開き方を記載する
-- `Disable cache` を有効にした場合の見え方も補足する
-- 簡易HTTPサーバーで開くの場合コマンド例を記載してもよい
+学習手順、故障演習、完了条件は[`doc/learning_notes/web02_browser_network/README.md`](../learning_notes/web02_browser_network/README.md)を参照する。

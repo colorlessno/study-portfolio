@@ -1,89 +1,140 @@
-# web18 詳細設計## Seed と Migration
+# web18 詳細設計
+## SeedとMigration
 
----
+## 1. 実装対象
 
-## 1. 実装ディレクトリ構成
+Docker ComposeでPostgreSQLを起動し、Prisma schemaからMigrationを作成・適用した後、再実行可能なSeedで学習用データを投入する。
 
 ```text
 src/backend/src/studyweb/systems/web18_seed_and_migration/
-├── docker-compose.yml
-├── package.json
 ├── .env.example
-├── prisma/
-│  ├── schema.prisma
-│  ├── seed.ts
-│  └── migrations/
-└── README.md
+├── docker-compose.yml
+├── Dockerfile
+├── package.json
+└── prisma/
+    ├── schema.prisma
+    ├── seed.ts
+    └── migrations/       # migrate実行時に生成される成果物
 ```
 
-## 2. モジュール詳細
+| ファイル・サービス | 役割 |
+|---|---|
+| `.env.example` | `DATABASE_URL`の設定例 |
+| `docker-compose.yml` | PostgreSQL、migrate、seedの実行単位を定義する |
+| `schema.prisma` | datasource、Prisma Client、DBモデルを定義する |
+| `seed.ts` | CategoryとTaskの初期データを投入する |
+| `migrations/` | Migration実行時に生成されるSQLと履歴を保持する |
 
-| モジュール | 役割 | 主な処理|
+## 2. Docker Compose設計
+
+| service | 役割 | 依存条件 |
 |---|---|---|
-| schema.prisma | モデル定義 | Task/Category応答|
-| migrations | 構造変更履歴 | SQL生成物 |
-| seed.ts | 初期データ投入 | upsert/delete+create |
-| Docker Compose | DB起動| PostgreSQL |
+| `db` | PostgreSQL 16を起動する | なし |
+| `migrate` | `npx prisma migrate dev --name init`を実行する | `db`がhealthy |
+| `seed` | `npx prisma db seed`を実行する | `db`がhealthy |
 
-## 3. API 詳細
+ホストの15418番をコンテナの5432番へ公開する。DBデータはnamed volume `web18_db`へ保存する。healthcheckは5秒間隔、タイムアウト3秒、最大10回とする。
 
-HTTP API は使用しないPrisma CLI を操作IFとして扱い
-| コマンテ| 処理|
-|---|---|
-| `prisma migrate dev` | migration成・実行|
-| `prisma db seed` | 初期データ投入 |
-| `prisma studio` | データ確認|
+既定値はユーザー`postgres`、パスワード`postgres`、DB名`web18`である。学習用のローカル設定であり、本番資格情報として使用しない。
 
-## 4. 詳細API I/O 定義
+## 3. Prisma schema
 
-| 入力| 内容|
-|---|---|
-| `DATABASE_URL` | DB接続文列 |
-| `schema.prisma` | DB構造定義 |
-| `seed.ts` | 初期データ |
+### 3.1 Category
 
-| 出力| 内容|
-|---|---|
-| migrations | DB変更履歴 |
-| tables | DBテーブル |
-| seed data | 初期データ |
-
-## 5. 入力チェック仕様
-| 対象 | ルール |
-|---|---|
-| DATABASE_URL | PostgreSQLへ接続可能 |
-| schema | Prisma構文エラーない|
-| seed | 再実行時に重複壊れない|
-| seed data | 複数件 | 2件以の初期データを投入する |
-
-## 6. エラー応答仕様
-| error_code | 発生条件 | 対処|
+| フィールド | Prisma型 | 制約・用途 |
 |---|---|---|
-| `db_not_ready` | DB未起動| Docker確認|
-| `migration_failed` | migration失敗| schema確認|
-| `seed_failed` | seed失敗| データ重複接続確認|
+| `id` | String | 主キー、`cuid()`で生成 |
+| `name` | String | 一意、Seedのupsert条件 |
+| `tasks` | Task[] | Taskとの1対多relation |
 
-## 7. バリデーション一覧
+### 3.2 Task
 
-| 対象 | ルール |
+| フィールド | Prisma型 | 制約・用途 |
+|---|---|---|
+| `id` | String | 主キー、`cuid()`で生成 |
+| `title` | String | タスク名 |
+| `done` | Boolean | 既定値false |
+| `categoryId` | String | Categoryへの外部キー |
+| `category` | Category | `categoryId`から`Category.id`を参照 |
+
+```text
+Category 1 ─── * Task
+```
+
+## 4. Migration設計
+
+```text
+DATABASE_URLを設定
+  ↓
+PostgreSQLのhealthcheck成功
+  ↓
+prisma migrate dev --name init
+  ↓
+schemaとの差分からSQLを生成
+  ↓
+DBへ適用しprisma/migrationsへ履歴を保存
+```
+
+初回実行前は`prisma/migrations/`が存在しない場合がある。生成後はDB構造の再現に必要な成果物としてGit管理対象にする。
+
+## 5. Seed設計
+
+1. Prisma Clientを生成・接続する。
+2. Category `Frontend`をnameでupsertする。
+3. Category `Backend`をnameでupsertする。
+4. 既存Taskを`deleteMany()`ですべて削除する。
+5. 2件のTaskを`createMany()`で作成する。
+6. 成功・失敗のどちらでもPrisma Clientを切断する。
+
+| title | category | done |
+|---|---|---|
+| `CSSの読み込みを確認する` | Frontend | false |
+| `Prisma migrationを実行する` | Backend | false |
+
+Categoryは一意なnameで再利用し、Taskは全削除後に同じ2件を作る。このためSeedを再実行してもCategoryやTaskが増え続けない。ただし、既存Taskを保持したい環境では使用しない。
+
+## 6. コマンドIF
+
+| コマンド | 入力 | 出力・副作用 |
+|---|---|---|
+| `npx prisma migrate dev --name init` | schema、DATABASE_URL | Migration生成とDB構造変更 |
+| `npx prisma db seed` | `prisma.seed`設定 | CategoryとTaskの初期投入 |
+| `npm run seed` | package script | `tsx prisma/seed.ts`を直接実行 |
+| `npx prisma studio` | DATABASE_URL | DB確認用UIを起動 |
+
+HTTP API、アプリ画面、AI処理、認証・認可、監査ログは扱わない。
+
+## 7. エラー設計
+
+| 状況 | 確認箇所 | 対処 |
+|---|---|---|
+| DBが起動していない | Docker Composeとhealthcheck | `db`のログと状態を確認する |
+| `DATABASE_URL`が不正 | Prisma CLIの接続エラー | host、port、DB名、資格情報を確認する |
+| schemaに構文不備がある | Prisma CLIの検証エラー | `schema.prisma`の該当箇所を修正する |
+| Migrationが失敗する | migrate serviceのログ | DB状態と生成SQLを確認する |
+| Seedが失敗する | seed serviceの標準エラー | relation、接続、既存データを確認する |
+
+Seedは例外をConsoleへ出し、終了コード1で終了する。
+
+## 8. 確認項目
+
+| ID | 操作 | 期待結果 |
+|---|---|---|
+| `CHK-001` | `db`を起動する | PostgreSQLがhealthyになる |
+| `CHK-002` | Migrationを実行する | CategoryとTaskのテーブルが作成される |
+| `CHK-003` | Seedを実行する | Category 2件、Task 2件が存在する |
+| `CHK-004` | Seedを再実行する | CategoryとTaskの件数が増えない |
+| `CHK-005` | Prisma Studioを開く | relationを含む投入データを確認できる |
+| `CHK-006` | 不正なDATABASE_URLで実行する | 接続エラーになり、処理が成功扱いにならない |
+
+## 9. 実装との対応
+
+| 設計要素 | 実装箇所 |
 |---|---|
-| migration | 成功終了|
-| seed | 初期データい件以上投入される|
-| studio | データ閲覧可能 |
+| DB・実行サービス・永続volume | `docker-compose.yml` |
+| 接続文字列の例 | `.env.example` |
+| モデルとrelation | `prisma/schema.prisma` |
+| 再実行可能な初期投入 | `prisma/seed.ts` |
+| Seedコマンド | `package.json` |
 
-## 8. データベース詳細
-
-学習用モデルとして Task または Category + Task を定義する。
-## 9. AI 処理詳細
-
-AI処理は使用しない
-## 10. エラー・監査設計
-- migration/seed の失敗ログをターミナルで確認する
-- 本番移行や監査ログは扱わない
-## 11. DDL
-
-DDLはPrisma migrationにより成される。果物には `prisma/migrations/` を含める。
-## 12. 実装メモ
-
-- `package.json` に seed 設定を追加する
-- README に migrate -> seed -> studio の項目を書い
+学習手順、故障演習、完了条件は[`doc/learning_notes/web18_seed_and_migration/README.md`](../learning_notes/web18_seed_and_migration/README.md)を参照する。
