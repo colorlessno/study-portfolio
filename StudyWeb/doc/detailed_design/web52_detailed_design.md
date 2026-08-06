@@ -21,6 +21,8 @@ doc/learning_notes/web52_modern_rendering_comparison/
 
 ## 2. 比較対象
 
+各用語は同じ軸の排他的な選択肢ではない。MPA / SPA / SSR / SSGはpage deliveryやHTML生成を比較し、Server Components / Islandsはcomponent・hydration戦略、PWAは複数構成へ追加できるapplication capabilityとして整理する。
+
 | mode | 説明 |
 |---|---|
 | MPA | ページ遷移ごとにHTMLを取得 |
@@ -30,6 +32,13 @@ doc/learning_notes/web52_modern_rendering_comparison/
 | Server Components | サーバ側でcomponent単位の処理を寄せる |
 | Islands Architecture | 静的HTMLに必要部分だけhydrate |
 | PWA | install、offline、pushなどアプリ的機能を付加 |
+
+組合せ例:
+
+- SSR + Server Components
+- SSG + Islands
+- SPA + PWA
+- MPA + 一部client component
 
 ## 3. 比較表設計
 
@@ -91,4 +100,3 @@ doc/learning_notes/web52_modern_rendering_comparison/
 - 特定フレームワークへの全面移行は行わない
 - 性能ベンチマーク値を断定しない
 - 流行語の暗記ではなく、要件に対する選定理由を中心にする
-
