@@ -31,6 +31,20 @@ StudySecurity は、セッション認証、JWT、認可、入力検証、Web攻
 
 security05と06は構造を標準出力で比較する教材、security07はlocal HTTP、security08と09は静的画面です。危険な入力や状態変更はローカルのダミーデータに限定し、外部systemへの攻撃や実fileのuploadは行いません。
 
+続いて、applicationを安全に運用・連携するための境界を学びます。
+
+| テーマ | 学ぶ運用判断 | 実行形態 |
+|---|---|---|
+| [security10 秘密情報管理](./doc/learning_notes/security10_secret_management/README.md) | secretをcode・Git・logからどう分離するか | CLI demo |
+| [security11 Webhook署名](./doc/learning_notes/security11_webhook_signature/README.md) | 改ざん検知とreplay防止をどう分けるか | CLI / `http://localhost:4111` |
+| [security12 監査ログ](./doc/learning_notes/security12_audit_log/README.md) | 調査可能性とdata最小化をどう両立するか | CLI demo |
+| [security13 レート制限](./doc/learning_notes/security13_rate_limit/README.md) | key・閾値・時間窓をどう決めるか | CLI / `http://localhost:4113` |
+| [security14 CORS](./doc/learning_notes/security14_cors/README.md) | browserへ許可するOriginをどう絞るか | `http://localhost:4114` |
+| [security15 Security headers](./doc/learning_notes/security15_security_headers/README.md) | browserの防御policyをresponseでどう伝えるか | `http://localhost:4115` |
+| [security16 依存関係管理](./doc/learning_notes/security16_dependency_management/README.md) | 脆弱性reportを対応判断へどう変えるか | CLI demo |
+
+security10〜16は、実secret、外部Webhook、外部traffic、実package更新を扱いません。localのダミーdataで判断点を再現し、本番ではSecret Manager、永続store、distributed limiter、production Origin、HTTPS、test・互換性確認が追加で必要になることを区別します。
+
 ## 構成
 
 ```text

@@ -1,6 +1,7 @@
 const http = require("http");
-const { verify } = require("./signature");
+const { validateWebhook } = require("./webhook");
 const seen = new Set();
+const MAX_BODY_BYTES = 64 * 1024;
 
 function send(res, status, body) {
   res.writeHead(status, { "Content-Type": "application/json; charset=utf-8" });
@@ -8,17 +9,25 @@ function send(res, status, body) {
 }
 
 http.createServer((req, res) => {
-  if (req.method !== "POST" || req.url !== "/webhook") return send(res, 404, { error: "not_found" });
-  let body = "";
-  req.on("data", (c) => { body += c; });
+  if (req.method !== "POST" || req.url !== "/webhook") {
+    return send(res, 404, { error: "not_found" });
+  }
+
+  const chunks = [];
+  let bodyBytes = 0;
+  req.on("data", (chunk) => {
+    bodyBytes += chunk.length;
+    if (bodyBytes <= MAX_BODY_BYTES) chunks.push(chunk);
+  });
   req.on("end", () => {
-    const timestamp = req.headers["x-timestamp"];
-    const signature = req.headers["x-signature"];
-    const eventId = req.headers["x-event-id"];
-    if (Math.abs(Date.now() - Number(timestamp)) > 300000) return send(res, 401, { error: "timestamp" });
-    if (!verify(timestamp, body, signature)) return send(res, 401, { error: "signature" });
-    if (seen.has(eventId)) return send(res, 409, { error: "replay" });
-    seen.add(eventId);
-    send(res, 200, { ok: true });
+    if (bodyBytes > MAX_BODY_BYTES) return send(res, 413, { error: "body_too_large" });
+
+    const result = validateWebhook({
+      timestamp: req.headers["x-timestamp"],
+      body: Buffer.concat(chunks),
+      signature: req.headers["x-signature"],
+      eventId: req.headers["x-event-id"],
+    }, { seen });
+    send(res, result.status, result);
   });
 }).listen(4111, () => console.log("security11 listening on http://localhost:4111"));

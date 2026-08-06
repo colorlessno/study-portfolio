@@ -19,13 +19,13 @@ Web / API / AIシステムで必要になる認証認可、攻撃対策、鍵、
 | security07 | CSRF体験と対策 | `security07_csrf_requirements.md` |
 | security08 | XSS対策 | `security08_xss_requirements.md` |
 | security09 | ファイルアップロード制御 | `security09_file_upload_requirements.md` |
-| security10 | `.env` / secrets管理 | `security10_env_secrets_requirements.md` |
-| security11 | ハッシュと署名 | `security11_hash_signature_requirements.md` |
-| security12 | SSH鍵 / JWT署名鍵 | `security12_ssh_jwt_keys_requirements.md` |
-| security13 | ローカルHTTPS | `security13_local_https_requirements.md` |
-| security14 | Nginx HTTPS終端 | `security14_nginx_https_termination_requirements.md` |
+| security10 | 秘密情報管理 | `security10_secret_management_requirements.md` |
+| security11 | Webhook署名検証 | `security11_webhook_signature_requirements.md` |
+| security12 | 監査ログ | `security12_audit_log_requirements.md` |
+| security13 | レート制限 | `security13_rate_limit_requirements.md` |
+| security14 | CORS | `security14_cors_requirements.md` |
 | security15 | セキュリティヘッダー | `security15_security_headers_requirements.md` |
-| security16 | 監査ログ | `security16_audit_log_requirements.md` |
+| security16 | 依存関係管理 | `security16_dependency_management_requirements.md` |
 | security17 | Prompt Injection体験 | `security17_prompt_injection_requirements.md` |
 | security18 | RAG Injection体験 | `security18_rag_injection_requirements.md` |
 | security19 | Tool実行前承認 | `security19_tool_approval_requirements.md` |

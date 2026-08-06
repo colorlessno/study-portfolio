@@ -8,12 +8,10 @@
 
 ```text
 src/backend/src/studysecurity/systems/security12_audit_log/
-  README.md
   Dockerfile
   package.json
   app/audit_logger.js
   app/demo.js
-  docs/audit_events.md
 ```
 
 ## 2. 主要設計
@@ -22,7 +20,7 @@ src/backend/src/studysecurity/systems/security12_audit_log/
 | 監査イベント | 認証、認可失敗、重要操作を記録する |
 | 項目 | actor, action, target, result, reason, requestIdを含める |
 | 出力 | JSON Lines形式で標準出力に出す |
-| マスク | 秘密情報と個人情報を伏せる |
+| マスク | 全文字列項目の学習用秘密情報とemailを伏せる |
 
 ## 3. 安全制約
 - 実個人情報、実秘密情報、サンプル鍵は置かない。

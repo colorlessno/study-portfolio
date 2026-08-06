@@ -1,8 +1,13 @@
 const crypto = require("crypto");
-const secret = "example-webhook-secret";
+const secret = process.env.WEBHOOK_SECRET || "example-webhook-secret";
 
 function sign(timestamp, body) {
-  return crypto.createHmac("sha256", secret).update(`${timestamp}.${body}`).digest("hex");
+  return crypto
+    .createHmac("sha256", secret)
+    .update(String(timestamp))
+    .update(".")
+    .update(body)
+    .digest("hex");
 }
 
 function verify(timestamp, body, signature) {

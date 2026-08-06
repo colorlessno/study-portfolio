@@ -8,12 +8,10 @@
 
 ```text
 src/backend/src/studysecurity/systems/security10_secret_management/
-  README.md
   Dockerfile
   package.json
   app/config.js
   .env.example
-  docs/secret_rotation.md
 ```
 
 ## 2. 主要設計

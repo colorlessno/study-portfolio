@@ -8,11 +8,9 @@
 
 ```text
 src/backend/src/studysecurity/systems/security14_cors/
-  README.md
   Dockerfile
   package.json
   app/server.js
-  docs/cors_matrix.md
 ```
 
 ## 2. 主要設計
@@ -22,6 +20,7 @@ src/backend/src/studysecurity/systems/security14_cors/
 | preflight | `OPTIONS`に許可メソッドとヘッダーを返す |
 | credentials | Cookie利用時だけ明示的に許可する |
 | 拒否 | 不許可OriginにはCORS許可ヘッダーを返さない |
+| cache | Originとpreflight条件を`Vary`へ含める |
 
 ## 3. 安全制約
 - `*`とcredentialsの組み合わせを許可しない。

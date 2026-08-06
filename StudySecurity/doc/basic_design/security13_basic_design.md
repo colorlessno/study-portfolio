@@ -1,50 +1,51 @@
-# security13 ローカルHTTPS 基本設計
+# security13 レート制限 基本設計
+
 ## 0. 関連要件
 
-- `../requirements/security13_local_https_requirements.md`
+- `../requirements/security13_rate_limit_requirements.md`
 
 ## 1. 設計目的
-ローカルHTTPSと自己署名証明書の警告、HTTPとの差を確認する。
-## 2. 対象範囲
 
-- HTTP / HTTPS
-- self-signed certificate
-- browser warning
-- Secure Cookie
-- 学習用証明書方針
-## 3. 成果物構成
+固定時間窓counterで、key・閾値・reset時刻・HTTP応答の関係を確認する。
+
+## 2. 成果物構成
 
 ```text
 src/backend/src/studysecurity/systems/security13_rate_limit/
+  package.json
+  app/rate_limiter.js
+  app/server.js
+  app/demo.js
+doc/learning_notes/security13_rate_limit/
   README.md
-  app/
-  docs/http_https_compare.md
-  docs/self_signed_warning.md
+  limit_policy.md
 ```
 
-## 4. 入力
-| 入力 | 内容 |
+## 3. 制限policy
+
+| 項目 | 内容 |
 |---|---|
-| request | HTTP / HTTPS |
-| certificate | 学習用自己署名証明書の説明 |
+| 窓 | 10秒のfixed window |
+| 上限 | keyごとに3 request |
+| key | `X-Demo-User`またはsocketのIP相当値 |
+| 超過 | 429、`Retry-After`、残り0 |
+| 除外 | `/health` |
 
-## 5. 出力
-| 出力 | 内容 |
-|---|---|
-| compare note | HTTP/HTTPS差分 |
-| warning note | ブラウザ警告 |
-| cookie note | Secure Cookie |
+## 4. 処理方針
 
-## 6. 処理方針
-1. HTTPとHTTPSの違いを整理する
-2. 自己署名証明書の警告を説明する
-3. Secure Cookieとの関係を整理する
-4. 証明書秘密鍵をリポジトリに入れない
-## 7. 確認観点
+1. keyごとにcountと`resetAt`をmemoryへ保持する。
+2. 現在時刻が`resetAt`以上なら新しい窓へresetする。
+3. counter更新後に許可・残り回数・再試行秒数を返す。
+4. HTTP層でrate limit headerへ変換する。
 
-- 自己署名を本番扱いしていないか
-- 秘密鍵を保存していないか
-- ブラウザ警告の意味を説明できるか
-## 8. 後続工程への引き継ぎ
+## 5. 安全制約
 
-詳細設計では、確認手順、証明書の扱い、比較表を定義する。
+- `X-Demo-User`を認証済みidentityとして扱わない。
+- local server以外へ連続requestを送らない。
+- memory storeをproduction向けdistributed limiterと扱わない。
+
+## 6. 確認観点
+
+- 3回成功、4回目429、境界時刻で成功になること
+- key変更で制限単位が変わること
+- proxy、複数instance、memory増加が本番論点になること

@@ -8,12 +8,12 @@
 
 ```text
 src/backend/src/studysecurity/systems/security11_webhook_signature/
-  README.md
   Dockerfile
   package.json
   app/server.js
   app/signature.js
-  docs/replay_protection.md
+  app/webhook.js
+  app/demo.js
 ```
 
 ## 2. 主要設計
@@ -22,7 +22,8 @@ src/backend/src/studysecurity/systems/security11_webhook_signature/
 | 署名対象 | raw bodyとtimestampを連結する |
 | 署名方式 | HMAC-SHA256をNode標準`crypto`で実装する |
 | `POST /webhook` | 署名、時刻差、重複IDを検証する |
-| 失敗応答 | 検証失敗は401、重複は409にする |
+| 入力上限 | raw bodyを64KiBまでBufferとして受け取る |
+| 失敗応答 | event ID不足は400、検証失敗は401、重複は409、body超過は413にする |
 
 ## 3. 安全制約
 - HMAC secretは学習用ダミー値にする。

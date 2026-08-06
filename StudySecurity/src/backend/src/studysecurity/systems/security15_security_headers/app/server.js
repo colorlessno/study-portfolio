@@ -2,10 +2,12 @@ const http = require("http");
 
 const headers = {
   "Content-Type": "text/html; charset=utf-8",
-  "Content-Security-Policy": "default-src 'self'",
+  "Content-Security-Policy": "default-src 'self'; frame-ancestors 'none'; object-src 'none'",
+  "X-Frame-Options": "DENY",
   "X-Content-Type-Options": "nosniff",
   "Referrer-Policy": "same-origin",
   "Permissions-Policy": "geolocation=(), camera=(), microphone=()",
+  "Cache-Control": "no-store",
 };
 
 http.createServer((req, res) => {

@@ -1,54 +1,49 @@
-# security16 監査ログ 基本設計
+# security16 依存関係管理 基本設計
+
 ## 0. 関連要件
 
-- `../requirements/security16_audit_log_requirements.md`
+- `../requirements/security16_dependency_management_requirements.md`
 
 ## 1. 設計目的
-誰が、いつ、何をしたかを記録する監査ログの基本を確認する。
-## 2. 対象範囲
 
-- actor
-- action
-- target
-- timestamp
-- request id
-- secret redaction
+監査reportをそのまま更新命令にせず、対応候補と判断材料へ変換する流れを確認する。
 
-## 3. 成果物構成
+## 2. 成果物構成
 
 ```text
 src/backend/src/studysecurity/systems/security16_dependency_management/
+  package.json
+  app/audit_report_parser.js
+  samples/npm_audit_sample.json
+doc/learning_notes/security16_dependency_management/
   README.md
-  app/
-  docs/audit_log_schema.md
-  docs/log_safety_notes.md
+  remediation_policy.md
 ```
 
-## 4. 入力
-| 入力 | 内容 |
+## 3. 入出力
+
+| 種別 | 内容 |
 |---|---|
-| operation | login/update/delete |
-| actor | 学習用ユーザー |
-| target | 操作対象 |
+| 入力 | 架空packageの`vulnerabilities`配列 |
+| summary | severity別件数 |
+| actions | package、severity、update/review、note |
+| 並び順 | criticalからinfo、unknownの順 |
 
-## 5. 出力
-| 出力 | 内容 |
-|---|---|
-| audit log | actor/action/target/time |
-| request id | 追跡ID |
-| safe log | secretを含まないログ |
+## 4. 処理方針
 
-## 6. 処理方針
-1. 操作時に監査ログを記録する
-2. request idを付ける
-3. secretやtokenをログに出さない
-4. 操作履歴を確認できるようにする
+1. report rootと`vulnerabilities`配列を検証する。
+2. 必要項目を対応候補へ正規化する。
+3. severity順に並べ、件数を集計する。
+4. fix有無から`update`または`review`を提示する。
 
-## 7. 確認観点
+## 5. 安全制約
 
-- 誰が何をしたか追跡できるか
-- 秘密情報がログに出ていないか
-- デバッグログとの違いを説明できるか
-## 8. 後続工程への引き継ぎ
+- 外部registryや実projectへ接続しない。
+- parser出力だけで自動更新を行わない。
+- sample packageを実在packageのadvisoryとして扱わない。
 
-詳細設計では、ログschema、操作API、確認手順を定義する。
+## 6. 確認観点
+
+- severityと到達可能性・互換性影響を分けて判断できること
+- direct dependencyとtransitive dependencyで更新経路が異なること
+- 更新・代替・保留の各判断にownerと期限が必要なこと

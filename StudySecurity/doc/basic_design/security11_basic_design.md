@@ -1,51 +1,55 @@
-# security11 ハッシュと署名 基本設計
+# security11 Webhook署名検証 基本設計
+
 ## 0. 関連要件
 
-- `../requirements/security11_hash_signature_requirements.md`
+- `../requirements/security11_webhook_signature_requirements.md`
 
 ## 1. 設計目的
-hash、password hash、署名の用途の違いを比較する。
-## 2. 対象範囲
 
-- hash計算
-- password hashの説明
-- HMAC署名
-- 検証
-- 用途比較
-## 3. 成果物構成
+raw bodyのHMAC検証、timestampの期限、event IDの重複検出を独立した判断として観察する。
+
+## 2. 成果物構成
 
 ```text
 src/backend/src/studysecurity/systems/security11_webhook_signature/
+  package.json
+  app/signature.js
+  app/webhook.js
+  app/server.js
+  app/demo.js
+doc/learning_notes/security11_webhook_signature/
   README.md
-  app/
-  docs/hash_signature_compare.md
-  docs/password_hash_notes.md
+  replay_protection.md
 ```
 
-## 4. 入力
-| 入力 | 内容 |
+## 3. requestと応答
+
+| 項目 | 内容 |
 |---|---|
-| message | hash対象 |
-| secret | 学習用ダミー署名鍵 |
+| endpoint | `POST /webhook` |
+| headers | `X-Timestamp`、`X-Signature`、`X-Event-Id` |
+| 署名対象 | timestamp、`.`、raw body bytes |
+| 成功 | 200 |
+| 不正timestamp・署名 | 401 |
+| event ID不足 | 400 |
+| replay | 409 |
+| body超過 | 413 |
 
-## 5. 出力
-| 出力 | 内容 |
-|---|---|
-| hash | 入力のhash |
-| signature | HMAC等の署名 |
-| verification | 検証結果 |
+## 4. 処理方針
 
-## 6. 処理方針
-1. hashを計算する
-2. 署名を作る
-3. 改ざん時に検証失敗することを確認する
-4. password hashは専用アルゴリズムが必要と説明する
-## 7. 確認観点
+1. bodyをparseせず64KiBまでBufferとして収集する。
+2. timestampの型と5分以内かを検証する。
+3. event IDの存在、HMAC署名、処理済みIDを検証する。
+4. 全条件を通過したIDだけを処理済みにする。
 
-- hashを暗号化と混同していないか
-- 署名の目的を説明できるか
-- 実パスワードを扱っていないか
+## 5. 安全制約
 
-## 8. 後続工程への引き継ぎ
+- 外部providerへ送信しない。
+- default secretは学習用ダミーであり、本番利用しない。
+- in-memoryの処理済みIDは再起動・複数instanceに対応しない。
 
-詳細設計では、入力、計算例、比較表、確認手順を定義する。
+## 6. 確認観点
+
+- bodyの1byte変更が署名不一致になること
+- 正しい署名でも期限切れ・replayは拒否されること
+- 検証順序により処理済みIDを誤登録しないこと
