@@ -1,91 +1,148 @@
-# web14 詳細設計## NestJS POST API
+# web14 詳細設計
+## NestJS POST API
 
----
+## 1. 実装対象
 
-## 1. 実装ディレクトリ構成
+NestJSのController、Service、DTO、ValidationPipeを使い、タスク作成風のJSONを返すPOST APIを実装する。データは永続化しない。
 
 ```text
 src/backend/src/studyweb/systems/web14_nest_post_api/
 ├── package.json
-├── src/
-│  ├── main.ts
-│  ├── app.module.ts
-│  └── tasks/
-│      ├── tasks.module.ts
-│      ├── tasks.controller.ts
-│      ├── tasks.service.ts
-│      └── dto/
-│          └── create-task.dto.ts
-└── README.md
+├── tsconfig.json
+└── src/
+    ├── main.ts
+    ├── app.module.ts
+    └── tasks/
+        ├── tasks.module.ts
+        ├── tasks.controller.ts
+        ├── tasks.service.ts
+        └── dto/
+            └── create-task.dto.ts
 ```
 
-## 2. モジュール詳細
-
-| モジュール | 役割 | 主な関数 |
-|---|---|---|
-| TasksController | POST受付| `create()` |
-| TasksService | タスク風レスポンス成 | `create()` |
-| CreateTaskDto | 入力定義 | `title`, `description` |
-| ValidationPipe | 入力検証 | DTO検証 |
-
-## 3. API 詳細
-
-### 3.1 POST `/tasks`
-
-- 入力 JSON body
-- 検証: title必要、最大文字数
-- 応答 成済みTask風JSON
-
-## 4. 詳細API I/O 定義
-
-### 4.1 リクエスト
-| 項目| 型| 必須| 制約|
-|---|---|---|---|
-| `title` | string | ○| 1。0文列|
-| `description` | string |  | 200文字以内|
-
-### 4.2 レスポンス
-
-| 項目| 型| 説明|
-|---|---|---|
-| `id` | string | 生成ID |
-| `title` | string | 入力値 |
-| `description` | string | 入力値 |
-| `createdAt` | string | ISO日時|
-
-## 5. 入力チェック仕様
-| 対象 | ルール | 不正時|
-|---|---|---|
-| title | 必須| 400 |
-| title | 最大80文列| 400 |
-| description | 最大200文列| 400 |
-
-## 6. エラー応答仕様
-| error_code | HTTP | 発生条件 |
-|---|---|---|
-| `validation_failed` | 400 | DTO検証エラー |
-| `invalid_json` | 400 | JSON不正 |
-
-## 7. バリデーション一覧
-
-| DTO項目| decorator例|
+| モジュール | 役割 |
 |---|---|
-| title | `@IsString()`, `@IsNotEmpty()`, `@MaxLength(80)` |
-| description | `@IsOptional()`, `@IsString()`, `@MaxLength(200)` |
+| `main.ts` | アプリ生成、Global ValidationPipe、3000番ポートの起動 |
+| `AppModule` | `TasksModule`をルートへ組み込む |
+| `TasksModule` | ControllerとServiceを登録する |
+| `TasksController` | `POST /tasks`を受け、検証済みDTOをServiceへ渡す |
+| `TasksService` | IDと作成時刻を加えたレスポンスを生成する |
+| `CreateTaskDto` | titleとdescriptionの型・制約を定義する |
 
-## 8. データベース詳細
+## 2. 起動とValidationPipe
 
-DBは使用しないレスポンスはServiceで生成する。
-## 9. AI 処理詳細
+```ts
+new ValidationPipe({
+  whitelist: true,
+  forbidNonWhitelisted: true,
+})
+```
 
-AI処理は使用しない
-## 10. エラー・監査設計
-- 正常系と異常系のcurl例をREADMEに記載する
-- 監査ログは扱わない
-## 11. DDL
+| オプション | 動作 |
+|---|---|
+| `whitelist: true` | DTOにデコレーター定義がないプロパティを許可対象から外す |
+| `forbidNonWhitelisted: true` | 未定義プロパティを含むリクエストを400エラーにする |
 
-DBを使用しないるDDL はない
-## 12. 実装メモ
+ValidationPipeはGlobal Pipeとして全ルートへ適用する。アプリは3000番ポートで待ち受ける。
 
-- `main.ts` で `ValidationPipe` を有効化する
-- `Content-Type: application/json` で確認する
+## 3. API仕様
+
+### POST `/tasks`
+
+| 項目 | 内容 |
+|---|---|
+| HTTPメソッド | POST |
+| Content-Type | `application/json` |
+| 成功ステータス | 201（NestJSの`@Post()`標準） |
+| Controller入力 | `@Body() dto: CreateTaskDto` |
+| 永続化 | なし |
+
+### リクエスト
+
+| フィールド | 型 | 必須 | 制約 |
+|---|---|---|---|
+| `title` | string | 必須 | 空文字不可、最大80文字 |
+| `description` | string | 任意 | 最大200文字 |
+
+`title`は`@IsString()`、`@IsNotEmpty()`、`@MaxLength(80)`、descriptionは`@IsOptional()`、`@IsString()`、`@MaxLength(200)`で検証する。
+
+### 成功レスポンス
+
+| フィールド | 型 | 値・生成方法 |
+|---|---|---|
+| `id` | string | ``task-${Date.now()}`` |
+| `title` | string | DTOの入力値 |
+| `description` | string | 入力値。未指定時は空文字 |
+| `createdAt` | string | `new Date().toISOString()` |
+
+```json
+{
+  "id": "task-1767225600000",
+  "title": "DTOを確認する",
+  "description": "ValidationPipeを試す",
+  "createdAt": "2026-01-01T00:00:00.000Z"
+}
+```
+
+## 4. 処理フロー
+
+```text
+POST /tasks
+  ↓
+JSON bodyを解析
+  ↓
+Global ValidationPipe
+  ├─ NG → NestJS標準の400応答
+  └─ OK
+      ↓
+TasksController.create(dto)
+      ↓
+TasksService.create(dto)
+      ↓
+ID・作成時刻を追加して201応答
+```
+
+## 5. エラー応答
+
+独自のerror_codeは定義せず、NestJSとclass-validatorの標準エラー形式を使用する。
+
+| 条件 | ステータス | 主な理由 |
+|---|---|---|
+| title未指定・空文字 | 400 | `IsNotEmpty`等に違反 |
+| titleが81文字以上 | 400 | `MaxLength(80)`に違反 |
+| descriptionが201文字以上 | 400 | `MaxLength(200)`に違反 |
+| フィールドの型がstring以外 | 400 | `IsString`に違反 |
+| DTO未定義のフィールドを含む | 400 | `forbidNonWhitelisted`により拒否 |
+| JSON構文が不正 | 400 | HTTP body parserが拒否 |
+
+## 6. データ・セキュリティ設計
+
+- データベース、ファイル永続化、AI処理は使用しない。
+- 認証・認可と監査ログは扱わない。
+- 受信可能なフィールドをDTOで制限し、余分な入力を拒否する。
+- IDは学習用の時刻ベース文字列であり、分散環境での一意性は保証しない。
+- 正常レスポンスは生成後に保持せず、再取得APIも提供しない。
+
+## 7. 確認項目
+
+| ID | 操作 | 期待結果 |
+|---|---|---|
+| `CHK-001` | titleだけでPOSTする | 201、descriptionが空文字のJSONを返す |
+| `CHK-002` | titleとdescriptionでPOSTする | 入力値を含む201応答を返す |
+| `CHK-003` | titleなしでPOSTする | 400応答になる |
+| `CHK-004` | titleを81文字にする | 400応答になる |
+| `CHK-005` | 未定義フィールドを追加する | 400応答になる |
+| `CHK-006` | 不正なJSONを送る | 400応答になる |
+| `CHK-007` | `npm run build`を実行する | NestJSのビルドが成功する |
+
+## 8. 実装との対応
+
+| 設計要素 | 実装箇所 |
+|---|---|
+| Global ValidationPipe | `src/main.ts` |
+| モジュール構成 | `src/app.module.ts`、`src/tasks/tasks.module.ts` |
+| POSTルート | `src/tasks/tasks.controller.ts` |
+| レスポンス生成 | `src/tasks/tasks.service.ts` |
+| DTO制約 | `src/tasks/dto/create-task.dto.ts` |
+
+学習手順、故障演習、完了条件は[`doc/learning_notes/web14_nest_post_api/README.md`](../learning_notes/web14_nest_post_api/README.md)を参照する。

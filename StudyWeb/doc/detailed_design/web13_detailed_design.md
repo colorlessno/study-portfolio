@@ -1,77 +1,126 @@
-# web13 詳細設計## NestJS Hello API
+# web13 詳細設計
+## NestJS Hello API
 
----
+## 1. 実装対象
 
-## 1. 実装ディレクトリ構成
+NestJSのModule、Controller、Serviceの責務分担を確認するため、固定メッセージと生成時刻を返すGET APIを実装する。
 
 ```text
 src/backend/src/studyweb/systems/web13_nest_hello_api/
 ├── package.json
-├── src/
-│  ├── main.ts
-│  ├── app.module.ts
-│  ├── app.controller.ts
-│  └── app.service.ts
-└── README.md
+├── tsconfig.json
+└── src/
+    ├── main.ts
+    ├── app.module.ts
+    ├── app.controller.ts
+    └── app.service.ts
 ```
 
-## 2. モジュール詳細
-
-| モジュール | 役割 | 主な関数 |
-|---|---|---|
-| `main.ts` | アプリ起動| `bootstrap()` |
-| `AppModule` | ルートモジュール | module定義 |
-| `AppController` | GET API受付| `getHello()` |
-| `AppService` | レスポンス成 | `getHello()` |
-
-## 3. API 詳細
-
-### 3.1 GET `/hello`
-
-- 入力 なし
-- 処理 Service からメッセージオブジェクトを取得
-- 応答 JSON
-
-## 4. 詳細API I/O 定義
-
-### 4.1 レスポンス
-
-| 項目| 型| 説明|
-|---|---|---|
-| `message` | string | Helloメテージ |
-| `sample` | string | `web13_nest_hello_api` |
-| `timestamp` | string | ISO日時|
-
-## 5. 入力チェック仕様
-入力値はないリクエストメソッドとパスのみ確認対象。
-## 6. エラー応答仕様
-| error_code | HTTP | 発生条件 |
-|---|---|---|
-| `not_found` | 404 | 定義されていないパス |
-| `method_not_allowed` | 405相当| 想定外メソッド|
-
-NestJS標準エラー形式を基本とする。
-## 7. バリデーション一覧
-
-| 対象 | ルール |
+| モジュール | 役割 |
 |---|---|
-| レスポンス | JSONオブジェクテ|
-| timestamp | ISO文列 |
+| `main.ts` | Nestアプリを生成し、TCP 3000番で待ち受ける |
+| `AppModule` | ControllerとProviderをNestのDIコンテナへ登録する |
+| `AppController` | `GET /hello`を受け付け、Serviceへ処理を委譲する |
+| `AppService` | レスポンスオブジェクトを生成する |
 
-## 8. データベース詳細
+## 2. 起動処理
 
-DBは使用しない
-## 9. AI 処理詳細
+```text
+npm run start:dev
+  ↓
+bootstrap()
+  ↓
+NestFactory.create(AppModule)
+  ↓
+app.listen(3000)
+```
 
-AI処理は使用しない
-## 10. エラー・監査設計
-- 起動ログでポートを確認する
-- curlでHTTPステータスを確認する
-- 監査ログは扱わない
-## 11. DDL
+`bootstrap()`が返すPromiseは`void bootstrap()`として開始する。環境変数によるポート変更、CORS、認証、共通prefixは設定しない。
 
-DBを使用しないるDDL はない
-## 12. 実装メモ
+## 3. ModuleとDI
 
-- `npm run start:dev` で起動する
-- README に `curl http://localhost:3000/hello` を記載する
+`AppModule`は`controllers`へ`AppController`、`providers`へ`AppService`を登録する。Controllerのconstructor injectionにより、Nestが`AppService`のインスタンスを渡す。
+
+```text
+HTTP request
+  ↓
+AppController.getHello()
+  ↓ constructor injection
+AppService.getHello()
+  ↓
+return object → JSON response
+```
+
+## 4. API仕様
+
+### GET `/hello`
+
+| 項目 | 内容 |
+|---|---|
+| HTTPメソッド | GET |
+| パス | `/hello` |
+| リクエストbody | なし |
+| クエリ・パスパラメータ | なし |
+| 成功ステータス | 200 |
+| Content-Type | `application/json` |
+
+### レスポンス
+
+| フィールド | 型 | 値・生成方法 |
+|---|---|---|
+| `message` | string | `Hello from NestJS` |
+| `sample` | string | `web13_nest_hello_api` |
+| `timestamp` | string | `new Date().toISOString()` |
+
+レスポンス例は次のとおり。timestampはリクエストごとに変わる。
+
+```json
+{
+  "message": "Hello from NestJS",
+  "sample": "web13_nest_hello_api",
+  "timestamp": "2026-01-01T00:00:00.000Z"
+}
+```
+
+## 5. エラーと入力検証
+
+入力値がないため、DTOとValidationPipeは使用しない。定義されていないパスはNestJS標準の404応答となる。
+
+| 状況 | 想定ステータス | 処理主体 |
+|---|---|---|
+| `GET /hello` | 200 | `AppController`と`AppService` |
+| `GET /unknown` | 404 | NestJS標準ルーティング |
+| 不正なHTTPリクエスト | 400系 | HTTPサーバーまたはNestJS |
+| 起動ポートが使用中 | 起動失敗 | Node.js/NestJS |
+
+特定メソッドへの想定外メソッドは、ルートの一致状況に応じてNestJS標準の404として処理されるため、独自の405応答は定義しない。
+
+## 6. データ・セキュリティ設計
+
+- HTTP API以外の外部サービスへ接続しない。
+- データベース、ファイル永続化、AI処理は使用しない。
+- 認証・認可と監査ログは扱わない。
+- リクエスト値をレスポンスへ反映しない。
+- timestamp以外の値は固定値とする。
+
+## 7. 確認項目
+
+| ID | 操作 | 期待結果 |
+|---|---|---|
+| `CHK-001` | `npm run start:dev`を実行する | 3000番ポートで起動する |
+| `CHK-002` | `GET http://localhost:3000/hello` | 200と3フィールドのJSONを返す |
+| `CHK-003` | timestampを確認する | ISO 8601形式である |
+| `CHK-004` | `/hello`を2回呼ぶ | timestampが各呼出しで生成される |
+| `CHK-005` | `GET /unknown`を呼ぶ | NestJS標準の404応答になる |
+| `CHK-006` | `npm run build`を実行する | NestJSのビルドが成功する |
+
+## 8. 実装との対応
+
+| 設計要素 | 実装箇所 |
+|---|---|
+| 起動とポート | `src/main.ts` |
+| Controller・Provider登録 | `src/app.module.ts` |
+| GETルート | `src/app.controller.ts` |
+| レスポンス生成 | `src/app.service.ts` |
+
+学習手順、故障演習、完了条件は[`doc/learning_notes/web13_nest_hello_api/README.md`](../learning_notes/web13_nest_hello_api/README.md)を参照する。
