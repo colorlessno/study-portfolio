@@ -1,236 +1,188 @@
-# web01 詳細設計## 静的自己紹介ページ
+# web01 詳細設計
+## 静的自己紹介ページ
 
----
+## 1. 実装対象
 
-## 1. 実装ディレクトリ構成
+HTML、CSS、JavaScriptの役割分担を確認するため、ビルドツールや外部ライブラリを使わない静的ページを実装する。
 
 ```text
 src/frontend/src/studyweb/systems/web01_static_first_page/
 ├── index.html
 ├── styles.css
-├── script.js
-└── README.md
+└── script.js
 ```
 
-| パス | 役割 |
+| ファイル | 役割 |
 |---|---|
-| `index.html` | ページ構造、表示テスト、ボタン、表示領域を定義する |
-| `styles.css` | ページ全体、カード、リスト、ボタン、メテージ領域の見た目を定義する |
-| `script.js` | DOM要素取得、イベント登録、クリック時の表示更新を行う |
-| `README.md` | 目的起動方法、確認手順学習ポイントを記載する|
+| `index.html` | ページ構造、表示内容、操作要素、外部ファイルの参照を定義する |
+| `styles.css` | レイアウト、色、余白、ボタン、レスポンシブ表示を定義する |
+| `script.js` | DOM要素の取得、クリックイベント、表示更新を実装する |
 
----
+## 2. HTML詳細
 
-## 2. モジュール詳細
+### 2.1 文書構造
 
-| モジュール | 役割 | 主な処理|
-|---|---|---|
-| HTML構造 | 自己紹介ページの文字構造を定義 | 見出し、ロフィール、リスト、ボタン、入力領域 |
-| CSSスタイル | 画面の見た目を定義 | 余白、背景、カード、ボタン、リスト、メテージ領域 |
-| JavaScript処理| ユーザー操作に応じて表示を変える| DOM取得、イベント登録、メテージ更新 |
-| README | 学習用ドキュメンテ| 開き方、確認観点、ファイル役割説明|
-
-### 2.1 HTML詳細
-
-`index.html` は次の構造を持つ。
 ```text
-html
+html[lang="ja"]
+├── head
+│   ├── meta[charset="UTF-8"]
+│   ├── meta[name="viewport"]
+│   ├── title
+│   ├── link[href="./styles.css"]
+│   └── script[src="./script.js"][defer]
 └── body
     └── main.profile-card
-        ├── h1
+        ├── p.sample-label
+        ├── h1#pageTitle
         ├── section.profile-summary
         ├── section.profile-list
-        ├── button#messageButton
-        └── p#messageOutput
+        └── section.interaction-area
+            ├── h2#interactionTitle
+            ├── button#messageButton
+            └── p#messageOutput.message-output
 ```
 
-### 2.2 CSS詳細
+### 2.2 主要要素
 
-主要セレクタ:
+| 要素 | 用途 | 設計上の注意 |
+|---|---|---|
+| `main.profile-card` | ページの主要コンテンツ | `aria-labelledby="pageTitle"` で見出しと関連付ける |
+| `section.profile-summary` | 名前と自己紹介 | `h2` をセクション見出しにする |
+| `section.profile-list` | 学習内容の箇条書き | `ul` / `li` で項目の集合を表す |
+| `button#messageButton` | クリックイベントの起点 | 送信操作ではないため `type="button"` とする |
+| `p#messageOutput` | JavaScriptの出力先 | `aria-live="polite"` で更新を通知可能にする |
 
-| セレクタ | 用途|
-|---|---|
-| `body` | ページ全体の背景、文字、余白 |
-| `.profile-card` | 自己紹介カードの幅余白、枠線、影 |
-| `.profile-list` | 箇所書き領域 |
-| `button` | 操作ボタンの見た目 |
-| `#messageOutput` | JavaScript の出力結果表示 |
+### 2.3 外部ファイルの読込
 
-### 2.3 JavaScript詳細
-
-主な処理
-
-| 処理| 内容|
-|---|---|
-| DOM取得| `messageButton` と `messageOutput` を取得する|
-| イベント登録 | ボタンに `click` イベントを登録する |
-| 表示更新 | クリック時に `messageOutput.textContent` を更新する |
-
----
-
-## 3. API 詳細
-
-本サンプルでは HTTP API は使用しない
-代替として、画面内ベントを詳細IFとして定義する。
-### 3.1 画面イベント
-| イベントD | 発生元 | トリガー | 処理| 結果 |
-|---|---|---|---|---|
-| `EVT-001` | `messageButton` | click | メテージ文列を成する | `messageOutput` を更新 |
-
-### 3.2 ファイル読み込み
-
-| 読み込みID | 呼び出し元 | 対象 | 記述例|
+| ID | 呼出元 | 対象 | 指定 |
 |---|---|---|---|
 | `LOAD-001` | `index.html` | `styles.css` | `<link rel="stylesheet" href="./styles.css">` |
 | `LOAD-002` | `index.html` | `script.js` | `<script src="./script.js" defer></script>` |
 
----
+`defer` を付け、HTMLの解析完了後にJavaScriptを実行する。これにより、スクリプト実行時に対象DOMが存在する状態を作る。
 
-## 4. 詳細API I/O 定義
+## 3. CSS詳細
 
-HTTP API はないめ、DOM I/O と画面表示項目を定義する。
-### 4.1 DOM入力
-| 項目| DOM | 型| 必須| 説明|
-|---|---|---|---|---|
-| メテージ表示ボタン | `#messageButton` | HTMLButtonElement | ○| クリックイベントの起点 |
+### 3.1 主要セレクタ
 
-### 4.2 DOM出力
-| 項目| DOM | 型| 更新方法| 説明|
-|---|---|---|---|---|
-| メテージ表示領域 | `#messageOutput` | HTMLElement | `textContent` | クリック後メテージを表示 |
+| セレクタ | 用途 |
+|---|---|
+| `*` | `box-sizing: border-box` を全要素へ適用する |
+| `body` | 全体の余白、文字、背景、最小高さを定義する |
+| `.profile-card` | コンテンツ幅、中央寄せ、枠線、影を定義する |
+| `section` | セクション間の余白と区切り線を定義する |
+| `button` | 操作可能な見た目と44px以上の高さを確保する |
+| `button:hover` | ポインター操作時の変化を示す |
+| `button:focus-visible` | キーボード操作時のフォーカスを示す |
+| `.message-output` | JavaScriptの出力領域を視覚的に区別する |
 
-### 4.3 表示テステ
-| 項目| 例| 備考|
+### 3.2 レスポンシブ表示
+
+画面幅が520px以下の場合は、`body` と `.profile-card` の余白、`h1` の文字サイズを縮小する。横スクロールを発生させず、主要操作を維持する。
+
+```css
+@media (max-width: 520px) {
+  body { padding: 16px 12px; }
+  .profile-card { padding: 20px; }
+  h1 { font-size: 1.6rem; }
+}
+```
+
+## 4. JavaScript詳細
+
+### 4.1 状態とDOM参照
+
+| 名前 | 型・想定値 | 用途 |
 |---|---|---|
-| ページタイトル | `自己紹介ページ` | `h1` |
-| 名前 | `Web学習者 | 固定テキスト|
-| 自己紹介文 | `HTML/CSS/JavaScriptを学習中です。` | 固定テキスト|
-| 箇所書い| 好きなの、学習中のこと、目標| `ul` / `li` |
-| クリック後メテージ | `こんにちは。avaScriptで表示を変更しました。` | JSで設定|
+| `messageButton` | `HTMLElement \| null` | クリックイベントを登録するボタン |
+| `messageOutput` | `HTMLElement \| null` | メッセージと回数の出力先 |
+| `clickCount` | `number` | ページを開いてからのクリック回数 |
 
----
+### 4.2 初期化処理
 
-## 5. 入力チェック仕様
-### 5.1 DOM存在チェック
+1. `document.getElementById` で `messageButton` と `messageOutput` を取得する。
+2. どちらかが取得できない場合は、Consoleへエラーを出す。
+3. 両方が存在する場合だけ、ボタンへ `click` イベントを登録する。
 
-| 対象 | チェック項目| ルール | 不正時挙動|
+```text
+script.jsを実行
+  ↓
+対象DOMを取得
+  ↓
+どちらかがnull ─ Yes → Console errorを出して終了
+  │
+  No
+  ↓
+clickイベントを登録
+```
+
+### 4.3 クリック処理
+
+| イベントID | 発生元 | 処理 | 出力 |
 |---|---|---|---|
-| `#messageButton` | 要素存在 | `null` でないと | Console にエラーを出して処理断 |
-| `#messageOutput` | 要素存在 | `null` でないと | Console にエラーを出して処理断 |
+| `EVT-001` | `button#messageButton` | `clickCount` を1加算し、メッセージを組み立てる | `messageOutput.textContent` を更新する |
 
-### 5.2 文列チェック
+表示形式は次のとおりとする。
 
-| 対象 | チェック項目| ルール |
+```text
+こんにちは。JavaScriptでHTMLの表示を書き換えました。クリック回数: {clickCount}
+```
+
+HTML文字列として解釈する必要がないため、`innerHTML` ではなく `textContent` を使用する。
+
+## 5. 入出力とバリデーション
+
+HTTP API、フォーム入力、データベースは使用しない。ユーザー入力はボタンのクリックだけである。
+
+| 対象 | 確認 | 不正時の動作 |
 |---|---|---|
-| クリック後メテージ | 空文列| 空文字にしない|
-| 表示テステ| 長い| 初学者読みるい文字する |
+| `#messageButton` | DOMが1件取得できる | イベントを登録せず、Consoleにエラーを出す |
+| `#messageOutput` | DOMが1件取得できる | 表示を更新せず、Consoleにエラーを出す |
+| `styles.css` | 相対パスで読み込める | ページは表示されるが装飾が適用されない |
+| `script.js` | 相対パスで読み込める | ページは表示されるがボタン操作で更新されない |
 
----
-
-## 6. エラー応答仕様
-HTTP API はないめ、エラーはブラウザ Console と画面表示で扱い
-| error_code | 発生条件 | 表示/出力| 対処|
-|---|---|---|---|
-| `dom_element_not_found` | 対象DOMが取得できない| Console error | `id` 名とHTML構造を確認|
-| `script_not_loaded` | JSファイルが読み込まれない| Console / Network | `<script>` の `src` を確認|
-| `style_not_loaded` | CSSファイルが読み込まれない| 見た目が未適用 | `<link>` の `href` を確認|
-
-Console出力例
+Consoleエラーは次の固定文言とする。
 
 ```text
 web01: required element was not found.
 ```
 
----
+## 6. セキュリティとアクセシビリティ
 
-## 7. バリデーション一覧
+- 外部入力や外部通信を扱わない。
+- DOM更新には `textContent` を使い、HTMLとして解釈させない。
+- 操作要素にはネイティブの `button` を使用する。
+- フォーカス表示を消さず、`focus-visible` で視認性を確保する。
+- 動的メッセージには `aria-live="polite"` を指定する。
+- 色だけに依存せず、見出しと区切りで構造を示す。
 
-| 対象 | ルール | 不正時挙動|
+## 7. 確認項目
+
+| ID | 操作 | 期待結果 |
 |---|---|---|
-| `messageButton` | HTML上に1つ存在する | イベント登録しない|
-| `messageOutput` | HTML上に1つ存在する | 表示更新しない|
-| `script.js` 読み込み | `defer` を付与する| DOM取得タイミング不整合の原因としてREADMEに記較|
-| CSS列| インラインstyleを多用しない| レビュー時に修正 |
+| `CHK-001` | `index.html` を開く | 自己紹介ページが表示される |
+| `CHK-002` | CSSを読み込む | 背景、カード、ボタン、余白が反映される |
+| `CHK-003` | ボタンを1回押す | メッセージ末尾が `クリック回数: 1` になる |
+| `CHK-004` | ボタンを続けて押す | 回数が1ずつ増える |
+| `CHK-005` | 520px以下へ画面を狭める | 余白と見出しが縮小し、横スクロールが出ない |
+| `CHK-006` | `messageButton` のIDを一時的に変える | Consoleに固定エラーが出る |
 
----
+## 8. 対象外
 
-## 8. データベース詳細
+- HTTP APIとWebサーバー
+- データベースと永続化
+- React、Vue等のフレームワーク
+- TypeScriptとビルド処理
+- ユーザー入力を受け取るフォーム
+- 自動テスト
 
-本サンプルではデータベースを使用しない
-### 8.1 画面内ータ
+## 9. 実装との対応
 
-| データ各| 型| 定義場所 | 更新有無 |
-|---|---|---|---|
-| `profileName` | string相当| HTML | ない|
-| `profileDescription` | string相当| HTML | ない|
-| `profileItems` | string[]相当| HTML | ない|
-| `messageText` | string | JavaScript | クリック時に出力|
-
----
-
-## 9. AI 処理詳細
-
-本サンプルでは AI 処理使用しない
----
-
-## 10. エラー・監査設計
-### 10.1 エラー確認方法
-| 確認対象 | 確認方法|
+| 設計要素 | 実装箇所 |
 |---|---|
-| CSS未読込 | 画面の見た目、DevTools Network |
-| JS未読込 | Console、ボタンクリック時の反必要|
-| DOM取得失敗| Console error |
+| HTML構造と外部ファイル参照 | `index.html` |
+| レイアウトとレスポンシブ表示 | `styles.css` |
+| DOM取得と存在確認 | `script.js` 1〜6行目 |
+| クリック回数と表示更新 | `script.js` のイベントリスナー |
 
-### 10.2 監査・ログ
-
-本サンプルではサーバーログる査ログは扱わない学習目的して、ブラウザ Console のみ確認対象とする。
----
-
-## 11. DDL
-
-本サンプルではデータベースを使用しないめ、DDL は存在しない
-参者して、ファイル成果物の成単位を以下に示す。
-```text
-CREATE FILE index.html;
-CREATE FILE styles.css;
-CREATE FILE script.js;
-CREATE FILE README.md;
-```
-
----
-
-## 12. 実装メモ
-
-### 12.1 `index.html` 実装点
-
-- `<!doctype html>` を記述する
-- `<meta charset="UTF-8">` を指定する
-- `<meta name="viewport" content="width=device-width, initial-scale=1.0">` を指定する
-- CSS は `<head>` 内で読み込む
-- JavaScript は `defer` 付きで読み込む
-
-### 12.2 `script.js` 実装点
-
-実装メージ:
-
-```javascript
-const messageButton = document.getElementById("messageButton");
-const messageOutput = document.getElementById("messageOutput");
-
-if (!messageButton || !messageOutput) {
-  console.error("web01: required element was not found.");
-} else {
-  messageButton.addEventListener("click", () => {
-    messageOutput.textContent = "こんにちは。avaScriptで表示を変更しました。;
-  });
-}
-```
-
-### 12.3 README 記載要点
-
-- このサンプルの目的
-- `index.html` の開き方
-- HTML / CSS / JavaScript の役割
-- ボタンクリックで確認すること
-- CSSやJSが反映されない合わせ確認箇所
-
+学習手順、故障演習、完了条件は [`doc/learning_notes/web01_static_first_page/README.md`](../learning_notes/web01_static_first_page/README.md) を参照する。

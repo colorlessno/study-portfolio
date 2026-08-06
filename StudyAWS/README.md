@@ -1,7 +1,13 @@
 # StudyAWS
 
 AWS / cloud / infra の学習分野です。
-既存の `Lamdab` フォルダは触らず、`aws01` から `aws10` の教材は StudyAI 型に合わせて共通領域へ配置しています。
+`aws01` から `aws10` の教材を、実行コード、インフラ定義、工程文書、学習ノートに分けて配置しています。
+
+## 学習の入口
+
+- [リポジトリ全体の学習再開ガイド](../LEARNING_GUIDE.md)
+- [全テーマカタログ](../THEME_CATALOG.md)
+- 初めての場合は [aws01 IAM basics](./doc/learning_notes/aws01_iam_basics/README.md) から始めます。
 
 ## 構成
 
@@ -24,7 +30,7 @@ AWS / cloud / infra の学習分野です。
 ## 実行例
 
 ```powershell
-Set-Location .\backend\src\studyaws\systems\aws07_lambda_local_api
+Set-Location .\src\backend\src\studyaws\systems\aws07_lambda_local_api
 npm run invoke
 npm run check
 ```
@@ -32,5 +38,5 @@ npm run check
 SAM CLI がある場合
 
 ```powershell
-sam local invoke HelloFunction -t .\infra\aws07_lambda_local_api\template.yaml -e .\backend\src\studyaws\systems\aws07_lambda_local_api\events\hello.json
+sam local invoke HelloFunction -t .\src\infra\aws07_lambda_local_api\template.yaml -e .\src\backend\src\studyaws\systems\aws07_lambda_local_api\events\hello.json
 ```

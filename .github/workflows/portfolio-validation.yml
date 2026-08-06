@@ -1,0 +1,17 @@
+name: Portfolio validation
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate-documents:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate UTF-8, links, and learning catalog
+        shell: pwsh
+        run: ./scripts/validate_portfolio.ps1
