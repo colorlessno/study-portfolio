@@ -1,51 +1,56 @@
-# security08 SQL Injection体験と対策 基本設計
+# security08 XSS対策 基本設計
 ## 0. 関連要件
 
-- `../requirements/security08_sql_injection_requirements.md`
+- `../requirements/security08_xss_requirements.md`
 
 ## 1. 設計目的
-文字列連結SQLの危険性と、パラメータ化による対策を比較する。
+ユーザー入力をHTMLではなく文字として表示し、危険なDOM sinkとの差を学ぶ。
 ## 2. 対象範囲
 
-- 危険なSQL組み立て
-- 安全なパラメータ化
-- 攻撃入力例
-- エラー情報隠蔽
+- `textContent`
+- `innerHTML`の危険性
+- output context
+- CSPの位置付け
+- ローカル静的画面
 
 ## 3. 成果物構成
 
 ```text
 src/backend/src/studysecurity/systems/security08_xss/
+  Dockerfile
+  package.json
+  app/server.js
+  public/index.html
+  public/app.js
+
+doc/learning_notes/security08_xss/
   README.md
-  app/
-  docs/sql_injection_examples.md
-  docs/defense_notes.md
+  escaping_rules.md
 ```
 
 ## 4. 入力
 | 入力 | 内容 |
 |---|---|
-| search text | 通常入力 |
-| attack text | ローカル限定の攻撃文字列 |
+| text | tag形式を含む学習用文字列 |
+| render action | 安全表示ボタン |
 
 ## 5. 出力
 | 出力 | 内容 |
 |---|---|
-| unsafe query | 危険なSQL例 |
-| safe query | パラメータ化例 |
-| notes | 対策説明 |
+| safe view | `textContent`による文字表示 |
+| danger note | `innerHTML`なら解釈されるという説明 |
 
 ## 6. 処理方針
-1. 危険なSQL文字列を表示する
-2. 攻撃入力で何が起きるか説明する
-3. パラメータ化例を示す
-4. 実DB攻撃は行わない
-5. エラー詳細を利用者に出さない方針を示す
+1. ローカルstatic serverで画面を表示する
+2. 入力値を`textContent`へ設定する
+3. tagが実行されず文字として表示されることを確認する
+4. `innerHTML`を危険なsinkとして説明する
+5. context別の対策を補足文書で確認する
 ## 7. 確認観点
 
-- 危険例と安全例がセットか
-- 実システム攻撃につながらないローカル教材か
-- パラメータ化の意味を説明できるか
+- 安全表示が`textContent`を使っているか
+- 危険なHTMLを実行する教材になっていないか
+- 出力contextで対策が異なると説明できるか
 ## 8. 後続工程への引き継ぎ
 
-詳細設計では、疑似SQL、入力例、安全化例、確認手順を定義する。
+詳細設計では、static server、DOM更新、安全制約、確認手順を定義する。

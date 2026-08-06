@@ -1,1 +1,1 @@
-{"scripts":{"check":"node --check public/app.js"},"dependencies":{},"devDependencies":{}}
+{"scripts":{"start":"node app/server.js","check":"node --check app/server.js && node --check public/app.js"},"dependencies":{},"devDependencies":{}}

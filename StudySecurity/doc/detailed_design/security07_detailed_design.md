@@ -19,9 +19,10 @@ src/backend/src/studysecurity/systems/security07_csrf/
 ## 2. 主要設計
 | 要素 | 内容 |
 |---|---|
-| `GET /form` | CSRFトークンを発行してフォームに埋め込む |
-| `POST /transfer` | Cookieのセッションとフォームトークンを照合する |
-| 失敗応答 | トークン欠落、不一致、期限切れを403にする |
+| `GET /` | `/form`へredirectする |
+| `GET /form` | 5分期限の一回限りtokenを発行し、`sid=demo` Cookieとフォームへ設定する |
+| `POST /transfer` | Cookieの`sid`とフォームtokenを照合する |
+| 失敗応答 | Cookie欠落は401、token欠落・不一致・期限切れ・再利用は403にする |
 | 状態変更 | ダミー残高やカウンタ更新だけに限定する |
 
 ## 3. 安全制約
@@ -29,10 +30,11 @@ src/backend/src/studysecurity/systems/security07_csrf/
 - CSRF例はローカルフォームとダミー状態変更に限定する。
 - SameSiteだけで完全防御とは説明しない。
 ## 4. 確認手順
-1. 正しいフォーム送信が成功することを確認する。
-2. トークンなし送信が403になることを確認する。
-3. 古いトークンが403になることを確認する。
-4. Cookie属性とトークン検証の関係を読む。
+1. Cookieなし送信が401になることを確認する。
+2. Cookieあり・tokenなし送信が403になることを確認する。
+3. Cookieと正しいtokenを組み合わせた送信が200になることを確認する。
+4. 同じtokenの再送が403になることを確認する。
+5. Cookie属性とtoken検証の役割分担を読む。
 ## 5. 完了条件
 
 - CSRFの成立条件を説明できる。
