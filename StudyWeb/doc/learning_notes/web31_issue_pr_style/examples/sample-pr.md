@@ -13,7 +13,7 @@ Vanilla JavaScript でイベント処理と DOM 更新を学ぶため。
 - 画面: `src/frontend/src/studyweb/systems/web04_vanilla_dom/index.html`
 - API: なし
 - DB: なし
-- ドキュメント: `src/frontend/src/studyweb/systems/web04_vanilla_dom/README.md`
+- ドキュメント: `doc/learning_notes/web04_vanilla_dom/README.md`
 
 ## 確認結果
 
