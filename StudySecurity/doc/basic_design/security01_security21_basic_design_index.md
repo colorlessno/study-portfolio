@@ -14,11 +14,11 @@
 | security02 | `../requirements/security02_jwt_auth_requirements.md` | `security02_basic_design.md` |
 | security03 | `../requirements/security03_rbac_authorization_requirements.md` | `security03_basic_design.md` |
 | security04 | `../requirements/security04_abac_requirements.md` | `security04_basic_design.md` |
-| security05 | `../requirements/security05_401_403_404_requirements.md` | `security05_basic_design.md` |
-| security06 | `../requirements/security06_xss_requirements.md` | `security06_basic_design.md` |
+| security05 | `../requirements/security05_input_validation_requirements.md` | `security05_basic_design.md` |
+| security06 | `../requirements/security06_sql_injection_requirements.md` | `security06_basic_design.md` |
 | security07 | `../requirements/security07_csrf_requirements.md` | `security07_basic_design.md` |
-| security08 | `../requirements/security08_sql_injection_requirements.md` | `security08_basic_design.md` |
-| security09 | `../requirements/security09_cors_misconfiguration_requirements.md` | `security09_basic_design.md` |
+| security08 | `../requirements/security08_xss_requirements.md` | `security08_basic_design.md` |
+| security09 | `../requirements/security09_file_upload_requirements.md` | `security09_basic_design.md` |
 | security10 | `../requirements/security10_env_secrets_requirements.md` | `security10_basic_design.md` |
 | security11 | `../requirements/security11_hash_signature_requirements.md` | `security11_basic_design.md` |
 | security12 | `../requirements/security12_ssh_jwt_keys_requirements.md` | `security12_basic_design.md` |

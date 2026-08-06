@@ -8,12 +8,14 @@
 
 ```text
 src/backend/src/studysecurity/systems/security06_sql_injection/
-  README.md
   Dockerfile
   package.json
   app/query_builder.js
   app/demo.js
-  docs/parameterized_query.md
+
+doc/learning_notes/security06_sql_injection/
+  README.md
+  parameterized_query.md
 ```
 
 ## 2. 主要設計
@@ -21,8 +23,9 @@ src/backend/src/studysecurity/systems/security06_sql_injection/
 |---|---|
 | 危険例 | 文字列連結SQLを表示用にのみ生成する |
 | 対策例 | SQL本文とパラメータ配列を分離する |
-| 検索条件 | 商品名、カテゴリ、ステータスを対象にする |
+| 検索条件 | 商品名、statusを対象にする |
 | 確認 | SQL本文に入力値が混入しないことを検査する |
+| 実行形態 | `npm run demo`で危険例と対策例を標準出力へ並べる |
 
 ## 3. 安全制約
 - 実DBには接続しない。

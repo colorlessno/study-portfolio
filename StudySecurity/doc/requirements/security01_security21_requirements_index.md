@@ -14,11 +14,11 @@ Web / API / AIシステムで必要になる認証認可、攻撃対策、鍵、
 | security02 | JWT認証 | `security02_jwt_auth_requirements.md` |
 | security03 | RBAC認可 | `security03_rbac_authorization_requirements.md` |
 | security04 | ABAC | `security04_abac_requirements.md` |
-| security05 | 401 / 403 / 404 の使い分け | `security05_401_403_404_requirements.md` |
-| security06 | XSS体験と対策 | `security06_xss_requirements.md` |
+| security05 | 入力検証 | `security05_input_validation_requirements.md` |
+| security06 | SQL Injection対策 | `security06_sql_injection_requirements.md` |
 | security07 | CSRF体験と対策 | `security07_csrf_requirements.md` |
-| security08 | SQL Injection体験と対策 | `security08_sql_injection_requirements.md` |
-| security09 | CORS設定ミス体験 | `security09_cors_misconfiguration_requirements.md` |
+| security08 | XSS対策 | `security08_xss_requirements.md` |
+| security09 | ファイルアップロード制御 | `security09_file_upload_requirements.md` |
 | security10 | `.env` / secrets管理 | `security10_env_secrets_requirements.md` |
 | security11 | ハッシュと署名 | `security11_hash_signature_requirements.md` |
 | security12 | SSH鍵 / JWT署名鍵 | `security12_ssh_jwt_keys_requirements.md` |

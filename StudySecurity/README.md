@@ -19,6 +19,18 @@ StudySecurity は、セッション認証、JWT、認可、入力検証、Web攻
 
 この4テーマは、認証済みユーザーを本物の認証基盤で確立する一体型アプリではありません。各方式の判断点を小さく分離したローカル教材です。security03とsecurity04の`X-User`は、サーバー内の固定ユーザーを選ぶための学習用入力であり、本番の本人確認には使えません。
 
+次に、信頼できない入力とbrowser経由のrequest・表示・file metadataを扱います。
+
+| テーマ | 学ぶ境界 | 実行形態 |
+|---|---|---|
+| [security05 入力検証](./doc/learning_notes/security05_input_validation/README.md) | 型・形式・範囲をどこで拒否するか | CLI demo |
+| [security06 SQL Injection](./doc/learning_notes/security06_sql_injection/README.md) | SQL構文と入力値をどう分離するか | CLI demo |
+| [security07 CSRF](./doc/learning_notes/security07_csrf/README.md) | Cookie付き状態変更requestをどう検証するか | `http://localhost:4107` |
+| [security08 XSS](./doc/learning_notes/security08_xss/README.md) | browserの出力contextでどう安全に表示するか | `http://localhost:4108` |
+| [security09 File upload](./doc/learning_notes/security09_file_upload/README.md) | metadata検証と実file検査をどう分けるか | `http://localhost:4109` |
+
+security05と06は構造を標準出力で比較する教材、security07はlocal HTTP、security08と09は静的画面です。危険な入力や状態変更はローカルのダミーデータに限定し、外部systemへの攻撃や実fileのuploadは行いません。
+
 ## 構成
 
 ```text

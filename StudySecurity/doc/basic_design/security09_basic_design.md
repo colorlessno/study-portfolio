@@ -1,51 +1,56 @@
-# security09 CORS設定ミス体験 基本設計
+# security09 ファイルアップロード制御 基本設計
 ## 0. 関連要件
 
-- `../requirements/security09_cors_misconfiguration_requirements.md`
+- `../requirements/security09_file_upload_requirements.md`
 
 ## 1. 設計目的
-CORSの許可しすぎ・拒否しすぎ・credentials併用の注意点を確認する。
+ファイル名とsizeのmetadata検証を体験し、実uploadで必要な多層防御を整理する。
 ## 2. 対象範囲
 
-- allowed origin
-- wildcard
-- credentials
-- preflight
-- StudyWeb CORS基礎との差分
+- extension allowlist
+- size limit
+- MIMEの信頼境界
+- generated storage name
+- ローカル静的画面
 ## 3. 成果物構成
 
 ```text
 src/backend/src/studysecurity/systems/security09_file_upload/
+  Dockerfile
+  package.json
+  app/server.js
+  public/index.html
+  public/app.js
+
+doc/learning_notes/security09_file_upload/
   README.md
-  app/
-  docs/cors_policy_table.md
-  docs/misconfiguration_notes.md
+  upload_policy.md
 ```
 
 ## 4. 入力
 | 入力 | 内容 |
 |---|---|
-| origin | 許可・未許可origin |
-| credentials | Cookieあり・なし |
-| policy | limited / wildcard |
+| file name | 拡張子を含む学習用文字列 |
+| size | byte数を表す数値 |
 
 ## 5. 出力
 | 出力 | 内容 |
 |---|---|
-| allowed response | 許可時 |
-| blocked response | 拒否時 |
-| notes | 設定ミスリスク |
+| extension | 正規化した拡張子 |
+| accepted | metadata上の許可・拒否 |
+| errors | 拡張子、sizeのエラー配列 |
 
 ## 6. 処理方針
-1. 許可origin限定を確認する
-2. wildcardの危険性を説明する
-3. credentialsとの関係を確認する
-4. 本番全許可を避ける方針を示す
+1. 拡張子を小文字へ正規化する
+2. allowlistに含まれるか確認する
+3. sizeが0以上1MiB以下か確認する
+4. 判定結果を文字として表示する
+5. 実uploadではserver-side検査が必要と説明する
 ## 7. 確認観点
 
-- StudyWebのCORS基礎と重複しすぎていないか
-- 本番でorigin限定が必要と説明できるか
-- Cookieあり通信の注意を説明できるか
+- client-side判定だけで安全と説明していないか
+- MIME、内容、保存名、保存場所の検査境界を説明できるか
+- 実ファイルを送信・保存していないことが明確か
 ## 8. 後続工程への引き継ぎ
 
-詳細設計では、policy分類、確認パターン、注意メモを定義する。
+詳細設計では、metadata判定、static server、安全制約、確認手順を定義する。

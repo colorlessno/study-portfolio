@@ -8,7 +8,7 @@ function validateProduct(input) {
 
 function validateCsvRow(row, rowNumber) {
   if (row.length !== 3) return [{ rowNumber, field: "*", message: "column_count" }];
-  return validateProduct({ name: row[0], price: Number(row[2]) }).map((e) => ({ rowNumber, ...e }));
+  return validateProduct({ name: row[1], price: Number(row[2]) }).map((e) => ({ rowNumber, ...e }));
 }
 
 module.exports = { validateProduct, validateCsvRow };
