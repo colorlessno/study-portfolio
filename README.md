@@ -11,6 +11,8 @@ AIコーディング支援を活用して作成したソースを、実際に読
 
 学習記録を残す場合は [学習ログテンプレート](./LEARNING_LOG_TEMPLATE.md) を使います。
 
+全`StudyXX`の現在地と改善順序は、[StudyXX横断棚卸し](./STUDY_PROJECT_INVENTORY.md)で確認できます。
+
 ## 代表成果
 
 ### StudyAI system03: プロジェクト文書の自然言語Q&A

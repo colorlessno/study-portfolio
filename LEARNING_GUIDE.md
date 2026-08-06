@@ -10,6 +10,8 @@
 4. 実行前に結果を予想し、実際の結果との差を確認する。
 5. [学習ログのテンプレート](./LEARNING_LOG_TEMPLATE.md)に、次回の最初の1手を残す。
 
+どの分野を選ぶか迷った場合は、[StudyXX横断棚卸し](./STUDY_PROJECT_INVENTORY.md)で各分野の現在地と改善順序を確認します。
+
 迷った場合は、最初の学習ハブである [web01](./StudyWeb/doc/learning_notes/web01_static_first_page/README.md) から始めます。
 
 ## 到達度
