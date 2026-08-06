@@ -12,10 +12,16 @@ function parseCookies(header = "") {
 }
 
 function readJson(req) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     let body = "";
     req.on("data", (chunk) => { body += chunk; });
-    req.on("end", () => resolve(body ? JSON.parse(body) : {}));
+    req.on("end", () => {
+      try {
+        resolve(body ? JSON.parse(body) : {});
+      } catch (error) {
+        reject(error);
+      }
+    });
   });
 }
 
@@ -26,7 +32,12 @@ function send(res, status, body, headers = {}) {
 
 http.createServer(async (req, res) => {
   if (req.method === "POST" && req.url === "/login") {
-    const body = await readJson(req);
+    let body;
+    try {
+      body = await readJson(req);
+    } catch (error) {
+      return send(res, 400, { error: "invalid_json" });
+    }
     if (body.userId !== user.id || body.password !== user.password) return send(res, 401, { error: "invalid_credentials" });
     const sid = crypto.randomBytes(16).toString("hex");
     sessions.set(sid, { userId: user.id, name: user.name });

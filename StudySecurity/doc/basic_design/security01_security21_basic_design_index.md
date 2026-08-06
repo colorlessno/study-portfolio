@@ -13,7 +13,7 @@
 | security01 | `../requirements/security01_session_auth_requirements.md` | `security01_basic_design.md` |
 | security02 | `../requirements/security02_jwt_auth_requirements.md` | `security02_basic_design.md` |
 | security03 | `../requirements/security03_rbac_authorization_requirements.md` | `security03_basic_design.md` |
-| security04 | `../requirements/security04_owner_tenant_authorization_requirements.md` | `security04_basic_design.md` |
+| security04 | `../requirements/security04_abac_requirements.md` | `security04_basic_design.md` |
 | security05 | `../requirements/security05_401_403_404_requirements.md` | `security05_basic_design.md` |
 | security06 | `../requirements/security06_xss_requirements.md` | `security06_basic_design.md` |
 | security07 | `../requirements/security07_csrf_requirements.md` | `security07_basic_design.md` |

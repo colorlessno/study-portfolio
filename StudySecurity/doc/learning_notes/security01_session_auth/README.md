@@ -9,6 +9,10 @@
 - `HttpOnly`、`SameSite`、`Path` の役割を確認できる
 - 学習用実装と本番用認証に必要な対策の差を説明できる
 
+## 認証・認可グループでの位置付け
+
+security01は「誰であるか」をCookieとサーバー側Sessionで確立する入口です。次のsecurity02では認証状態を署名付きtokenへ移し、security03とsecurity04では認証後に「何をしてよいか」を判定します。
+
 ## 工程を横断する
 
 | 工程 | 成果物 |
@@ -38,7 +42,7 @@ npm.cmd --prefix StudySecurity/src/backend/src/studysecurity/systems/security01_
 
 ```powershell
 curl.exe -i http://localhost:4101/me
-curl.exe -i -c security01.cookies -H "Content-Type: application/json" -d '{\"userId\":\"u-demo\",\"password\":\"passw0rd\"}' http://localhost:4101/login
+curl.exe -i -c security01.cookies -H "Content-Type: application/json" -d '{"userId":"u-demo","password":"passw0rd"}' http://localhost:4101/login
 curl.exe -i -b security01.cookies http://localhost:4101/me
 curl.exe -i -b security01.cookies -X POST http://localhost:4101/logout
 curl.exe -i -b security01.cookies http://localhost:4101/me
@@ -58,6 +62,7 @@ Remove-Item -LiteralPath .\security01.cookies
 
 - 未ログインの `GET /me` は401を返す
 - `POST /login` はランダムな `sid` を作り、`Set-Cookie` を返す
+- JSONとして解釈できないlogin bodyは400 `invalid_json`を返し、サーバーは継続する
 - Cookieにはユーザー名やパスワードではなくSession IDだけが入る
 - Session本体はサーバー側の `Map` に保存される
 - ログアウト後は同じCookieを送っても401になる
