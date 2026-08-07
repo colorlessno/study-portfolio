@@ -1,50 +1,50 @@
 # security15 セキュリティヘッダー 基本設計
+
 ## 0. 関連要件
 
 - `../requirements/security15_security_headers_requirements.md`
 
 ## 1. 設計目的
-主要セキュリティヘッダーを付与し、DevToolsで確認する。
-## 2. 対象範囲
 
-- CSP
-- HSTS
-- X-Frame-Options
-- X-Content-Type-Options
-- Referrer-Policy
+browserへ防御方針を伝えるresponse headerの役割と、headerだけでは防げない範囲を確認する。
 
-## 3. 成果物構成
+## 2. 成果物構成
 
 ```text
 src/backend/src/studysecurity/systems/security15_security_headers/
+  package.json
+  app/server.js
+doc/learning_notes/security15_security_headers/
   README.md
-  app/
-  docs/header_table.md
-  docs/devtools_check.md
+  header_policy.md
 ```
 
-## 4. 入力
-| 入力 | 内容 |
+## 3. header policy
+
+| Header | 学習用policy |
 |---|---|
-| request | サンプルページ |
-| header policy | 学習用header設定 |
+| Content-Security-Policy | self限定、frame・objectを拒否 |
+| X-Frame-Options | `DENY` |
+| X-Content-Type-Options | `nosniff` |
+| Referrer-Policy | `same-origin` |
+| Permissions-Policy | camera等を無効化 |
+| Cache-Control | `no-store` |
 
-## 5. 出力
-| 出力 | 内容 |
-|---|---|
-| response headers | 主要セキュリティヘッダー |
-| header table | 意味と注意 |
+## 4. 処理方針
 
-## 6. 処理方針
-1. responseにheaderを付与する
-2. DevToolsで確認する
-3. 各headerの役割を表にする
-4. HSTSなど本番注意が必要なものを明記する
-## 7. 確認観点
+1. local HTTP serverの全responseへ同じ学習用headerを付与する。
+2. browser DevToolsまたはHTTP clientで実値を観察する。
+3. CSPの制約とlegacy headerの重なりを比較する。
+4. HSTSはHTTPS productionでのみ検討し、local HTTP教材では付与しない。
 
-- headerの意味を説明できるか
-- headerだけで全て防げると誤解していないか
-- HSTSの注意点を説明できるか
-## 8. 後続工程への引き継ぎ
+## 5. 安全制約
 
-詳細設計では、header値、API、確認手順、注意表を定義する。
+- 学習用policyを実siteへ無検証で適用しない。
+- headerを入力validationや出力encodingの代替にしない。
+- HSTSをlocalhostのHTTP確認へ追加しない。
+
+## 6. 確認観点
+
+- 各headerをどのbrowser機能が解釈するか
+- CSP違反時の機能影響を事前検証する必要性
+- HSTSが戻しにくい設定である理由

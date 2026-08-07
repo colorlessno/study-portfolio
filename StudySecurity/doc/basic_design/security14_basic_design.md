@@ -1,52 +1,49 @@
-# security14 Nginx HTTPS終端 基本設計
+# security14 CORS 基本設計
+
 ## 0. 関連要件
 
-- `../requirements/security14_nginx_https_termination_requirements.md`
+- `../requirements/security14_cors_requirements.md`
 
 ## 1. 設計目的
-NginxでHTTPS終端し、backendへreverse proxyする構成を理解する。
-## 2. 対象範囲
 
-- TLS termination
-- reverse proxy
-- `/api` proxy
-- backend非公開
-- 設定例
-## 3. 成果物構成
+Origin allowlistとpreflight応答を通じ、browserのresponse公開制御を確認する。
+
+## 2. 成果物構成
 
 ```text
 src/backend/src/studysecurity/systems/security14_cors/
+  package.json
+  app/server.js
+doc/learning_notes/security14_cors/
   README.md
-  nginx/
-  docs/architecture.md
-  docs/nginx_config_notes.md
+  cors_matrix.md
 ```
 
-## 4. 入力
-| 入力 | 内容 |
+## 3. CORS policy
+
+| 項目 | 内容 |
 |---|---|
-| request | HTTPS request |
-| path | `/` と `/api` |
-| certificate | ダミー配置説明 |
+| 許可Origin | `http://localhost:3000`、`http://localhost:5173` |
+| 許可method | GET、POST、OPTIONS |
+| 許可header | Content-Type、Authorization |
+| credentials | 許可Originだけ`true` |
+| cache | Origin・preflight条件を`Vary`へ含める |
 
-## 5. 出力
-| 出力 | 内容 |
-|---|---|
-| static response | Nginx配信 |
-| proxied response | backend応答 |
-| notes | 終端と内部転送の説明 |
+## 4. 処理方針
 
-## 6. 処理方針
-1. Nginxが公開入口になる構成を示す
-2. `/api` をbackendへ転送する
-3. backendを外部公開しない
-4. 証明書秘密鍵はサンプルに含めない
-## 7. 確認観点
+1. request Originを完全一致のallowlistで判定する。
+2. 許可Originのpreflightへ204とCORS headerを返す。
+3. 不許可Originのpreflightへ403を返す。
+4. 通常requestは処理するが、不許可Originへ許可headerを返さない。
 
-- HTTPS終端の意味を説明できるか
-- backendを直接公開しない理由を説明できるか
-- 秘密鍵を含んでいないか
+## 5. 安全制約
 
-## 8. 後続工程への引き継ぎ
+- credentials利用時にwildcard Originを使わない。
+- CORSをserver-side access制御として扱わない。
+- 外部siteを検証対象にしない。
 
-詳細設計では、Nginx設定例、構成図、確認手順を定義する。
+## 6. 確認観点
+
+- 許可・不許可Originでheaderがどう変わるか
+- curlがresponseを受け取れてもbrowser JavaScriptは読めない場合があること
+- CORS、CSRF、認証、認可の責務の違い

@@ -8,20 +8,20 @@
 
 ```text
 src/backend/src/studysecurity/systems/security15_security_headers/
-  README.md
   Dockerfile
   package.json
   app/server.js
-  docs/header_policy.md
 ```
 
 ## 2. 主要設計
 | 要素 | 内容 |
 |---|---|
-| CSP | `default-src 'self'`を基本にする |
+| CSP | `default-src 'self'`に加えてframeとobjectを拒否する |
+| frame | `frame-ancestors 'none'`と`X-Frame-Options: DENY`を返す |
 | X-Content-Type-Options | `nosniff`を返す |
 | Referrer-Policy | `same-origin`を返す |
 | Permissions-Policy | 不要なブラウザ機能を無効化する |
+| HSTS | local HTTP教材では付与せず、production HTTPSの検討事項とする |
 
 ## 3. 安全制約
 - ヘッダーだけで完全防御と説明しない。

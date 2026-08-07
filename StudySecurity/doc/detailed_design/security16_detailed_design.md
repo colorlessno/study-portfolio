@@ -8,21 +8,19 @@
 
 ```text
 src/backend/src/studysecurity/systems/security16_dependency_management/
-  README.md
   Dockerfile
   package.json
   app/audit_report_parser.js
   samples/npm_audit_sample.json
-  docs/remediation_policy.md
 ```
 
 ## 2. 主要設計
 | 要素 | 内容 |
 |---|---|
 | 入力 | 学習用の監査レポートJSONを読み込む |
-| 分析 | severity, package, vulnerable rangeを抽出する |
+| 分析 | severity、package、fix有無、noteを抽出する |
 | 判断 | 更新、代替、保留の判断観点を示す |
-| 出力 | 優先順位付きの対応表を生成する |
+| 出力 | severity別summaryと優先順位付きの対応候補を生成する |
 
 ## 3. 安全制約
 - ネットワーク監査や外部レジストリ参照は行わない。

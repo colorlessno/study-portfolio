@@ -8,12 +8,11 @@
 
 ```text
 src/backend/src/studysecurity/systems/security13_rate_limit/
-  README.md
   Dockerfile
   package.json
   app/server.js
   app/rate_limiter.js
-  docs/limit_policy.md
+  app/demo.js
 ```
 
 ## 2. 主要設計
@@ -21,7 +20,7 @@ src/backend/src/studysecurity/systems/security13_rate_limit/
 |---|---|
 | キー | IP相当値とユーザーID相当値を切り替える |
 | 窓 | 固定時間窓のカウンタで実装する |
-| 応答 | 超過時は429と`Retry-After`を返す |
+| 応答 | 残り回数を返し、超過時は429と`Retry-After`を返す |
 | 例外 | ヘルスチェックは制限対象外にする |
 
 ## 3. 安全制約
