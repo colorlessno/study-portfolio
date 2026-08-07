@@ -18,7 +18,7 @@ GitHub Actions で push / pull request 時に build を実行し、AI が生成�
 
 | ID | 要件 |
 |---|---|
-| FR-01 | `.github/workflows/build.yml` の教材例を作成する |
+| FR-01 | リポジトリ共通の`.github/workflows/studydevops-ci.yml`にbuild jobを作成する |
 | FR-02 | Node.js または Python の最小 build job を定義する |
 | FR-03 | build 成功時と失敗時のログ確認ポイントを README に記載する |
 | FR-04 | ローカルで同等コマンドを実行できる手順を用意する |
@@ -41,11 +41,10 @@ GitHub Actions で push / pull request 時に build を実行し、AI が生成�
 ```text
 StudyDevOps/
   src/apps/devops01_github_actions_build/
-    README.md
-    .github/workflows/build.yml
     app/
     Dockerfile
   doc/requirements/devops01_github_actions_build_requirements.md
+.github/workflows/studydevops-ci.yml
 ```
 
 ## 7. 受入条件

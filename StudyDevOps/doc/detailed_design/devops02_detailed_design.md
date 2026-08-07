@@ -5,9 +5,9 @@
 ## 1. 実装配置
 
 ```text
-src/apps/devops02_lint_unit_test/
-  README.md
+StudyDevOps/src/apps/devops02_lint_unit_test/
   package.json
+  package-lock.json
   src/calculator.js
   test/calculator.test.js
   Dockerfile
@@ -51,8 +51,8 @@ lint と unit test は step を分け、どちらで失敗したかログで判�
 ## 6. 検証コマンド
 
 ```powershell
-npm.cmd --prefix .\src\apps\devops02_lint_unit_test run check
-docker build -t studydevops-devops02 .\src\apps\devops02_lint_unit_test
+npm.cmd --prefix StudyDevOps/src/apps/devops02_lint_unit_test run check
+docker build -t studydevops-devops02 StudyDevOps/src/apps/devops02_lint_unit_test
 docker run --rm studydevops-devops02
 ```
 

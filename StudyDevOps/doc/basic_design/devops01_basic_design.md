@@ -11,12 +11,12 @@ GitHub Actions の build workflow を教材化し、ローカル build と CI bu
 ```text
 StudyDevOps/
   src/apps/devops01_github_actions_build/
-    README.md
-    .github/workflows/build.yml
     app/
       package.json
+      package-lock.json
       src/
     Dockerfile
+.github/workflows/studydevops-ci.yml
 ```
 
 - 実際の GitHub repository への push は必須にしない。
@@ -33,10 +33,10 @@ source checkout -> runtime setup -> dependency install -> build -> result log re
 
 | コンポーネント | 役割 |
 |---|---|
-| `build.yml` | GitHub Actions の build job を定義する |
+| `studydevops-ci.yml` | GitHub Actions のStudyDevOps用jobを定義する |
 | `app/package.json` | build script を持つ最小の Node.js アプリ |
 | `Dockerfile` | CI と同等の build をローカル Docker で再現する |
-| `README.md` | CIログの見方、失敗時の対処方法を説明する |
+| `doc/learning_notes/.../README.md` | CIログの見方、失敗時の対処方法を説明する |
 
 ## 5. Docker / CI 方針
 

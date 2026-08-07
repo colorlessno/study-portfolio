@@ -5,9 +5,9 @@
 ## 1. 実装配置
 
 ```text
-src/apps/devops04_playwright_e2e/
-  README.md
-  app/package.json
+StudyDevOps/src/apps/devops04_playwright_e2e/
+  package.json
+  package-lock.json
   app/src/
   tests/e2e/form.spec.ts
   playwright.config.ts
@@ -46,9 +46,10 @@ use.screenshot: only-on-failure
 ## 6. 検証コマンド
 
 ```powershell
-npm.cmd --prefix .\src\apps\devops04_playwright_e2e install
-npm.cmd --prefix .\src\apps\devops04_playwright_e2e run test:e2e
-docker build -t studydevops-devops04 .\src\apps\devops04_playwright_e2e
+npm.cmd --prefix StudyDevOps/src/apps/devops04_playwright_e2e ci
+npm.cmd --prefix StudyDevOps/src/apps/devops04_playwright_e2e exec -- playwright install chromium
+npm.cmd --prefix StudyDevOps/src/apps/devops04_playwright_e2e run test:e2e
+docker build -t studydevops-devops04 StudyDevOps/src/apps/devops04_playwright_e2e
 ```
 
 ## 7. 安全性

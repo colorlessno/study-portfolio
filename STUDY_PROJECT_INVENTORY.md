@@ -1,6 +1,6 @@
 # StudyXX 横断棚卸し
 
-最終更新: 2026-08-07
+最終更新: 2026-08-08
 
 この文書は、各`StudyXX`をポートフォリオと学習教材の両面から改善する順番を決めるための現在地です。個々のテーマを探す場合は[テーマカタログ](./THEME_CATALOG.md)、学習方法は[学習再開ガイド](./LEARNING_GUIDE.md)、将来の管理ツール構想は[Study Hub 将来構想](./STUDY_HUB_ROADMAP.md)を参照します。
 
@@ -9,7 +9,8 @@
 - `Study`で始まる13ディレクトリを、将来のStudy Hubの標準カタログ対象とする。
 - 物理ディレクトリは移動せず、学習グループやタグを論理的に付け替えられる前提とする。
 - StudyWebは52テーマの構造監査と学習導線の初回改善が完了した。
-- 次の改善対象はStudySecurityとする。
+- StudySecurityは21テーマを4グループに分けた学習導線の初回改善が完了した。
+- 現在の改善対象はStudyDevOpsとする。
 - 番号体系外の小規模成果物も除外せず、Study Hubでは`StudyArea`単位の教材として扱う。
 - `StudyXX`以外のディレクトリは自動登録せず、必要なものだけ明示的に追加する。
 
@@ -32,8 +33,8 @@
 | StudyArea | テーマ | 学習README | 実装ファイル | テストファイル | 現在地 | 次の改善 |
 |---|---:|---:|---:|---:|---|---|
 | StudyWeb | 52 | 52 | 406 | 0 | 構造監査と初回導線改善済み | 自動テストは別工程で代表テーマから追加する |
-| StudySecurity | 21 | 21 | 82 | 0 | 教材と実装が揃い、security01で新形式を検証済み | 4つの学習グループに分けて全テーマへ展開する |
-| StudyDevOps | 10 | 9 | 55 | 6 | 実装・テスト・運用文書がある。devops10はarch02への重複導線 | CI、テスト、可観測性、障害対応の学習経路を作る |
+| StudySecurity | 21 | 21 | 82 | 0 | 4つの学習グループで全テーマの初回導線改善済み | 代表テーマから自動テストと保守証跡を追加する |
+| StudyDevOps | 10 | 9 | 59 | 6 | devops01〜05に学習導線と自動CIがある。devops10はarch02への重複導線 | devops06〜09を可観測性・障害対応の運用経路として整える |
 | StudyAWS | 10 | 10 | 48 | 0 | ローカル模擬実装と実行手順がある | AWS実環境との差、観察点、費用・安全上の境界を明示する |
 | StudyDB | 7 | 7 | 36 | 0 | 文書教材とPostgreSQL実習がある | SQL実行前の予想、実測結果、後片付けを学習単位にする |
 | StudyBase | 12 | 11 | 25 | 1 | 文書完結型と小規模実習が混在する。base12はarch01への重複導線 | 他分野の前提として推奨順と到達条件を整理する |
@@ -54,9 +55,9 @@
 
 ## 改善順序
 
-### 1. StudySecurity
+### 1. StudySecurity（初回改善完了）
 
-最初の展開先とします。21テーマすべてに工程文書、学習ノート、実装があり、外部依存が少ないため、学習導線の改善効果を短い周期で確認できます。
+最初の展開先として、21テーマすべての学習ノートへ再開手順、観察点、演習、説明問題、完了条件を追加しました。
 
 | 学習グループ | 対象 | 主な問い |
 |---|---|---|
@@ -65,21 +66,29 @@
 | Integration and operations defense | security10〜16 | secret、署名、監査、rate limit、header、依存をどう守るか |
 | AI and data safety | security17〜21 | prompt、RAG、保持、PII、moderationの境界をどう定義するか |
 
-各グループを別PRにし、READMEへ再開手順、読む順番、観察ポイント、安全な改造課題、説明問題、完了条件を追加します。実装と要件に差がある場合は、実装済みと未実装を区別して記録します。
+4グループを別PRで改善済みです。次回は代表テーマへ自動テストを追加し、実装と教材のずれを継続検出できるようにします。
 
-### 2. StudyDevOps、StudyDB、StudyAWS
+### 2. StudyDevOps（進行中）
 
-- StudyDevOpsは、実際のテストと運用証拠をポートフォリオとして見せやすい形にする。
+| 学習グループ | 対象 | 主な問い |
+|---|---|---|
+| CI and testing | devops01〜05 | build、unit、API、E2E、DBのどの層を何の証拠として残すか |
+| Observability and incident response | devops06〜09 | requestから障害収束までを、ログ、health、調査、runbookでどうつなぐか |
+
+devops01〜05には学習導線と実際に動くGitHub Actionsを追加しました。次にdevops06〜09を運用シナリオとして再編します。devops10は`StudyArchitecture arch02`を正規ルートとします。
+
+### 3. StudyDB、StudyAWS
+
 - StudyDBは、WebやAIの前提知識として、SQLを実行して結果を説明する経路を作る。
 - StudyAWSは、ローカル模擬とAWS実環境を混同しない説明を追加する。
 
-### 3. StudyBaseとStudyAI
+### 4. StudyBaseとStudyAI
 
 - StudyBaseは、他分野へ進む前の推奨経路を短く整理する。
 - StudyAIは48テーマを一括編集せず、代表経路を選んで段階的に改善する。
 - StudyAIの優先経路は、RAG、AI基礎と評価、業務AI、エージェント実装とする。
 
-### 4. 独立プロダクトと小規模教材
+### 5. 独立プロダクトと小規模教材
 
 StudyFabelをデモ可能な独立成果として磨いた後、StudyArchitecture、StudyDesktop、StudyAIIdeaGeneration、StudyAICorporateEmployee、StudyAPIをそれぞれの成果物形式に合わせて整理します。
 
