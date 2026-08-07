@@ -52,9 +52,10 @@ const RULES = [
   },
 ];
 
-function moderate(input) {
-  const intent = String(input.intent || "");
-  const context = String(input.context || "");
+function moderate(input = {}) {
+  const safeInput = input && typeof input === "object" ? input : {};
+  const intent = String(safeInput.intent || "");
+  const context = String(safeInput.context || "");
   for (const rule of RULES) {
     if (rule.match.test(intent)) {
       const r = rule.decide(context);

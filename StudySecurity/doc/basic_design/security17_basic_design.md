@@ -1,53 +1,51 @@
-# security17 Prompt Injection体験 基本設計
+# security17 Prompt Injection対策 基本設計
+
 ## 0. 関連要件
 
 - `../requirements/security17_prompt_injection_requirements.md`
 
 ## 1. 設計目的
-ユーザー入力でAI指示が上書きされる危険性と、防御の基本を疑似的に確認する。
-## 2. 対象範囲
 
-- malicious user input
-- instruction separation
-- output validation
-- allowlist
-- refusal policy
+入力内の命令上書き・secret要求を小さなruleで分類し、promptだけに依存しない防御層を考える。
 
-## 3. 成果物構成
+## 2. 成果物構成
 
 ```text
 src/backend/src/studysecurity/systems/security17_prompt_injection/
+  package.json
+  public/index.html
+  public/app.js
+  app/server.js
+  app/demo.js
+  samples/prompts.json
+doc/learning_notes/security17_prompt_injection/
   README.md
-  app/
-  docs/prompt_injection_cases.md
-  docs/defense_notes.md
+  guardrail_policy.md
 ```
 
-## 4. 入力
-| 入力 | 内容 |
-|---|---|
-| system instruction | 守るべき方針 |
-| user input | 通常入力や攻撃入力 |
+## 3. 判定
 
-## 5. 出力
-| 出力 | 内容 |
-|---|---|
-| unsafe result | 指示上書き例 |
-| guarded result | 検証・拒否結果 |
-| notes | 防御の限界 |
+| 入力 | decision | reason |
+|---|---|---|
+| 通常の問い合わせ | answer | normal |
+| 指示上書きpattern | review | instruction_override_pattern |
+| secret要求 | reject | secret_request |
 
-## 6. 処理方針
-1. 疑似AI処理で攻撃入力を確認する
-2. 入力と指示を分ける
-3. 出力形式を検証する
-4. 危険要求を拒否する
-5. promptだけでは完全防御できないと明記する
-## 7. 確認観点
+## 4. 処理方針
 
-- 実APIキーを使っていないか
-- 危険例と防御例がセットか
-- AI出力を無条件に信用していないか
+1. 入力を文字列として正規化する。
+2. secret要求、命令上書きpattern、通常入力を分類する。
+3. 判定と安定したreason codeだけを表示する。
+4. CLI demoとlocal画面で同じ関数を確認する。
 
-## 8. 後続工程への引き継ぎ
+## 5. 安全制約
 
-詳細設計では、攻撃入力、疑似判定、出力検証、確認手順を定義する。
+- 外部AI APIへ送信しない。
+- rule一致を完全なPrompt Injection検出と扱わない。
+- tool権限、output validation、承認を別の防御層として考える。
+
+## 6. 確認観点
+
+- 入力分類は攻撃者が迂回できること
+- instruction hierarchyとdata boundaryの違い
+- LLM出力を次の操作へ渡す前のschema・権限検証

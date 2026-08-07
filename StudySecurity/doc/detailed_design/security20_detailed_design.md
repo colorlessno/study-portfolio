@@ -8,12 +8,10 @@
 
 ```text
 src/backend/src/studysecurity/systems/security20_pii_masking/
-  README.md
   Dockerfile
   package.json
   app/masker.js
   app/demo.js
-  docs/masking_policy.md
 ```
 
 ## 2. 主要設計

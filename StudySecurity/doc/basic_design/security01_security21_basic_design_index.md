@@ -27,8 +27,8 @@
 | security15 | `../requirements/security15_security_headers_requirements.md` | `security15_basic_design.md` |
 | security16 | `../requirements/security16_dependency_management_requirements.md` | `security16_basic_design.md` |
 | security17 | `../requirements/security17_prompt_injection_requirements.md` | `security17_basic_design.md` |
-| security18 | `../requirements/security18_rag_injection_requirements.md` | `security18_basic_design.md` |
-| security19 | `../requirements/security19_tool_approval_requirements.md` | `security19_basic_design.md` |
+| security18 | `../requirements/security18_rag_safety_requirements.md` | `security18_basic_design.md` |
+| security19 | `../requirements/security19_data_retention_requirements.md` | `security19_basic_design.md` |
 | security20 | `../requirements/security20_pii_masking_requirements.md` | `security20_basic_design.md` |
 | security21 | `../requirements/security21_ai_content_moderation_requirements.md` | `security21_basic_design.md` |
 

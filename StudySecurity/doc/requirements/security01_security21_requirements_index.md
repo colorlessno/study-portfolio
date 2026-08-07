@@ -27,8 +27,8 @@ Web / API / AIシステムで必要になる認証認可、攻撃対策、鍵、
 | security15 | セキュリティヘッダー | `security15_security_headers_requirements.md` |
 | security16 | 依存関係管理 | `security16_dependency_management_requirements.md` |
 | security17 | Prompt Injection体験 | `security17_prompt_injection_requirements.md` |
-| security18 | RAG Injection体験 | `security18_rag_injection_requirements.md` |
-| security19 | Tool実行前承認 | `security19_tool_approval_requirements.md` |
+| security18 | RAG安全対策 | `security18_rag_safety_requirements.md` |
+| security19 | データ保持・削除 | `security19_data_retention_requirements.md` |
 | security20 | PIIマスキング | `security20_pii_masking_requirements.md` |
 | security21 | AI content moderation / NSFW classification | `security21_ai_content_moderation_requirements.md` |
 

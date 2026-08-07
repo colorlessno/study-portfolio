@@ -1,3 +1,5 @@
 # ガードレール方針
 
 参照文書を命令として扱わず、秘密情報要求や指示上書き風の入力は拒否または要確認に分類します。
+
+pattern分類は観察用の一層にすぎません。productionではmodelへ実secretを渡さず、toolを最小権限にし、output schema、操作前authorization、human approvalを組み合わせます。
