@@ -11,17 +11,18 @@ request id / trace id を API request に付与し、正常系と異常系のロ
 ```text
 StudyDevOps/
   src/apps/devops06_request_id_logging/
-    README.md
     app/
       server.js
       logger.js
       package.json
+      package-lock.json
     tests/
       logging.test.js
     Dockerfile
 ```
 
-- request id は middleware で生成する。
+- request IDはrequest handlerの入口で検証・生成する。
+- 外部request IDは許可文字と長さを検証し、query値はログへ含めない。
 - response header に request id を返す。
 - 作成・更新するテキストファイルは UTF-8 BOMなしとする。
 
@@ -35,7 +36,7 @@ request received -> request id attach -> start log -> handler -> completed/faile
 
 | コンポーネント | 役割 |
 |---|---|
-| `server.js` | middleware と endpoint を提供する |
+| `server.js` | request IDを付与するhandlerとendpointを提供する |
 | `logger.js` | structured log を出力する |
 | `logging.test.js` | header とログ出力を確認する |
 | `Dockerfile` | Docker logs で確認できる実行環境を作る |

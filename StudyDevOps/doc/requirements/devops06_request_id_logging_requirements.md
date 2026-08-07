@@ -23,6 +23,7 @@
 | FR-03 | response header に request id を返す |
 | FR-04 | 意図的に例外を起こす endpoint を用意する |
 | FR-05 | Docker logs から request id で絞り込む手順を記載する |
+| FR-06 | 外部request IDを許可文字と長さで検証し、query値をログへ出さない |
 
 ## 4. 非機能要件
 
@@ -41,8 +42,8 @@
 ```text
 StudyDevOps/
   src/apps/devops06_request_id_logging/
-    README.md
     app/
+      package-lock.json
     tests/
     Dockerfile
   doc/requirements/devops06_request_id_logging_requirements.md

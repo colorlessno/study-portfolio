@@ -7,7 +7,7 @@ CI、テスト自動化、可観測性、障害対応を、小さな実装を動
 | グループ | 対象 | 到達点 | 状態 |
 |---|---|---|---|
 | CIとテスト | devops01〜05 | build、unit、API、E2E、DBテストをCIの証拠として残せる | 学習導線・自動CIあり |
-| 可観測性と障害対応 | devops06〜09 | request id、health、ログ調査、runbookを一連の運用として説明できる | 次の改善対象 |
+| 可観測性と障害対応 | devops06〜09 | request ID、health、ログ調査、runbookを一連の運用として説明できる | 学習導線・自動CIあり |
 | 設計レビュー | devops10 | 実行証跡から設計をレビューする | [StudyArchitecture arch02](../StudyArchitecture/doc/learning_notes/arch02_evidence_driven_design_review/README.md)が正規ルート |
 
 最初はdevops01から順番に進めます。テストの層がbuildからDBへ段階的に広がるため、「何を、どこまで自動確認しているか」を比較しやすい並びです。
@@ -23,6 +23,17 @@ CI、テスト自動化、可観測性、障害対応を、小さな実装を動
 | devops05 DB付きCI | [再開する](./doc/learning_notes/devops05_db_ci/README.md) | PostgreSQL初期化と結合テスト |
 
 これらは実際の[StudyDevOps CI workflow](../.github/workflows/studydevops-ci.yml)でも実行します。ローカル確認は学習ノート、GitHub上の結果はPull RequestのChecksから確認します。
+
+## 可観測性と障害対応の入口
+
+| テーマ | 学習ノート | 主な証拠 |
+|---|---|---|
+| devops06 request ID付きログ | [再開する](./doc/learning_notes/devops06_request_id_logging/README.md) | 正常・失敗を結ぶ構造化ログ |
+| devops07 health check | [再開する](./doc/learning_notes/devops07_health_check_endpoint/README.md) | health 200とready 503の分離 |
+| devops08 Docker logs調査 | [再開する](./doc/learning_notes/devops08_docker_logs_investigation/README.md) | 起動失敗とruntime errorの分類 |
+| devops09 障害調査Runbook | [再開する](./doc/learning_notes/devops09_incident_runbook/README.md) | 事実・仮説・判断を分けた報告書 |
+
+devops06〜08のシグナルはCIで自動確認し、devops09のRunbookと記入例は構造検証の対象にします。学習時はdevops08の固定障害をdevops09の手順で調査します。
 
 ## まず15分で確認する
 
@@ -46,7 +57,7 @@ StudyDevOps/
     detailed_design/   ファイル・処理・検証方法
     learning_notes/    再開手順、観察点、演習、完了条件
 .github/workflows/
-  studydevops-ci.yml   devops01〜05を実行するCI
+  studydevops-ci.yml   devops01〜09を検証するCI
 ```
 
 ## 技術と範囲

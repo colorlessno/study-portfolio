@@ -11,10 +11,12 @@ Docker Compose 上の起動失敗、env 不足、port conflict、runtime error �
 ```text
 StudyDevOps/
   src/apps/devops08_docker_logs_investigation/
-    README.md
     app/
       server.js
       package.json
+      package-lock.json
+    tests/
+      investigation.test.js
     docker-compose.yml
     docs/
       investigation_template.md
@@ -36,13 +38,14 @@ compose up -> ps status -> logs review -> exec check -> cause classify -> invest
 |---|---|
 | `docker-compose.yml` | 正常 service と失敗演習 service を定義する |
 | `app/server.js` | env 不足や runtime error を再現する |
+| `tests/investigation.test.js` | 3種類のシグナルを有限時間で自動確認する |
 | `investigation_template.md` | 調査結果を記録する |
 | `README.md` | Docker logs 調査手順を説明する |
 
 ## 5. Docker / CI 方針
 
 - Docker Compose を主教材にする。
-- CI では logs artifact の残し方を後続課題として扱う。
+- CIでは3種類のシグナルを自動テストし、Compose固有のps/logs調査は手動演習として残す。
 - secret をログに出さない。
 - secrets は logs、調査テンプレート、README の例示値に含めない。
 

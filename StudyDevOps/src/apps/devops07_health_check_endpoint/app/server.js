@@ -1,9 +1,13 @@
 import http from 'node:http'
 
 let dependencyOk = true
+const port = Number(process.env.PORT ?? '8080')
 
 function send(res, status, body) {
-  res.writeHead(status, { 'content-type': 'application/json' })
+  res.writeHead(status, {
+    'cache-control': 'no-store',
+    'content-type': 'application/json; charset=utf-8',
+  })
   res.end(JSON.stringify(body))
 }
 
@@ -20,4 +24,4 @@ http.createServer((req, res) => {
     return send(res, 200, { dependency_ok: dependencyOk })
   }
   return send(res, 404, { error_code: 'not_found' })
-}).listen(8080, () => console.log('health api listening on 8080'))
+}).listen(port, () => console.log(`health api listening on ${port}`))

@@ -23,6 +23,7 @@ Docker コンテナで起きる起動失敗、環境変数不足、port conflict
 | FR-03 | port conflict の確認手順を記載する |
 | FR-04 | logs から原因箇所を探す演習を用意する |
 | FR-05 | 調査結果を記録するテンプレートを用意する |
+| FR-06 | 起動失敗、runtime error、正常応答のシグナルを自動テストする |
 
 ## 4. 非機能要件
 
@@ -41,8 +42,9 @@ Docker コンテナで起きる起動失敗、環境変数不足、port conflict
 ```text
 StudyDevOps/
   src/apps/devops08_docker_logs_investigation/
-    README.md
     app/
+      package-lock.json
+    tests/
     docker-compose.yml
     docs/investigation_template.md
   doc/requirements/devops08_docker_logs_investigation_requirements.md
