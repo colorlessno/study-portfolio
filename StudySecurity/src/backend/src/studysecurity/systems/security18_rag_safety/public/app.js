@@ -4,9 +4,25 @@ const docs = [
   { id: "d3", trust: "restricted", text: "社内限定の手順です。" },
 ];
 
-document.getElementById("search").addEventListener("click", () => {
-  const query = document.getElementById("query").value;
-  const results = docs.filter((d) => d.text.includes(query) || query === "");
-  const view = results.map((d) => ({ ...d, action: d.trust === "restricted" ? "needs_approval" : "cite_with_label" }));
-  document.getElementById("result").textContent = JSON.stringify(view, null, 2);
-});
+function searchDocuments(query, documents = docs) {
+  const normalizedQuery = String(query || "");
+  return documents
+    .filter((document) => document.text.includes(normalizedQuery) || normalizedQuery === "")
+    .map((document) => ({
+      ...document,
+      action: document.trust === "restricted"
+        ? "needs_approval"
+        : document.trust === "untrusted"
+          ? "ignore_instructions_and_review_content"
+          : "cite_with_label",
+    }));
+}
+
+if (typeof document !== "undefined") {
+  document.getElementById("search").addEventListener("click", () => {
+    const query = document.getElementById("query").value;
+    document.getElementById("result").textContent = JSON.stringify(searchDocuments(query), null, 2);
+  });
+}
+
+if (typeof module !== "undefined") module.exports = { docs, searchDocuments };

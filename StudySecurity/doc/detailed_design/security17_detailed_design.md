@@ -8,12 +8,13 @@
 
 ```text
 src/backend/src/studysecurity/systems/security17_prompt_injection/
-  README.md
   Dockerfile
+  package.json
   public/index.html
   public/app.js
+  app/server.js
+  app/demo.js
   samples/prompts.json
-  docs/guardrail_policy.md
 ```
 
 ## 2. 主要設計
@@ -23,6 +24,7 @@ src/backend/src/studysecurity/systems/security17_prompt_injection/
 | 危険例 | 指示上書き風の文をローカルサンプルとして扱う |
 | 防御例 | 参照文書を信頼しない前提の応答方針を示す |
 | 判定 | 拒否、要確認、通常回答の3区分にする |
+| 実行 | CLI demoとport 4117のlocal画面で同じ判定関数を使う |
 
 ## 3. 安全制約
 - 外部AI APIには送信しない。

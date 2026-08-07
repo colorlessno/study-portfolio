@@ -8,12 +8,13 @@
 
 ```text
 src/backend/src/studysecurity/systems/security18_rag_safety/
-  README.md
   Dockerfile
+  package.json
   public/index.html
   public/app.js
+  app/server.js
+  app/demo.js
   samples/documents.json
-  docs/rag_trust_boundary.md
 ```
 
 ## 2. 主要設計
@@ -21,8 +22,9 @@ src/backend/src/studysecurity/systems/security18_rag_safety/
 |---|---|
 | 文書分類 | trusted, untrusted, restrictedを付与する |
 | 検索結果 | 文書本文、出典、信頼区分を並べる |
-| 応答方針 | restricted文書は要約停止または要確認にする |
+| 応答方針 | untrusted文書内の命令は無視し、restricted文書は要確認にする |
 | 引用 | 出典IDを必ず表示する |
+| 実行 | CLI demoとport 4118のlocal画面で3区分を比較する |
 
 ## 3. 安全制約
 - 悪意ある文書はローカルサンプルに限定する。

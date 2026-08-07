@@ -1,53 +1,48 @@
-# security19 Tool実行前承認 基本設計
+# security19 データ保持・削除 基本設計
+
 ## 0. 関連要件
 
-- `../requirements/security19_tool_approval_requirements.md`
+- `../requirements/security19_data_retention_requirements.md`
 
 ## 1. 設計目的
-AIが提案した操作を即実行せず、人間承認とallowlistを通す設計を確認する。
-## 2. 対象範囲
 
-- tool request
-- approval queue
-- allowlist
-- approve / reject
-- audit log
+保持policy、record age、legal holdから削除候補をdry runし、理由と境界値を確認する。
 
-## 3. 成果物構成
+## 2. 成果物構成
 
 ```text
 src/backend/src/studysecurity/systems/security19_data_retention/
+  package.json
+  app/retention_policy.js
+  app/demo.js
+doc/learning_notes/security19_data_retention/
   README.md
-  app/
-  docs/tool_approval_flow.md
-  docs/audit_log.md
+  deletion_workflow.md
 ```
 
-## 4. 入力
-| 入力 | 内容 |
-|---|---|
-| proposed action | AI提案操作 |
-| approver decision | approve / reject |
+## 3. 保持policy
 
-## 5. 出力
-| 出力 | 内容 |
-|---|---|
-| pending item | 承認待ち |
-| decision result | 許可・拒否 |
-| audit log | 操作履歴 |
+| type | retention days |
+|---|---:|
+| order | 365 |
+| inquiry | 180 |
+| audit | 1095 |
 
-## 6. 処理方針
-1. AI提案操作を承認待ちにする
-2. allowlist外は拒否する
-3. 人間承認後に実行済みにする
-4. 実破壊操作は行わない
-5. 監査ログを残す
+## 4. 処理方針
 
-## 7. 確認観点
+1. typeとupdatedAtを検証する。
+2. 判定日との差を日数へ変換する。
+3. 保持日数以上かつlegal holdなしを削除候補にする。
+4. delete可否、reason、ageDays、retentionDaysを返す。
 
-- AI判断だけで実行していないか
-- 危険操作が疑似操作に限定されているか
-- 承認者と実行者を区別できるか
-## 8. 後続工程への引き継ぎ
+## 5. 安全制約
 
-詳細設計では、操作schema、承認状態、allowlist、監査ログを定義する。
+- dry runだけで実dataを削除しない。
+- unknown type・不正日付・未来日付は安全側に倒して削除しない。
+- 実保持期間の法的妥当性を教材値から判断しない。
+
+## 6. 確認観点
+
+- ちょうど保持日数の境界
+- legal holdが通常policyより優先されること
+- backup、cache、search index、derived dataの削除差

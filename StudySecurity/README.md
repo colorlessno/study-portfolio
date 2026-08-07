@@ -45,6 +45,18 @@ security05と06は構造を標準出力で比較する教材、security07はloca
 
 security10〜16は、実secret、外部Webhook、外部traffic、実package更新を扱いません。localのダミーdataで判断点を再現し、本番ではSecret Manager、永続store、distributed limiter、production Origin、HTTPS、test・互換性確認が追加で必要になることを区別します。
 
+最後に、AIへ渡す入力・検索文書・保持data・個人情報・出力policyの境界を学びます。
+
+| テーマ | 学ぶAI・data判断 | 実行形態 |
+|---|---|---|
+| [security17 Prompt Injection](./doc/learning_notes/security17_prompt_injection/README.md) | 入力分類を過信せず権限・出力をどう制限するか | CLI / `http://localhost:4117` |
+| [security18 RAG安全対策](./doc/learning_notes/security18_rag_safety/README.md) | source・trust・accessをどう分けるか | CLI / `http://localhost:4118` |
+| [security19 Data保持・削除](./doc/learning_notes/security19_data_retention/README.md) | retention・legal hold・dry runをどう扱うか | CLI demo |
+| [security20 PII masking](./doc/learning_notes/security20_pii_masking/README.md) | log・AI入力の前に何を伏せるか | CLI demo |
+| [security21 AI content moderation](./doc/learning_notes/security21_ai_content_moderation/README.md) | context・判定・安全応答・reviewをどう結ぶか | CLI demo |
+
+security17〜21は外部AI API、vector DB、実個人情報、実data削除を使いません。抽象化したdummy caseでpolicyの判断点を観察し、単純なpattern判定やtrust labelだけではproductionの安全性を保証できないことを前提にします。
+
 ## 構成
 
 ```text

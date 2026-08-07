@@ -1,1 +1,1 @@
-{"scripts":{"demo":"node app/demo.js","check":"node --check app/retention_policy.js app/demo.js"},"dependencies":{},"devDependencies":{}}
+{"scripts":{"demo":"node app/demo.js","check":"node --check app/retention_policy.js && node --check app/demo.js"},"dependencies":{},"devDependencies":{}}

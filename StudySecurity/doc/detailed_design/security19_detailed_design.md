@@ -8,12 +8,10 @@
 
 ```text
 src/backend/src/studysecurity/systems/security19_data_retention/
-  README.md
   Dockerfile
   package.json
   app/retention_policy.js
   app/demo.js
-  docs/deletion_workflow.md
 ```
 
 ## 2. 主要設計
@@ -23,6 +21,7 @@ src/backend/src/studysecurity/systems/security19_data_retention/
 | 判定 | 作成日、最終更新日、法的保留フラグで削除可否を判定する |
 | 削除候補 | 削除対象リストを生成するだけにする |
 | 監査 | 削除判断の理由を記録する |
+| 安全側の失敗 | unknown type、不正日付、未来日付は削除候補にしない |
 
 ## 3. 安全制約
 - 実ファイルや実DBの削除は行わない。

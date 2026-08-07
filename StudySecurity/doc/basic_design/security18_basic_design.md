@@ -1,53 +1,51 @@
-# security18 RAG Injection体験 基本設計
+# security18 RAG安全対策 基本設計
+
 ## 0. 関連要件
 
-- `../requirements/security18_rag_injection_requirements.md`
+- `../requirements/security18_rag_safety_requirements.md`
 
 ## 1. 設計目的
-検索文書内の悪意ある指示をAIが拾う危険性を疑似的に確認する。
-## 2. 対象範囲
 
-- untrusted document
-- malicious document instruction
-- source metadata
-- grounding
-- instruction hierarchy
+retrieved documentの本文・source・trust区分を分け、文書内命令とaccess controlを混同しない流れを確認する。
 
-## 3. 成果物構成
+## 2. 成果物構成
 
 ```text
 src/backend/src/studysecurity/systems/security18_rag_safety/
+  package.json
+  public/index.html
+  public/app.js
+  app/server.js
+  app/demo.js
+  samples/documents.json
+doc/learning_notes/security18_rag_safety/
   README.md
-  app/
-  docs/rag_injection_cases.md
-  docs/defense_notes.md
+  rag_trust_boundary.md
 ```
 
-## 4. 入力
-| 入力 | 内容 |
+## 3. trust policy
+
+| trust | action |
 |---|---|
-| document | 通常文書・悪意ある文書 |
-| question | 検索質問 |
-| metadata | source id |
+| trusted | source label付き引用候補 |
+| untrusted | 文書内命令を無視し、内容をreview |
+| restricted | access承認まで利用しない |
 
-## 5. 出力
-| 出力 | 内容 |
-|---|---|
-| retrieved context | 検索文書 |
-| unsafe answer | 危険例 |
-| guarded answer | 防御例 |
+## 4. 処理方針
 
-## 6. 処理方針
-1. 悪意ある文書をローカルサンプルとして用意する
-2. 文書内容とシステム指示を分ける
-3. 文書由来の指示を実行しない
-4. source metadataを残す
+1. local配列から単純な部分一致で文書を検索する。
+2. source ID、trust、本文、actionを一緒に返す。
+3. trust区分に応じたactionを明示する。
+4. CLI demoとlocal画面で3区分を比較する。
 
-## 7. 確認観点
+## 5. 安全制約
 
-- 文書を信頼済み指示として扱っていないか
-- source metadataが残るか
-- RAG評価や根拠確認へ接続できるか
-## 8. 後続工程への引き継ぎ
+- 文書内の命令を実行しない。
+- restricted文書は検索結果へ出たことを閲覧許可と扱わない。
+- trust label・citationだけで正しさを保証しない。
 
-詳細設計では、文書サンプル、疑似検索、危険例、防御例を定義する。
+## 6. 確認観点
+
+- source provenance、authorization、content trustの違い
+- indirect Prompt Injectionがretrieval経由で入ること
+- productionでは取得前filterと回答前filterの両方が必要なこと
