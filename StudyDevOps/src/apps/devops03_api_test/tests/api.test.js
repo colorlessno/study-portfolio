@@ -31,6 +31,26 @@ test('create item and validate errors', async () => {
 
   const invalid = await fetch(`${baseUrl}/items`, { method: 'POST', body: '{}' })
   assert.equal(invalid.status, 400)
+  assert.equal((await invalid.json()).error_code, 'name_required')
+
+  const malformed = await fetch(`${baseUrl}/items`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: '{"name":',
+  })
+  assert.equal(malformed.status, 400)
+  assert.equal((await malformed.json()).error_code, 'invalid_json')
+
+  const oversized = await fetch(`${baseUrl}/items`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ name: 'x'.repeat(64 * 1024) }),
+  })
+  assert.equal(oversized.status, 413)
+  assert.equal((await oversized.json()).error_code, 'body_too_large')
+
+  const healthAfterError = await fetch(`${baseUrl}/health`)
+  assert.equal(healthAfterError.status, 200)
 
   const missing = await fetch(`${baseUrl}/missing`)
   assert.equal(missing.status, 404)

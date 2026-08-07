@@ -5,10 +5,9 @@
 ## 1. 実装配置
 
 ```text
-src/apps/devops05_db_ci/
-  README.md
-  app/package.json
-  app/src/db.js
+StudyDevOps/src/apps/devops05_db_ci/
+  package.json
+  package-lock.json
   db/schema.sql
   db/seed.sql
   tests/db.test.js
@@ -54,8 +53,8 @@ services:
 ## 6. 検証コマンド
 
 ```powershell
-docker compose -f .\src\apps\devops05_db_ci\docker-compose.yml up --build --abort-on-container-exit
-docker compose -f .\src\apps\devops05_db_ci\docker-compose.yml logs db
+docker compose -f StudyDevOps/src/apps/devops05_db_ci/docker-compose.yml up --build --abort-on-container-exit --exit-code-from test
+docker compose -f StudyDevOps/src/apps/devops05_db_ci/docker-compose.yml logs db
 ```
 
 ## 7. 安全性

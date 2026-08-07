@@ -5,23 +5,21 @@
 ## 1. 実装配置
 
 ```text
-src/apps/devops01_github_actions_build/
-  README.md
-  .github/workflows/build.yml
+StudyDevOps/src/apps/devops01_github_actions_build/
   app/package.json
+  app/package-lock.json
   app/src/index.js
   Dockerfile
+.github/workflows/studydevops-ci.yml
 ```
 
 ## 2. workflow設計
 
-`build.yml`:
+`studydevops-ci.yml`の`node-quality` job:
 
 ```yaml
-name: build
-on: [push, pull_request]
 jobs:
-  build:
+  node-quality:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -29,9 +27,9 @@ jobs:
         with:
           node-version: "20"
       - run: npm ci
-        working-directory: app
+        working-directory: StudyDevOps/src/apps/devops01_github_actions_build/app
       - run: npm run build
-        working-directory: app
+        working-directory: StudyDevOps/src/apps/devops01_github_actions_build/app
 ```
 
 ## 3. package scripts
@@ -55,8 +53,8 @@ CMD ["npm", "run", "build"]
 ## 5. 検証コマンド
 
 ```powershell
-npm.cmd --prefix .\src\apps\devops01_github_actions_build\app run build
-docker build -t studydevops-devops01 .\src\apps\devops01_github_actions_build
+npm.cmd --prefix StudyDevOps/src/apps/devops01_github_actions_build/app run build
+docker build -t studydevops-devops01 StudyDevOps/src/apps/devops01_github_actions_build
 docker run --rm studydevops-devops01
 ```
 

@@ -5,9 +5,11 @@
 ## 1. 実装配置
 
 ```text
-src/apps/devops03_api_test/
-  README.md
+StudyDevOps/src/apps/devops03_api_test/
+  package.json
+  package-lock.json
   app/package.json
+  app/package-lock.json
   app/server.js
   tests/api.test.js
   docker-compose.yml
@@ -22,6 +24,8 @@ src/apps/devops03_api_test/
 | POST | `/items` | `{ "id": "item-1", "name": "..." }` |
 | GET | `/missing` | 404 error |
 
+`POST /items`は64 KiBを上限とし、不正JSONには`invalid_json`、`name`不足には`name_required`を返す。
+
 ## 3. test case
 
 | case | 確認 |
@@ -29,6 +33,8 @@ src/apps/devops03_api_test/
 | health smoke | status 200 / `status=ok` |
 | create item | status 201 / `id`, `name` |
 | validation error | status 400 |
+| malformed JSON | status 400 / process継続 |
+| oversized body | status 413 / process継続 |
 | not found | status 404 |
 
 ## 4. compose設計
@@ -50,7 +56,7 @@ services:
 ## 5. 検証コマンド
 
 ```powershell
-docker compose -f .\src\apps\devops03_api_test\docker-compose.yml up --build --abort-on-container-exit
+docker compose -f StudyDevOps/src/apps/devops03_api_test/docker-compose.yml up --build --abort-on-container-exit --exit-code-from test
 curl http://localhost:18083/health
 ```
 

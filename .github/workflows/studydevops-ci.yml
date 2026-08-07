@@ -1,0 +1,121 @@
+name: StudyDevOps CI
+
+on:
+  push:
+    paths:
+      - "StudyDevOps/**"
+      - ".github/workflows/studydevops-ci.yml"
+  pull_request:
+    paths:
+      - "StudyDevOps/**"
+      - ".github/workflows/studydevops-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: studydevops-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  node-quality:
+    name: Build, lint, and unit test
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: |
+            StudyDevOps/src/apps/devops01_github_actions_build/app/package-lock.json
+            StudyDevOps/src/apps/devops02_lint_unit_test/package-lock.json
+      - name: Install devops01 dependencies
+        run: npm ci
+        working-directory: StudyDevOps/src/apps/devops01_github_actions_build/app
+      - name: Run devops01 build
+        run: npm run build
+        working-directory: StudyDevOps/src/apps/devops01_github_actions_build/app
+      - name: Install devops02 dependencies
+        run: npm ci
+        working-directory: StudyDevOps/src/apps/devops02_lint_unit_test
+      - name: Run devops02 lint
+        run: npm run lint
+        working-directory: StudyDevOps/src/apps/devops02_lint_unit_test
+      - name: Run devops02 unit tests
+        run: npm test
+        working-directory: StudyDevOps/src/apps/devops02_lint_unit_test
+
+  api-integration:
+    name: API integration test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build API and run tests
+        run: docker compose up --build --abort-on-container-exit --exit-code-from test
+        working-directory: StudyDevOps/src/apps/devops03_api_test
+      - name: Show container logs after failure
+        if: failure()
+        run: docker compose logs
+        working-directory: StudyDevOps/src/apps/devops03_api_test
+      - name: Remove API containers
+        if: always()
+        run: docker compose down --volumes
+        working-directory: StudyDevOps/src/apps/devops03_api_test
+
+  browser-e2e:
+    name: Playwright E2E test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: StudyDevOps/src/apps/devops04_playwright_e2e/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+        working-directory: StudyDevOps/src/apps/devops04_playwright_e2e
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+        working-directory: StudyDevOps/src/apps/devops04_playwright_e2e
+      - name: Run browser tests
+        run: npm run test:e2e
+        working-directory: StudyDevOps/src/apps/devops04_playwright_e2e
+      - name: Upload failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: devops04-playwright-failure
+          if-no-files-found: ignore
+          path: |
+            StudyDevOps/src/apps/devops04_playwright_e2e/playwright-report/
+            StudyDevOps/src/apps/devops04_playwright_e2e/test-results/
+
+  database-integration:
+    name: PostgreSQL integration test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Start PostgreSQL and run tests
+        run: docker compose up --build --abort-on-container-exit --exit-code-from test
+        working-directory: StudyDevOps/src/apps/devops05_db_ci
+      - name: Show container logs after failure
+        if: failure()
+        run: docker compose logs
+        working-directory: StudyDevOps/src/apps/devops05_db_ci
+      - name: Remove database containers and volumes
+        if: always()
+        run: docker compose down --volumes
+        working-directory: StudyDevOps/src/apps/devops05_db_ci

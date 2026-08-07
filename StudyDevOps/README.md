@@ -1,54 +1,60 @@
 # StudyDevOps
 
-CI/CD、テスト自動化、コンテナ運用、ログ・監視、インシデント対応といった **DevOps の基礎を、要件定義 → 基本設計 → 詳細設計 → 製造の流れで実践しながら学ぶ**ための、個人学習用プロジェクトです。`devops01` 〜 の題材ごとに各工程の成果物（設計文書とコード）を揃えています。
+CI、テスト自動化、可観測性、障害対応を、小さな実装を動かしながら学ぶ教材群です。AIで作った成果物を読むだけで終わらせず、**予想する → 実行する → 結果を説明する → 安全に壊して直す**までを1テーマの学習単位にします。
 
-## 本リポジトリについて
+## 学習経路
 
-- 個人の学習用に開発している実験的なプロジェクトです。DevOps の各テーマを、設計から実装・確認まで一通り体験・記録することを目的にしています。
-- 開発には **Claude Code / Codex などの AI コーディングアシストを活用**しています。
-- 各テーマの完成度には差があります。
+| グループ | 対象 | 到達点 | 状態 |
+|---|---|---|---|
+| CIとテスト | devops01〜05 | build、unit、API、E2E、DBテストをCIの証拠として残せる | 学習導線・自動CIあり |
+| 可観測性と障害対応 | devops06〜09 | request id、health、ログ調査、runbookを一連の運用として説明できる | 次の改善対象 |
+| 設計レビュー | devops10 | 実行証跡から設計をレビューする | [StudyArchitecture arch02](../StudyArchitecture/doc/learning_notes/arch02_evidence_driven_design_review/README.md)が正規ルート |
 
-## 取り扱うテーマ
+最初はdevops01から順番に進めます。テストの層がbuildからDBへ段階的に広がるため、「何を、どこまで自動確認しているか」を比較しやすい並びです。
 
-| 番号 | テーマ |
-|------|--------|
-| devops01 | GitHub Actions によるビルド |
-| devops02 | Lint / ユニットテスト |
-| devops03 | API テスト |
-| devops04 | Playwright による E2E テスト |
-| devops05 | DB を含む CI |
-| devops06 | request id ロギング |
-| devops07 | ヘルスチェックエンドポイント |
-| devops08 | Docker ログ調査 |
-| devops09 | インシデント runbook |
-| devops10 | 証跡ベースの設計レビュー |
+## CIとテストの入口
+
+| テーマ | 学習ノート | 主な証拠 |
+|---|---|---|
+| devops01 GitHub Actions build | [再開する](./doc/learning_notes/devops01_github_actions_build/README.md) | buildログ |
+| devops02 lint / unit test | [再開する](./doc/learning_notes/devops02_lint_unit_test/README.md) | lintとunit testの分離 |
+| devops03 API test | [再開する](./doc/learning_notes/devops03_api_test/README.md) | 正常系・入力異常・死活確認 |
+| devops04 Playwright E2E | [再開する](./doc/learning_notes/devops04_playwright_e2e/README.md) | ブラウザ操作と失敗時artifact |
+| devops05 DB付きCI | [再開する](./doc/learning_notes/devops05_db_ci/README.md) | PostgreSQL初期化と結合テスト |
+
+これらは実際の[StudyDevOps CI workflow](../.github/workflows/studydevops-ci.yml)でも実行します。ローカル確認は学習ノート、GitHub上の結果はPull RequestのChecksから確認します。
+
+## まず15分で確認する
+
+リポジトリルート `C:\work\work20260617` から、外部サービスを使わない2テーマを実行します。
+
+```powershell
+npm.cmd --prefix StudyDevOps/src/apps/devops01_github_actions_build/app run build
+npm.cmd --prefix StudyDevOps/src/apps/devops02_lint_unit_test run check
+```
+
+期待結果は、devops01がbuild情報のJSONを出力し、devops02が`lint ok`と3件のテスト成功を出力することです。コマンドが通ったら、各学習ノートの「説明してみる」に答えます。
 
 ## 構成
 
 ```text
 StudyDevOps/
-  src/apps/            各テーマの実装（devops01〜）
+  src/apps/            実行対象、テスト、Docker構成
   doc/
-    requirements/      各テーマの要件定義
-    basic_design/      基本設計
-    detailed_design/   詳細設計
-    learning_notes/    各テーマの README・学習ノート
+    requirements/      何を満たすか
+    basic_design/      どの構成で満たすか
+    detailed_design/   ファイル・処理・検証方法
+    learning_notes/    再開手順、観察点、演習、完了条件
+.github/workflows/
+  studydevops-ci.yml   devops01〜05を実行するCI
 ```
 
-各テーマは「要件定義 → 基本設計 → 詳細設計 → 製造」を一通り辿れるよう、`doc/` に工程別の成果物を、`src/apps/` に実装を配置しています。
+## 技術と範囲
 
-## 技術スタック
+- Node.js 20 / JavaScript / TypeScript
+- GitHub Actions、Playwright、Docker / Docker Compose、PostgreSQL
+- 教材用の固定値だけを使い、secret、token、個人情報、本番DBは扱いません。
+- CIは品質の一部を自動確認する教材であり、本番デプロイや組織向け運用設計までは対象外です。
+- `node_modules`、`.env`、Playwrightの生成物はGit管理しません。
 
-- Node.js / TypeScript / JavaScript
-- GitHub Actions（CI）
-- Playwright（E2E テスト）
-- Docker / Docker Compose
-- PostgreSQL（CI でのDB利用）
-
-## 補足
-
-- `node_modules`、`.env`（`.env.example` を除く）、テスト生成物などは `.gitignore` で除外しています。
-- 学習目的のため、設計文書とコードの粒度や完成度はテーマごとに異なります。
-## 文書完結型・重複テーマについて
-
-`devops10` は正規ルートを `StudyArchitecture arch02` とする重複テーマのため、詳細設計のみ残し、教材成果物は意図的に作成していません。
+このリポジトリは個人学習用で、Claude Code / CodexなどのAI支援も利用しています。完了とは「AIが作ったコードが動く」ではなく、確認対象、失敗時の切り分け、残る制約を自分の言葉で説明できる状態を指します。
