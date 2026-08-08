@@ -8,6 +8,7 @@
 - APIとDBを学ぶ: `base10` → `web13` → `db02` → `web16` → `web35` → `web42`
 - セキュリティを学ぶ: `security01` → `security02` → `security03` → `security05` → `security06` → `security17`
 - テストと運用を学ぶ: `devops02` → `devops03` → `devops04` → `devops06` → `devops07` → `devops09`
+- GitとPR中心のチーム開発を学ぶ: `base06` → `base07` → `base08` → `devops01` → `devops02`
 - AIシステムを学ぶ: `system17` → `system18` → `system22` → `system03` → `system31` → `system36` → `system44`
 - 開発工程を説明できるようにする: `base01` → `base03` → `base04` → `arch01` → `arch02` → `base11`
 
@@ -176,7 +177,7 @@
 - [base05 RACI・責任分担](./StudyBase/doc/learning_notes/base05_raci_responsibility_matrix/README.md)
 - [base06 Git基本操作](./StudyBase/doc/learning_notes/base06_git_basic/README.md)
 - [base07 Branch・merge・conflict](./StudyBase/doc/learning_notes/base07_branch_merge_conflict/README.md)
-- [base08 Issue・branch・PR・merge](./StudyBase/doc/learning_notes/base08_issue_branch_pr_merge/README.md)
+- [base08 Issue・branch・push・PR・merge・ローカル同期](./StudyBase/doc/learning_notes/base08_issue_branch_pr_merge/README.md)
 - [base09 npm scripts](./StudyBase/doc/learning_notes/base09_npm_scripts/README.md)
 - [base10 curlによるAPI確認](./StudyBase/doc/learning_notes/base10_curl_api_check/README.md)
 - [base11 ポートフォリオのデモ・説明](./StudyBase/doc/learning_notes/base11_portfolio_demo_presentation/README.md)

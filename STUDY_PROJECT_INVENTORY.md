@@ -13,7 +13,8 @@
 - StudyDevOpsはdevops01〜09を2つの学習経路に分けた初回改善が完了した。
 - StudyDBは7テーマを3段階の学習経路にまとめ、PostgreSQL教材の自動検証を追加した。
 - StudyAWSは10テーマを3段階の学習経路にまとめ、認証情報不要のローカル自動検証を追加した。
-- 次の改善対象はStudyBaseとする。
+- StudyBaseは12テーマを3段階の学習経路にまとめ、隔離された自動検証とローカルGiteaによるPR演習を追加した。
+- 次の改善対象はStudyAIの代表経路とする。
 - 番号体系外の小規模成果物も除外せず、Study Hubでは`StudyArea`単位の教材として扱う。
 - `StudyXX`以外のディレクトリは自動登録せず、必要なものだけ明示的に追加する。
 
@@ -40,7 +41,7 @@
 | StudyDevOps | 10 | 9 | 64 | 7 | devops01〜09の学習導線と自動CIがある。devops10はarch02への重複導線 | 代表シナリオの保守証跡を継続する |
 | StudyAWS | 10 | 10 | 48 | 0 | 3段階の学習経路、認証情報不要の10テーマ自動検証、実AWSとの境界がある | 実AWS発展課題はsandbox・予算・削除計画を確認してから個別に行う |
 | StudyDB | 7 | 7 | 36 | 0 | 3段階の学習経路、15分の再開手順、隔離されたPostgreSQL自動検証がある | 学習記録を蓄積し、代表SQLの説明課題を継続改善する |
-| StudyBase | 12 | 11 | 25 | 1 | 文書完結型と小規模実習が混在する。base12はarch01への重複導線 | 他分野の前提として推奨順と到達条件を整理する |
+| StudyBase | 12 | 11 | 31 | 1 | 3段階の学習経路、15分の再開手順、隔離された自動検証、任意のGitea PR演習がある。base12はarch01への重複導線 | 学習記録を蓄積し、実GitHub演習は公開対象と権限を確認して個別に行う |
 | StudyAI | 48 | 5 | 574 | 58 | 最大の看板領域。個別アプリと共通ハーネスが混在する | 全件一括ではなく、RAG・AI基礎評価・業務AI・エージェントの経路別に改善する |
 | StudyArchitecture | 2 | 2 | 0 | 0 | 意図した文書完結型 | 設計レビューの入力例と説明演習を強化する |
 | StudyDesktop | 1 | 1 | 15 | 0 | Electron教材とGUI確認手順がある | 再開手順、OS依存条件、失敗時の復旧を一画面にまとめる |
@@ -100,13 +101,22 @@ devops01〜05にはCIとテストの学習導線、devops06〜09には可観測�
 
 全10テーマへ予想、観察、説明、完了条件を追加しました。標準経路はAWS認証情報と外部通信を使わず、テーマ単位または一括でローカル検証できます。実AWSはsandbox、予算、最小権限、削除確認を伴う発展課題として分離します。
 
-### 5. StudyBase（次の改善対象）とStudyAI
+### 5. StudyBase（初回改善完了）
 
-- StudyBaseは、他分野へ進む前の推奨経路を短く整理する。
+| 学習段階 | 対象 | 主な問い |
+|---|---|---|
+| Clarify and plan | base01〜05 | 不確実な依頼を、前提・根拠・責任・完了条件へどう分解するか |
+| Version control | base06〜08 | 差分を安全に作り、review可能な証拠としてmainへ統合するにはどうするか |
+| Execute and explain | base09〜11 | command、API、demoを使って、動作と理解をどう説明するか |
+
+全テーマへ再開手順と完了条件を追加しました。base06〜07は一時Git repository、base09〜10は小規模Node.js実装として自動検証し、base08はGiteaを社内Gitサーバーに見立ててIssue、branch、push、PR、review、merge、ローカルmain同期を演習できます。base12は重複実装せず、`StudyArchitecture arch01`を正規ルートとします。
+
+### 6. StudyAI（次の改善対象）
+
 - StudyAIは48テーマを一括編集せず、代表経路を選んで段階的に改善する。
 - StudyAIの優先経路は、RAG、AI基礎と評価、業務AI、エージェント実装とする。
 
-### 6. 独立プロダクトと小規模教材
+### 7. 独立プロダクトと小規模教材
 
 StudyFabel（StudyHub移行時の名称は`StudyIdeaForge`）をデモ可能な独立成果として磨いた後、StudyArchitecture、StudyDesktop、StudyAIIdeaGeneration、StudyAICorporateEmployee、StudyAPIをそれぞれの成果物形式に合わせて整理します。
 

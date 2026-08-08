@@ -17,7 +17,7 @@
 | base05 | RACI / 責任分界表 | `../basic_design/base05_basic_design.md` | `base05_detailed_design.md` |
 | base06 | Git基本操作 | `../basic_design/base06_basic_design.md` | `base06_detailed_design.md` |
 | base07 | branch / merge / conflict | `../basic_design/base07_basic_design.md` | `base07_detailed_design.md` |
-| base08 | Issue -> branch -> PR -> merge | `../basic_design/base08_basic_design.md` | `base08_detailed_design.md` |
+| base08 | Issue -> branch -> push -> PR -> merge -> sync | `../basic_design/base08_basic_design.md` | `base08_detailed_design.md` |
 | base09 | npm scripts | `../basic_design/base09_basic_design.md` | `base09_detailed_design.md` |
 | base10 | curl API確認 | `../basic_design/base10_basic_design.md` | `base10_detailed_design.md` |
 | base11 | Portfolio demo presentation | `../basic_design/base11_basic_design.md` | `base11_detailed_design.md` |

@@ -24,6 +24,22 @@
 
 仮称は`Study Hub`とします。
 
+### 2.1 上位構想候補（未確定）
+
+将来的にはStudy Hub単体ではなく、IT業界向け人材育成プラットフォームへ発展させる案を検討します。この場合もStudy Hubは廃止せず、教材カタログ、学習進捗、復習管理を担う最初の中核moduleとして位置付けます。
+
+```text
+IT業界向け人材育成プラットフォーム
+├── Study Hub              教材カタログ・学習進捗・復習管理
+├── Practice Lab           Web・AI・DB・Security・AWS等の実行演習
+├── Project Lab            実アプリ開発・上流工程・QCD・変更管理
+├── Coding Agent Lab       Codex・Claude Code等の開発演習
+├── Knowledge Library      電子書籍取り込み・要約・教材との関連付け
+└── Skill Portfolio        習得技術・成果物・説明・検証証拠
+```
+
+これは長期的な上位構想の候補であり、現在のPhase 0、MVP、レポジトリ名、ディレクトリ構成を変更する決定ではありません。まず個人向けStudy Hubを成立させ、実行演習、開発管理、skill評価、複数利用者対応の順に必要性を再評価します。
+
 ## 3. 基本方針
 
 ### 3.1 `category/` 配下でも教材の独立性を保つ
@@ -214,6 +230,9 @@ study-hub/                         リポジトリルート
 | 環境差 | Node、Python、Docker、AWS等の前提をどう表示するか |
 | データ持運び | SQLiteのバックアップとGit非公開情報をどう分けるか |
 | 公開範囲 | ポートフォリオ表示と個人学習記録をどう分離するか |
+| AIコーディングエージェント教材 | Codex、Claude Code等のcommand、skill、project指示、権限、継続実行、Git連携を、`StudyAI`内のテーマとするか独立した`StudyCodingAgents`候補とするか。現時点では調査・分類・実装を行わない |
+| アプリ開発・上流工程管理学習 | 実際のアプリ開発を教材として、企画、要件定義、scope、見積り、WBS、QCD、進捗、役割、risk・課題、変更・意思決定、review・承認gate等を管理し、一般的なシステム開発管理を実地体験できる機能を検討する。Study Hubの学習機能に含めるか、`StudyProjectManagement`や`ProjectOps`等の別領域に分けるかは未決定とし、現時点では調査・要件化・実装を行わない |
+| 製品範囲 | Study Hubを個人学習管理に留めるか、Practice Lab、Project Lab、Coding Agent Lab、Knowledge Library、Skill Portfolioを含むIT業界向け人材育成プラットフォームへ段階的に拡張するか |
 
 ## 11. 実装開始前に行うこと
 
@@ -239,3 +258,5 @@ study-hub/                         リポジトリルート
 - `Study`で始まる13ディレクトリを標準のStudyAreaとし、それ以外は明示的に追加します。
 - Study Hub改修前に、レポジトリ名を `study-portfolio` から `study-hub` へ変更します。
 - 現在はPhase 0を進め、Study Hub本体の実装は将来タスクとします。
+- AIコーディングエージェント教材と、実際のアプリ開発を通じて特に上流工程の管理知識を学ぶ機能は将来の検討課題とし、現在のPhase 0およびMVPの確定要件には含めません。
+- IT業界向け人材育成プラットフォームは上位構想候補として記録しますが、現在はStudy Hubを最初の中核moduleとして成立させる方針を維持します。
