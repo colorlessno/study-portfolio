@@ -1,34 +1,45 @@
 # StudyDB common DB
 
-`StudyDB db02、db04、db05、db06` で共通利用する PostgreSQL 教材環境。
-db01、db03、db07 は文書・サンプル中心の教材であり、この共通SQL実行入口の対象外とする。
-## 方針
-- service名は `db`。
-- databaseは `studydb`。
-- user/passwordは教材用固定値 `postgres/postgres`。
-- volumeは `studydb_db`。
-- PowerShell script は使わず、DOS窓で使える `.cmd` を実行入口にする。
-## 起動
+`db02`、`db04`、`db05`、`db06` が共通利用するローカルPostgreSQL教材環境です。以下のコマンドはすべてリポジトリルートから実行します。
+
+## 前提
+
+- Docker Desktop が起動していること。
+- serviceは `db`、databaseは `studydb`。
+- user/passwordはローカル教材専用の `postgres/postgres`。
+- `db01`、`db03`、`db07` は文書完結型のため対象外。
+
+## 起動とSQL実行
+
 ```cmd
-cd .\src\apps\common
-docker compose up -d db
-docker compose ps
+docker compose -f StudyDB\src\apps\common\docker-compose.yml up -d --wait --wait-timeout 30 db
+StudyDB\src\apps\common\scripts\run-sql.cmd db02 sql\001_schema.sql
+StudyDB\src\apps\common\scripts\run-sql.cmd db02 sql\002_seed.sql
 ```
 
-## SQL実行
-```cmd
-scripts\run-sql.cmd db02 sql\001_schema.sql
-scripts\run-sql.cmd db02 sql\002_seed.sql
-```
+`run-sql.cmd` の第1引数は教材番号、第2引数はその教材フォルダからの相対SQLパスです。スクリプト自身がComposeファイルの場所を解決するため、リポジトリルートから実行できます。
 
-引数1は `apps` 配下の教材番号、引数2は教材フォルダからの相対SQLパス。
 ## 停止
 
+データを次回も残す場合:
+
 ```cmd
-docker compose down
+docker compose -f StudyDB\src\apps\common\docker-compose.yml down
 ```
 
-volumeも消す場合だけ次を使う。
+教材データを初期化すると決めた場合だけ、volumeも削除します。
+
 ```cmd
-docker compose down -v
+docker compose -f StudyDB\src\apps\common\docker-compose.yml down --volumes
 ```
+
+## 自動検証
+
+短い再開確認にはテーマを指定します。引数を省略すると4テーマを一括検証します。
+
+```cmd
+node StudyDB\scripts\validate-studydb.mjs db02
+node StudyDB\scripts\validate-studydb.mjs
+```
+
+自動検証は通常の教材環境と分離したComposeプロジェクトを作り、終了時にコンテナとvolumeを削除します。

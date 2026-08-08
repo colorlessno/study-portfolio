@@ -1,4 +1,5 @@
 SET search_path TO db04;
+SET idle_in_transaction_session_timeout = '60s';
 
 BEGIN;
 UPDATE products
@@ -10,4 +11,3 @@ RETURNING id, name, stock;
 -- Then finish with either:
 -- COMMIT;
 -- ROLLBACK;
-

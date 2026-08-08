@@ -32,7 +32,7 @@ doc/learning_notes/db04_transaction_lock_isolation/
 | DB | PostgreSQL 16 alpine |
 | database | `studydb` |
 | 実行方式 | 2つのpsqlセッションを使う |
-| 起動方式 | `StudyDB/src/src/apps/common` の共通DB構成を使う |
+| 起動方式 | `StudyDB/src/apps/common` の共通DB構成を使う |
 | 前提 | 教材DBのみを操作する |
 
 ## 3. テーブル設計
@@ -48,8 +48,8 @@ doc/learning_notes/db04_transaction_lock_isolation/
 | `001_schema.sql` | products、orders、transaction_eventsを作成 |
 | `002_seed.sql` | 在庫数を持つ商品を投入 |
 | `003_commit_rollback.sql` | 正常commitと途中失敗rollbackを確認 |
-| `004_concurrent_update_session_a.sql` | session Aで在庫行を更新しcommitを待機 |
-| `005_concurrent_update_session_b.sql` | session Bで同じ行を更新しlock waitを観察 |
+| `004_concurrent_update_session_a.sql` | session Aで在庫行を更新し、60秒のアイドル制限内でcommitまたはrollbackを待つ |
+| `005_concurrent_update_session_b.sql` | session Bで同じ行を更新し、5秒のlock timeoutを観察 |
 | `006_isolation_observation.sql` | 分離レベルごとの観察メモ用SQL |
 
 ## 5. 同時実行手順
@@ -58,7 +58,7 @@ doc/learning_notes/db04_transaction_lock_isolation/
 | 1 | `BEGIN;` | 待機 |
 | 2 | 対象商品の在庫を更新 | 待機 |
 | 3 | commitせず状態を保持 | `BEGIN;` |
-| 4 | 待機 | 同じ商品を更新しlock waitを観察 |
+| 4 | 待機 | 同じ商品を更新し、5秒でlock timeoutになることを観察 |
 | 5 | `COMMIT;` または `ROLLBACK;` | 更新結果を確認 |
 
 ## 6. 分離レベル表設計
@@ -85,4 +85,4 @@ doc/learning_notes/db04_transaction_lock_isolation/
 
 - 教材DB以外では実行しない
 - 破壊操作はseed済み教材データに限定する
-- 2セッション手順は詳細に記録し、途中状態を放置しない
+- 2セッション手順は詳細に記録し、session Aを必ずcommitまたはrollbackして途中状態を放置しない

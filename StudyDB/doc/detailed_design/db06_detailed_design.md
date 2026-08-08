@@ -37,7 +37,7 @@ doc/learning_notes/db06_backup_restore_migration/
 |---|---|
 | DB | PostgreSQL 16 alpine |
 | database | `studydb` |
-| 起動方式 | `StudyDB/src/src/apps/common` の共通DB構成を使う |
+| 起動方式 | `StudyDB/src/apps/common` の共通DB構成を使う |
 | backup形式 | `pg_dump` のplain SQL |
 | restore先 | 同一compose内の別databaseまたは再作成DB |
 
@@ -60,9 +60,9 @@ doc/learning_notes/db06_backup_restore_migration/
 
 ## 5. backup / restore コマンド設計
 ```cmd
-docker compose exec db pg_dump -U postgres -d studydb --file=/backups/studydb_before_migration.sql
-docker compose exec db createdb -U postgres studydb_restore
-docker compose exec db psql -U postgres -d studydb_restore -f /backups/studydb_before_migration.sql
+docker compose -f StudyDB\src\apps\common\docker-compose.yml exec db pg_dump -U postgres -d studydb --schema=db06 --file=/backups/studydb_db06_before_migration.sql
+docker compose -f StudyDB\src\apps\common\docker-compose.yml exec db createdb -U postgres studydb_restore
+docker compose -f StudyDB\src\apps\common\docker-compose.yml exec db psql -U postgres -d studydb_restore -f /backups/studydb_db06_before_migration.sql
 ```
 
 ## 6. migration checklist 設計

@@ -16,13 +16,13 @@
 | db07 | NoSQL / cache / search / DWH 比較 | `db07_detailed_design.md` | `../basic_design/db07_basic_design.md` |
 
 ## 共通実装方針
-- SQL実行を伴う db02、db04、db05、db06 は `StudyDB/src/src/apps/common` 相当の共通DB構成を使い、PostgreSQL コンテナを基本実行環境とする。
+- SQL実行を伴う db02、db04、db05、db06 は `StudyDB/src/apps/common` の共通DB構成を使い、PostgreSQLコンテナを基本実行環境とする。
 - db01 と db07 は文書中心とし、必要な比較データを Markdown / CSV / JSON で定義する。
 - SQL、seed、確認ログは教材データのみを扱う。
 - 実個人情報、実秘密情報、実顧客データを含めない。
 - 作成・更新するテキストファイルは UTF-8 BOMなしとする。
 ## 共通DB構成方針
-ユーザー回答により、SQL実行を伴う db02、db04、db05、db06 は個別composeではなく、`StudyDB/src/src/apps/common` 相当の共通DB構成を使う。
+ユーザー回答により、SQL実行を伴う db02、db04、db05、db06 は個別composeではなく、`StudyDB/src/apps/common` の共通DB構成を使う。
 ```text
 StudyDB/
   apps/
@@ -47,4 +47,4 @@ SQL実行を伴う db02、db04、db05、db06 の教材は、個別にDBコンテ
 | SQL mount | `/work/sql` | 教材SQLをテーマ別に渡す共通マウント先 |
 
 ## 製造状況
-2026-05-07 に、上記方針に沿って `StudyDB/src/src/apps/common`、db02/db04/db05/db06 のSQL教材、db01-db07 の学習メモを作成した。
+2026-05-07 に、上記方針に沿って `StudyDB/src/apps/common`、db02/db04/db05/db06 のSQL教材、db01-db07 の学習メモを作成した。
