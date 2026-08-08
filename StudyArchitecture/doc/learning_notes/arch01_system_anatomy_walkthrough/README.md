@@ -6,6 +6,22 @@
 
 この単元は system anatomy 系の正規ルートである。`StudyBase base12` は重複候補として残すが、実装はここから始める。
 
+## 15分で再開する
+
+最初は`StudyDevOps devops07`を入力例として使います。
+
+| 入力 | 値 |
+|---|---|
+| 対象 | `StudyDevOps/src/apps/devops07_health_check_endpoint` |
+| user・operatorから見える動作 | Dockerが`/health`をprobeし、利用者が`/ready`でdependency状態を確認する |
+| 最初に読むsource | `app/server.js`、`docker-compose.yml`、`tests/health.test.js` |
+| 今回追うflow | Docker healthcheck → Node.js route → JSON response |
+
+1. `docs/example_devops07_system_anatomy.md`の「request と data の流れ」を読む。
+2. 表の各stepについて、上記sourceのどこが証拠かを1か所ずつ確認する。
+3. `/health`と`/ready`を分けた理由を、確認済み事実と推測に分けて2文で説明する。
+4. 次回は別の小さなStudyWebまたはStudyDevOps sampleへtemplateをコピーする。
+
 ## 学習順
 
 1. 小さな StudyWeb または StudyDevOps サンプルを対象に選ぶ。
@@ -26,6 +42,13 @@
 - logs と health checks
 - browser または curl の観察結果
 - 記入例: `docs/example_devops07_system_anatomy.md`
+
+## 説明演習
+
+- context、container、componentを同じ粒度で並べると何が分かりにくくなるか。
+- hostからのrequestとcontainer内部のhealthcheckでは、通るnetwork経路がどう違うか。
+- `/ready`が503で`/health`が200の状態を、故障ではなく設計された状態として説明できるか。
+- sourceから確認できない設計意図を、断定せずdecision noteへどう書くか。
 
 ## 完了条件
 
