@@ -1,20 +1,20 @@
-name: StudyAI foundations validation
+name: StudyAI learning validation
 
 on:
   push:
     paths:
       - "StudyAI/**"
-      - ".github/workflows/studyai-foundations-validation.yml"
+      - ".github/workflows/studyai-learning-validation.yml"
   pull_request:
     paths:
       - "StudyAI/**"
-      - ".github/workflows/studyai-foundations-validation.yml"
+      - ".github/workflows/studyai-learning-validation.yml"
 
 permissions:
   contents: read
 
 concurrency:
-  group: studyai-foundations-${{ github.workflow }}-${{ github.ref }}
+  group: studyai-learning-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:

@@ -22,6 +22,15 @@
 - [system29 Chunk metadata設計](system29_chunk_metadata_design/README.md)
 - [system30 重複文書検出](system30_duplicate_document_detection/README.md)
 
+## 評価・再現性
+
+- [system31 Ground truth作成](system31_ground_truth_creation/README.md)
+- [system32 RAG評価set](system32_rag_evaluation_set/README.md)
+- [system33 Retrieval評価](system33_retrieval_evaluation/README.md)
+- [system34 Answer評価](system34_answer_evaluation/README.md)
+- [system35 Prompt A/B比較](system35_prompt_ab_comparison/README.md)
+- [system36 Trace保存](system36_trace_storage/README.md)
+
 ## 実アプリ・Agent
 
 - [system03 プロジェクト文書の自然言語Q&A](system03_project_document_qa/README.md)

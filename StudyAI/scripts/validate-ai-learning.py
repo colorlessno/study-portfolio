@@ -127,6 +127,55 @@ def validate_system30(result: dict[str, Any]) -> None:
         require(group["document_id"] not in group["matches"], "system30 must not match a document to itself")
 
 
+def validate_system31(result: dict[str, Any]) -> None:
+    output = result["result"]
+    require(output["case"] == result["input"], "system31 must preserve the evaluation case")
+    require(output["case_id"].startswith("case-"), "system31 case id is invalid")
+    require(output["review_status"] == "draft", "system31 default case must start as draft")
+
+
+def validate_system32(result: dict[str, Any]) -> None:
+    output = result["result"]
+    rows = output["case_results"]
+    require(len(rows) == len(result["input"]["cases"]), "system32 must return every evaluation case")
+    require(all({"case", "retrieval_hit", "answer_score"} <= row.keys() for row in rows), "system32 case result is incomplete")
+    require(output["regression_diff"]["baseline"] == result["input"]["run_label"], "system32 baseline label is invalid")
+
+
+def validate_system33(result: dict[str, Any]) -> None:
+    output = result["result"]
+    expected = set(result["input"]["expected_evidence"])
+    retrieved = set(result["input"]["retrieval_results"])
+    expected_recall = len(expected & retrieved) / max(1, len(expected))
+    require(output["recall_at_k"]["k"] == len(result["input"]["retrieval_results"]), "system33 k must match result count")
+    require(output["recall_at_k"]["recall"] == expected_recall, "system33 recall is invalid")
+    require(output["hit_rate"] == (1.0 if expected & retrieved else 0.0), "system33 hit rate is invalid")
+
+
+def validate_system34(result: dict[str, Any]) -> None:
+    output = result["result"]
+    scores = output["score_breakdown"]
+    require({"correctness", "groundedness"} <= scores.keys(), "system34 score breakdown is incomplete")
+    require(all(0 <= score <= 1 for score in scores.values()), "system34 scores must be bounded")
+    require(scores["correctness"] == 1.0 and scores["groundedness"] == 1.0, "system34 default answer must pass both checks")
+    require(isinstance(output["risk_flags"], list), "system34 risk flags must be a list")
+
+
+def validate_system35(result: dict[str, Any]) -> None:
+    output = result["result"]
+    require(output["winner"] in {"A", "B"}, "system35 winner is invalid")
+    require(set(output["score_diff"]) == {"A", "B"}, "system35 must score both prompts")
+    require(output["changed_cases"] == result["input"]["cases"], "system35 must preserve evaluation cases")
+    require(output["winner"] == "B", "system35 default mock must select prompt B")
+
+
+def validate_system36(result: dict[str, Any]) -> None:
+    output = result["result"]
+    require(output["trace_id"].startswith("trace-"), "system36 trace id is invalid")
+    require(output["trace_record"] == result["input"], "system36 must preserve the trace record")
+    require(bool(output["replay_note"]), "system36 must provide a replay note")
+
+
 SYSTEM_VALIDATORS: dict[str, Callable[[dict[str, Any]], None]] = {
     "system17": validate_system17,
     "system18": validate_system18,
@@ -142,6 +191,12 @@ SYSTEM_VALIDATORS: dict[str, Callable[[dict[str, Any]], None]] = {
     "system28": validate_system28,
     "system29": validate_system29,
     "system30": validate_system30,
+    "system31": validate_system31,
+    "system32": validate_system32,
+    "system33": validate_system33,
+    "system34": validate_system34,
+    "system35": validate_system35,
+    "system36": validate_system36,
 }
 
 
