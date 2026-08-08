@@ -11,6 +11,17 @@
 - [system21 Temperature比較](system21_temperature_comparison/README.md)
 - [system22 RAG chunkサイズ比較](system22_rag_chunk_size_comparison/README.md)
 
+## 品質観察・前処理
+
+- [system23 Reranker比較](system23_reranker_comparison/README.md)
+- [system24 複数model比較](system24_multi_model_comparison/README.md)
+- [system25 出力制御比較](system25_output_control_comparison/README.md)
+- [system26 量子化比較](system26_quantization_comparison/README.md)
+- [system27 VLM画像size比較](system27_vlm_image_size_accuracy/README.md)
+- [system28 OCR結果の正規化](system28_ocr_result_normalization/README.md)
+- [system29 Chunk metadata設計](system29_chunk_metadata_design/README.md)
+- [system30 重複文書検出](system30_duplicate_document_detection/README.md)
+
 ## 実アプリ・Agent
 
 - [system03 プロジェクト文書の自然言語Q&A](system03_project_document_qa/README.md)
