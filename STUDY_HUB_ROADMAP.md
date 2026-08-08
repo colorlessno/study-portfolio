@@ -26,9 +26,9 @@
 
 ## 3. 基本方針
 
-### 3.1 既存教材を一つの巨大アプリへ移動しない
+### 3.1 `category/` 配下でも教材の独立性を保つ
 
-`StudyWeb`、`StudyAI`、`StudySecurity`等は、分野ごとの教材・設計・実装として現在の構成を維持します。Study Hubは、それらを横断して索引化・表示・管理する上位レイヤーとします。
+Study Hub改修時に、`StudyWeb`、`StudyAI`、`StudySecurity`等のStudyAreaを`category/`配下へ移動します。ただし、それぞれの内部を一つの巨大アプリへ統合せず、分野ごとの教材・設計・実装として独立性を維持します。`study-hub/`は、それらを横断して索引化・表示・管理する上位レイヤーとします。
 
 ### 3.2 教材定義と個人進捗を分離する
 
@@ -106,16 +106,17 @@ area: StudyWeb
 title: props / state / list表示
 kind: implementation
 level: beginner
+root: category/StudyWeb
 tags:
   - React
   - TypeScript
 artifacts:
-  requirements: doc/requirements/web09_props_state_list_requirements.md
-  basic_design: doc/basic_design/web09_basic_design.md
-  detailed_design: doc/detailed_design/web09_detailed_design.md
-  learning_note: doc/learning_notes/web09_props_state_list/README.md
+  requirements: category/StudyWeb/doc/requirements/web09_props_state_list_requirements.md
+  basic_design: category/StudyWeb/doc/basic_design/web09_basic_design.md
+  detailed_design: category/StudyWeb/doc/detailed_design/web09_detailed_design.md
+  learning_note: category/StudyWeb/doc/learning_notes/web09_props_state_list/README.md
 run:
-  cwd: src/frontend/src/studyweb/systems/web09_props_state_list
+  cwd: category/StudyWeb/src/frontend/src/studyweb/systems/web09_props_state_list
   start: npm run dev
   verify: npm test -- web09
   stop: managed-process
@@ -127,21 +128,32 @@ status: available
 
 ## 7. 推奨アーキテクチャ
 
+目標とするレポジトリ構成は次のとおりです。
+
 ```text
-StudyXX群
-  ↓ metadata scanner
-教材カタログ
-  ↓
-Study Hub Web UI
-  ├─ ダッシュボード
-  ├─ テーマ詳細
-  ├─ 検索・フィルタ
-  └─ 学習記録
-        ↓
-      SQLite
+study-hub/                         リポジトリルート
+├── category/                      学習カテゴリー
+│   ├── StudyWeb/
+│   ├── StudyAI/
+│   ├── StudyDB/
+│   ├── StudySecurity/
+│   ├── StudyAWS/
+│   ├── StudyDevOps/
+│   ├── StudyBase/
+│   ├── StudyArchitecture/
+│   ├── StudyDesktop/
+│   ├── StudyIdeaForge/
+│   ├── StudyAIIdeaGeneration/
+│   ├── StudyAICorporateEmployee/
+│   └── StudyAPI/
+├── study-hub/                     管理画面・進捗管理アプリ
+├── catalog/                       テーマのメタデータ
+└── scripts/                       構造検証・起動支援
 ```
 
-初期候補はNext.js + TypeScript + SQLite + Prismaです。既存リポジトリを走査するindexerは、アプリ本体から分離したスクリプトとします。
+13個のStudyAreaはすべて`category/`直下へ並列に配置します。`scripts/`のindexerが`category/`を走査して`catalog/`を生成・検証し、`study-hub/`がカタログとSQLiteの個人進捗を表示します。初期候補はNext.js + TypeScript + SQLite + Prismaです。
+
+現在のStudyAreaを`category/`へ移動するときは、履歴を保つ移動として別PRで実施し、文書リンク、GitHub Actionsのpaths、検証スクリプト、実行時の作業ディレクトリを同時に更新します。現在の`StudyFabel`は、収録する単独プロダクト名に合わせて`StudyIdeaForge`へ変更します。
 
 ## 8. 段階的な実装計画
 
@@ -210,18 +222,20 @@ Study Hub Web UI
 3. 代表テーマで起動・動作確認・停止・タイムアウトを試し、Study Hubなしでも直接利用できることを確認する。
 4. Study Hub本体の改修を始める前に、GitHubのレポジトリ名を `study-portfolio` から `study-hub` へ変更する。
 5. 名称変更後に、ローカルの`origin`、README、CI、バッジ、文書内リンク、公開URLの参照先を確認して更新する。
-6. ユーザー利用シナリオを3〜5件に絞る。
-7. 既存テーマを10件だけ選び、確定したインターフェースでメタデータ試作を行う。
-8. `THEME_CATALOG.md`との正本関係を決める。
-9. DBを使わないPhase 1の画面モックを確認する。
-10. 承認後にアプリのディレクトリと技術構成を確定する。
+6. `category/`を作り、13のStudyAreaを配下へ移動する。このとき`StudyFabel`は`StudyIdeaForge`へ名称変更する。
+7. 移動に伴う文書リンク、CI、検証スクリプト、実行パスを更新し、構造検証を通す。
+8. ユーザー利用シナリオを3〜5件に絞る。
+9. 既存テーマを10件だけ選び、確定したインターフェースでメタデータ試作を行う。
+10. `THEME_CATALOG.md`との正本関係を決める。
+11. DBを使わないPhase 1の画面モックを確認する。
+12. 承認後にアプリのディレクトリと技術構成を確定する。
 
-1〜5はStudy Hub改修前の実装ゲートとします。物理ディレクトリ分割は必須条件にせず、単体利用契約と安全な後片付けを満たせるかで判定します。レポジトリ名の変更はこの文書への記録だけでは完了とせず、GitHub上の名称変更と参照先の検証をもって完了とします。
+1〜7はStudy Hub改修前の実装ゲートとします。各StudyAreaの内部を分割することは必須条件にせず、単体利用契約と安全な後片付けを満たせるかで判定します。レポジトリ名とディレクトリ構成の変更はこの文書への記録だけでは完了とせず、GitHub上の名称変更、`category/`への移動、参照先の検証をもって完了とします。
 
 ## 12. 現在の判断
 
 - 統合学習ツール化は実現可能で、ポートフォリオと学習継続の両方に有効です。
-- 物理的なソース統合ではなく、メタデータと管理画面による論理統合を推奨します。
+- StudyAreaは`category/`配下へ物理的に整理しますが、各StudyAreaの内部は統合せず、メタデータと管理画面で論理統合します。
 - `Study`で始まる13ディレクトリを標準のStudyAreaとし、それ以外は明示的に追加します。
 - Study Hub改修前に、レポジトリ名を `study-portfolio` から `study-hub` へ変更します。
 - 現在はPhase 0を進め、Study Hub本体の実装は将来タスクとします。
