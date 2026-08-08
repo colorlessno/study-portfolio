@@ -58,13 +58,90 @@ def validate_system22(result: dict[str, Any]) -> None:
     require(output["chunk_count"] > 1, "system22 default input must create multiple chunks")
 
 
-FOUNDATION_VALIDATORS: dict[str, Callable[[dict[str, Any]], None]] = {
+def validate_system23(result: dict[str, Any]) -> None:
+    output = result["result"]
+    before = output["before"]
+    after = output["after"]
+    require(len(before) == len(after), "system23 must preserve the candidate count")
+    require({row["text"] for row in before} == {row["text"] for row in after}, "system23 must preserve candidates")
+    require(result["input"]["query"] in after[0]["text"], "system23 must promote the exact phrase candidate")
+
+
+def validate_system24(result: dict[str, Any]) -> None:
+    output = result["result"]
+    rows = output["model_results"]
+    models = result["input"]["models"]
+    require([row["model"] for row in rows] == models, "system24 must return every model profile")
+    require(output["selected_model"] in models, "system24 selected model must be one of the candidates")
+    require(all({"quality", "latency_ms", "cost_index"} <= row.keys() for row in rows), "system24 metrics are incomplete")
+
+
+def validate_system25(result: dict[str, Any]) -> None:
+    rows = result["result"]["matrix_results"]
+    expected = {
+        (max_tokens, temperature)
+        for max_tokens in result["input"]["max_tokens_values"]
+        for temperature in result["input"]["temperatures"]
+    }
+    actual = {(row["max_tokens"], row["temperature"]) for row in rows}
+    require(actual == expected, "system25 must execute the full configuration matrix")
+    require(all(len(row["output"]) <= row["max_tokens"] * 4 for row in rows), "system25 mock output exceeded its character cap")
+
+
+def validate_system26(result: dict[str, Any]) -> None:
+    rows = result["result"]["profile_results"]
+    require([row["profile"] for row in rows] == result["input"]["profiles"], "system26 must preserve profile order")
+    require(all({"memory_index", "speed_index", "quality_index"} <= row.keys() for row in rows), "system26 profile metrics are incomplete")
+
+
+def validate_system27(result: dict[str, Any]) -> None:
+    rows = result["result"]["variant_results"]
+    require(len(rows) == len(result["input"]["image_variants"]), "system27 must return every image variant")
+    require(all(0 <= row["estimated_accuracy"] <= 1 for row in rows), "system27 estimated accuracy must be bounded")
+    require(rows[-1]["estimated_accuracy"] > rows[0]["estimated_accuracy"], "system27 default large image must score above small")
+
+
+def validate_system28(result: dict[str, Any]) -> None:
+    output = result["result"]
+    normalized = output["normalized_text"]
+    require("O3" not in normalized and "03" in normalized, "system28 must apply the O-to-zero rule")
+    require("  " not in normalized and "　" not in normalized, "system28 must normalize whitespace")
+    require(output["diffs"][0]["after"] == normalized, "system28 diff must contain the normalized text")
+
+
+def validate_system29(result: dict[str, Any]) -> None:
+    output = result["result"]
+    chunk = output["chunks"][0]
+    metadata = result["input"]["metadata"]
+    require(chunk["metadata"] == metadata, "system29 must preserve chunk metadata")
+    require(output["citation_preview"] == [f"{metadata['source']}#{metadata['page']}"], "system29 citation preview is invalid")
+
+
+def validate_system30(result: dict[str, Any]) -> None:
+    groups = result["result"]["duplicate_groups"]
+    valid_ids = {f"doc-{index + 1}" for index, _ in enumerate(result["input"]["documents"])}
+    require(bool(groups), "system30 default input must return review candidates")
+    for group in groups:
+        require(group["document_id"] in valid_ids, "system30 returned an unknown document id")
+        require(set(group["matches"]) <= valid_ids, "system30 returned an unknown match id")
+        require(group["document_id"] not in group["matches"], "system30 must not match a document to itself")
+
+
+SYSTEM_VALIDATORS: dict[str, Callable[[dict[str, Any]], None]] = {
     "system17": validate_system17,
     "system18": validate_system18,
     "system19": validate_system19,
     "system20": validate_system20,
     "system21": validate_system21,
     "system22": validate_system22,
+    "system23": validate_system23,
+    "system24": validate_system24,
+    "system25": validate_system25,
+    "system26": validate_system26,
+    "system27": validate_system27,
+    "system28": validate_system28,
+    "system29": validate_system29,
+    "system30": validate_system30,
 }
 
 
@@ -76,8 +153,8 @@ def validate(system_ids: list[str], show_output: bool) -> None:
         require(run["run_id"].startswith(f"{system_id}-"), f"{system_id} returned an invalid run id")
         require(bool(run["result"]), f"{system_id} returned an empty result")
         require(service.list_runs(system_id)[0]["run_id"] == run["run_id"], f"{system_id} run history was not updated")
-        if system_id in FOUNDATION_VALIDATORS:
-            FOUNDATION_VALIDATORS[system_id](run)
+        if system_id in SYSTEM_VALIDATORS:
+            SYSTEM_VALIDATORS[system_id](run)
         print(f"PASS {system_id}: {run['title']} ({run['category']})")
         if show_output:
             print(json.dumps(run, ensure_ascii=False, indent=2))
