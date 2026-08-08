@@ -6,8 +6,32 @@ AI システム開発を、**要件定義 → 基本設計 → 詳細設計 → 
 
 - [リポジトリ全体の学習再開ガイド](../LEARNING_GUIDE.md)
 - [全テーマカタログ](../THEME_CATALOG.md)
+- [StudyAI 学習ノート一覧](./doc/learning_notes/README.md)
 - [system03 RAG Q&A 学習ハブ](./doc/learning_notes/system03_project_document_qa/README.md)
 - [AIシステム開発 学習ロードマップ](./doc/requirements/index.md)
+
+## 推奨学習経路
+
+48テーマを番号順に一括学習せず、目的別の経路として往復します。同じテーマが複数経路の前提になる場合は重複して参照します。
+
+| 経路 | 対象 | 到達する問い |
+|---|---|---|
+| AI基礎・評価 | system17、19〜21、24〜28、31、34〜36、44 | 入出力、model設定、評価、traceをどの証拠から判断するか |
+| RAG・検索品質 | system18、22〜23、29〜30、32〜33、03 | 文書をどう分割・検索・評価し、根拠付き回答へつなぐか |
+| 業務AI | system01〜02、04〜07、14〜16、37〜43、47 | AIの役割と業務ロジック、read-only境界、人間判断をどう分けるか |
+| Agent実装・運用 | system08〜13、45〜46、48 | tool、状態、停止条件、承認、引き継ぎをどう設計するか |
+
+最初は外部LLM・DB・networkを使わない`system17〜22`から始めます。共通ハーネスは概念観察用の決定的シミュレーションであり、実modelのtokenizer、embedding、attention、生成結果そのものではありません。
+
+## 15分で再開する
+
+Python 3.11以上を使用し、リポジトリルートで次を実行します。外部package、API key、DBは不要です。
+
+```powershell
+python StudyAI\scripts\validate-ai-learning.py system17 --show-output
+```
+
+出力の`input`、`result`、`observation`を一つずつ読み、実modelで確認した事実とローカルシミュレーションによる推測を混同していないか説明します。Python環境を用意していない場合は、既存の`backend-test` Docker Compose serviceを使う発展手順へ進みます。
 
 ## 本リポジトリについて
 
@@ -67,6 +91,15 @@ docker compose up -d
 > **データベース接続情報について**: `docker-compose.yml` や設定の既定値に含まれる `postgres / postgres` は、**ローカル開発用の慣例的なデフォルト**です。本番等で利用する場合は `DATABASE_URL` 等の環境変数で上書きしてください。
 
 ## テスト
+
+外部依存なしのAI基礎・評価ハーネスは、リポジトリルートから個別または全件を検証できます。
+
+```bash
+python StudyAI/scripts/validate-ai-learning.py system18
+python StudyAI/scripts/validate-ai-learning.py
+```
+
+FastAPI統合を含む既存テストはバックエンド環境で実行します。
 
 ```bash
 cd src/backend
