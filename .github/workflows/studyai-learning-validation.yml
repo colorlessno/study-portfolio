@@ -32,3 +32,6 @@ jobs:
 
       - name: Run dependency-free AI learning validation
         run: python StudyAI/scripts/validate-ai-learning.py
+
+      - name: Run dependency-free system03 RAG validation
+        run: python StudyAI/scripts/validate-system03-rag-learning.py

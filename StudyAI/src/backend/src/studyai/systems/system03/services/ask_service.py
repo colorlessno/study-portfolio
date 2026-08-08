@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-import math
-import re
-
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from studyai.common.ai.embedding_client import EmbeddingClient
@@ -14,11 +11,10 @@ from studyai.systems.system03.repositories.document_repository import DocumentRe
 from studyai.systems.system03.repositories.question_log_repository import QuestionLogRepository
 from studyai.systems.system03.repositories.session_repository import SessionRepository
 from studyai.systems.system03.schemas.qa import AskRequest, AskResponse, AskSource, FeedbackRequest, FeedbackResponse
+from studyai.systems.system03.services.retrieval_scoring import score_candidate
 
 
 class AskService:
-    TOKEN_PATTERN = re.compile(r"[0-9A-Za-z_]+|[ぁ-んァ-ン一-龥]{2,}")
-
     def __init__(self) -> None:
         self.embedding_client = EmbeddingClient()
         self.llm_client = LLMClient()
@@ -141,38 +137,18 @@ class AskService:
     ) -> list[dict[str, object]]:
         ranked: list[dict[str, object]] = []
         for chunk, document in candidates:
-            keyword_score = self._keyword_score(question, chunk.chunk_text)
-            vector_score = self._cosine_similarity(question_embedding, chunk.embedding or [])
-            hybrid_score = keyword_score * 0.4 + vector_score * 0.6
+            scores = score_candidate(
+                question,
+                question_embedding,
+                chunk.chunk_text,
+                chunk.embedding or [],
+            )
             ranked.append(
                 {
                     "chunk": chunk,
                     "document": document,
-                    "keyword_score": keyword_score,
-                    "vector_score": vector_score,
-                    "hybrid_score": hybrid_score,
+                    **scores,
                 }
             )
         ranked.sort(key=lambda item: item["hybrid_score"], reverse=True)
         return ranked
-
-    def _keyword_score(self, question: str, chunk_text: str) -> float:
-        question_tokens = {token.lower() for token in self.TOKEN_PATTERN.findall(question)}
-        if not question_tokens:
-            return 0.0
-        chunk_tokens = {token.lower() for token in self.TOKEN_PATTERN.findall(chunk_text)}
-        if not chunk_tokens:
-            return 0.0
-        matched = len(question_tokens & chunk_tokens)
-        return matched / len(question_tokens)
-
-    @staticmethod
-    def _cosine_similarity(left: list[float], right: list[float]) -> float:
-        if not left or not right or len(left) != len(right):
-            return 0.0
-        numerator = sum(a * b for a, b in zip(left, right, strict=True))
-        left_norm = math.sqrt(sum(a * a for a in left))
-        right_norm = math.sqrt(sum(b * b for b in right))
-        if left_norm == 0 or right_norm == 0:
-            return 0.0
-        return max(0.0, numerator / (left_norm * right_norm))
