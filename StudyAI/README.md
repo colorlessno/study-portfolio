@@ -29,9 +29,10 @@ Python 3.11以上を使用し、リポジトリルートで次を実行します
 
 ```powershell
 python StudyAI\scripts\validate-ai-learning.py system17 --show-output
+python StudyAI\scripts\validate-system03-rag-learning.py --show-output
 ```
 
-出力の`input`、`result`、`observation`を一つずつ読み、実modelで確認した事実とローカルシミュレーションによる推測を混同していないか説明します。Python環境を用意していない場合は、既存の`backend-test` Docker Compose serviceを使う発展手順へ進みます。
+1つ目は共通ハーネスの概念観察、2つ目はsystem03実装と同じChunk生成・検索スコアmoduleの確認です。出力を読み、実modelで確認した事実とローカル計算による観察を混同していないか説明します。Python環境を用意していない場合は、既存の`backend-test` Docker Compose serviceを使う発展手順へ進みます。
 
 ## 本リポジトリについて
 
@@ -97,6 +98,7 @@ docker compose up -d
 ```bash
 python StudyAI/scripts/validate-ai-learning.py system18
 python StudyAI/scripts/validate-ai-learning.py
+python StudyAI/scripts/validate-system03-rag-learning.py
 ```
 
 FastAPI統合を含む既存テストはバックエンド環境で実行します。
