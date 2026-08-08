@@ -214,6 +214,8 @@ study-hub/                         リポジトリルート
 | 環境差 | Node、Python、Docker、AWS等の前提をどう表示するか |
 | データ持運び | SQLiteのバックアップとGit非公開情報をどう分けるか |
 | 公開範囲 | ポートフォリオ表示と個人学習記録をどう分離するか |
+| AIコーディングエージェント教材 | Codex、Claude Code等のcommand、skill、project指示、権限、継続実行、Git連携を、`StudyAI`内のテーマとするか独立した`StudyCodingAgents`候補とするか。現時点では調査・分類・実装を行わない |
+| アプリ開発ポートフォリオ管理 | 放置防止のための状態、最終更新、次の行動、QCD、進捗、役割、risk等をStudy Hubの軽量機能に含めるか、本格的なproject管理を`ProjectOps`等の別領域に分けるか。現時点では要件化・実装を行わない |
 
 ## 11. 実装開始前に行うこと
 
@@ -239,3 +241,4 @@ study-hub/                         リポジトリルート
 - `Study`で始まる13ディレクトリを標準のStudyAreaとし、それ以外は明示的に追加します。
 - Study Hub改修前に、レポジトリ名を `study-portfolio` から `study-hub` へ変更します。
 - 現在はPhase 0を進め、Study Hub本体の実装は将来タスクとします。
+- AIコーディングエージェント教材とアプリ開発ポートフォリオ管理は将来の検討課題とし、現在のPhase 0およびMVPの確定要件には含めません。
