@@ -5,9 +5,9 @@
 ## 1. 実装配置
 
 ```text
-src/apps/devops07_health_check_endpoint/
-  README.md
+StudyDevOps/src/apps/devops07_health_check_endpoint/
   app/package.json
+  app/package-lock.json
   app/server.js
   tests/health.test.js
   docker-compose.yml
@@ -50,8 +50,20 @@ healthcheck:
 | ready ok | 200 / dependency ok |
 | ready failure | 503 / dependency failed |
 
-## 6. 安全性
+testは専用portでserverを起動し、最大3秒以内にhealthへ接続できなければ失敗する。正常、依存障害、health継続、ready復旧を確認後、processを停止する。
+
+## 6. 検証コマンド
+
+```powershell
+npm.cmd --prefix StudyDevOps/src/apps/devops07_health_check_endpoint/app test
+docker compose -f StudyDevOps/src/apps/devops07_health_check_endpoint/docker-compose.yml up -d --build
+docker compose -f StudyDevOps/src/apps/devops07_health_check_endpoint/docker-compose.yml ps
+docker compose -f StudyDevOps/src/apps/devops07_health_check_endpoint/docker-compose.yml down
+```
+
+## 7. 安全性
 
 - secrets は health / ready response に出さない。
 - 内部接続文字列やtokenを返さない。
+- `toggle-dependency`は教材専用の障害注入であり、本番公開しない。
 - テキストファイルは UTF-8 BOMなしで保存する。

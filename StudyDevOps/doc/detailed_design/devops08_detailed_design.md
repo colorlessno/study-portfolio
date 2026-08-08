@@ -5,10 +5,11 @@
 ## 1. 実装配置
 
 ```text
-src/apps/devops08_docker_logs_investigation/
-  README.md
+StudyDevOps/src/apps/devops08_docker_logs_investigation/
   app/package.json
+  app/package-lock.json
   app/server.js
+  tests/investigation.test.js
   docker-compose.yml
   docs/investigation_template.md
 ```
@@ -38,6 +39,8 @@ docker compose exec app-ok env
 | port conflict | host port 使用中 | compose ps / bind error |
 | runtime error | 起動後例外 | app logs |
 
+構造化ログは`timestamp`、`level`、`action`、`error_code`、`request_id`を必要に応じて持つ。URLはpathnameだけを記録する。
+
 ## 5. 調査テンプレート
 
 | 項目 | 内容 |
@@ -57,4 +60,8 @@ docker compose exec app-ok env
 
 ## 7. CI連携
 
-CI では失敗時に `docker compose ps` と `docker compose logs` を artifact または job log として残す設計にする。
+CIではNode.js testがmissing env、runtime error、正常応答のシグナルを検証する。Docker調査は手動演習とし、将来Compose自体が失敗した場合は`docker compose ps -a`と対象serviceのlogsをjob logへ残す。
+
+```powershell
+npm.cmd --prefix StudyDevOps/src/apps/devops08_docker_logs_investigation/app test
+```

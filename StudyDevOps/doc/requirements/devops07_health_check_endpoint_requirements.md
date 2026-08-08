@@ -41,8 +41,8 @@
 ```text
 StudyDevOps/
   src/apps/devops07_health_check_endpoint/
-    README.md
     app/
+      package-lock.json
     tests/
     docker-compose.yml
   doc/requirements/devops07_health_check_endpoint_requirements.md

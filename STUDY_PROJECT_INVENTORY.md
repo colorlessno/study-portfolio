@@ -10,7 +10,8 @@
 - 物理ディレクトリは移動せず、学習グループやタグを論理的に付け替えられる前提とする。
 - StudyWebは52テーマの構造監査と学習導線の初回改善が完了した。
 - StudySecurityは21テーマを4グループに分けた学習導線の初回改善が完了した。
-- 現在の改善対象はStudyDevOpsとする。
+- StudyDevOpsはdevops01〜09を2つの学習経路に分けた初回改善が完了した。
+- 次の改善対象はStudyDBとする。
 - 番号体系外の小規模成果物も除外せず、Study Hubでは`StudyArea`単位の教材として扱う。
 - `StudyXX`以外のディレクトリは自動登録せず、必要なものだけ明示的に追加する。
 
@@ -34,7 +35,7 @@
 |---|---:|---:|---:|---:|---|---|
 | StudyWeb | 52 | 52 | 406 | 0 | 構造監査と初回導線改善済み | 自動テストは別工程で代表テーマから追加する |
 | StudySecurity | 21 | 21 | 82 | 0 | 4つの学習グループで全テーマの初回導線改善済み | 代表テーマから自動テストと保守証跡を追加する |
-| StudyDevOps | 10 | 9 | 59 | 6 | devops01〜05に学習導線と自動CIがある。devops10はarch02への重複導線 | devops06〜09を可観測性・障害対応の運用経路として整える |
+| StudyDevOps | 10 | 9 | 64 | 7 | devops01〜09の学習導線と自動CIがある。devops10はarch02への重複導線 | 代表シナリオの保守証跡を継続し、次はStudyDBへ進む |
 | StudyAWS | 10 | 10 | 48 | 0 | ローカル模擬実装と実行手順がある | AWS実環境との差、観察点、費用・安全上の境界を明示する |
 | StudyDB | 7 | 7 | 36 | 0 | 文書教材とPostgreSQL実習がある | SQL実行前の予想、実測結果、後片付けを学習単位にする |
 | StudyBase | 12 | 11 | 25 | 1 | 文書完結型と小規模実習が混在する。base12はarch01への重複導線 | 他分野の前提として推奨順と到達条件を整理する |
@@ -68,16 +69,16 @@
 
 4グループを別PRで改善済みです。次回は代表テーマへ自動テストを追加し、実装と教材のずれを継続検出できるようにします。
 
-### 2. StudyDevOps（進行中）
+### 2. StudyDevOps（初回改善完了）
 
 | 学習グループ | 対象 | 主な問い |
 |---|---|---|
 | CI and testing | devops01〜05 | build、unit、API、E2E、DBのどの層を何の証拠として残すか |
 | Observability and incident response | devops06〜09 | requestから障害収束までを、ログ、health、調査、runbookでどうつなぐか |
 
-devops01〜05には学習導線と実際に動くGitHub Actionsを追加しました。次にdevops06〜09を運用シナリオとして再編します。devops10は`StudyArchitecture arch02`を正規ルートとします。
+devops01〜05にはCIとテストの学習導線、devops06〜09には可観測性から障害報告までの運用導線を追加しました。GitHub Actionsで実装シグナルを継続確認し、devops10は`StudyArchitecture arch02`を正規ルートとします。
 
-### 3. StudyDB、StudyAWS
+### 3. StudyDB、StudyAWS（次の改善対象）
 
 - StudyDBは、WebやAIの前提知識として、SQLを実行して結果を説明する経路を作る。
 - StudyAWSは、ローカル模擬とAWS実環境を混同しない説明を追加する。

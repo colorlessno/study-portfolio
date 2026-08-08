@@ -25,6 +25,7 @@
 | FR-04 | 一時対応、恒久対応、再発防止の記録欄を用意する |
 | FR-05 | devops01 から devops08 の確認観点を Runbook に接続する |
 | FR-06 | Docker logs、compose ps、health endpoint の確認欄を用意する |
+| FR-07 | 固定教材シナリオの記入例を用意する |
 
 ## 4. 非機能要件
 
@@ -46,6 +47,7 @@ StudyDevOps/
     docs/runbook.md
     docs/incident_report_template.md
     docs/docker_investigation_checklist.md
+    docs/sample_incident_report.md
   doc/learning_notes/devops09_incident_runbook/README.md
   doc/requirements/devops09_incident_runbook_requirements.md
 ```

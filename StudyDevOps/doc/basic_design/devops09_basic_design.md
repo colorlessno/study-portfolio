@@ -14,6 +14,7 @@ StudyDevOps/
     docs/runbook.md
     docs/incident_report_template.md
     docs/docker_investigation_checklist.md
+    docs/sample_incident_report.md
   doc/learning_notes/devops09_incident_runbook/
     README.md
 ```
@@ -35,6 +36,7 @@ incident received -> severity classify -> impact check -> health/log/CI review -
 | `src/apps/devops09_incident_runbook/docs/runbook.md` | 初動から収束までの確認順 |
 | `src/apps/devops09_incident_runbook/docs/incident_report_template.md` | 影響、原因、対応、再発防止の記録 |
 | `src/apps/devops09_incident_runbook/docs/docker_investigation_checklist.md` | Docker ps/logs/health の確認 |
+| `src/apps/devops09_incident_runbook/docs/sample_incident_report.md` | 固定教材シナリオの記入例 |
 | `doc/learning_notes/devops09_incident_runbook/README.md` | Runbook の使い方を説明する |
 
 ## 5. Docker / CI 方針

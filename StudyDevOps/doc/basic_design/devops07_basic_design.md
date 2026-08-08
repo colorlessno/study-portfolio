@@ -11,10 +11,10 @@
 ```text
 StudyDevOps/
   src/apps/devops07_health_check_endpoint/
-    README.md
     app/
       server.js
       package.json
+      package-lock.json
     tests/
       health.test.js
     docker-compose.yml

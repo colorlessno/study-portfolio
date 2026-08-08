@@ -5,11 +5,12 @@
 ## 1. 実装配置
 
 ```text
-src/apps/devops09_incident_runbook/
+StudyDevOps/src/apps/devops09_incident_runbook/
   docs/runbook.md
   docs/incident_report_template.md
   docs/docker_investigation_checklist.md
-doc/learning_notes/devops09_incident_runbook/
+  docs/sample_incident_report.md
+StudyDevOps/doc/learning_notes/devops09_incident_runbook/
   README.md
 ```
 
@@ -23,6 +24,7 @@ doc/learning_notes/devops09_incident_runbook/
 | 一時対応 | workaround、restart判断 |
 | 恒久対応 | code/config修正 |
 | 再発防止 | test、monitoring、手順修正 |
+| 記入例 | 固定障害を事実・仮説・判断へ分けた例 |
 
 ## 3. severity分類
 
@@ -57,4 +59,5 @@ recent image / env / compose diff
 
 - secrets、個人情報、実顧客情報を記録しない。
 - 障害メモに token、password、接続文字列を貼らない。
+- restartや設定変更前に証拠と戻し方を記録する。
 - テキストファイルは UTF-8 BOMなしで保存する。

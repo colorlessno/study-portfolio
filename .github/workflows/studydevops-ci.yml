@@ -119,3 +119,33 @@ jobs:
         if: always()
         run: docker compose down --volumes
         working-directory: StudyDevOps/src/apps/devops05_db_ci
+
+  operations-signals:
+    name: Logging, health, and incident evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: |
+            StudyDevOps/src/apps/devops06_request_id_logging/app/package-lock.json
+            StudyDevOps/src/apps/devops07_health_check_endpoint/app/package-lock.json
+            StudyDevOps/src/apps/devops08_docker_logs_investigation/app/package-lock.json
+      - name: Test request ID logging
+        run: npm ci && npm test
+        working-directory: StudyDevOps/src/apps/devops06_request_id_logging/app
+      - name: Test health and readiness
+        run: npm ci && npm test
+        working-directory: StudyDevOps/src/apps/devops07_health_check_endpoint/app
+      - name: Test investigation signals
+        run: npm ci && npm test
+        working-directory: StudyDevOps/src/apps/devops08_docker_logs_investigation/app
+      - name: Verify incident response artifacts
+        run: |
+          test -s StudyDevOps/src/apps/devops09_incident_runbook/docs/runbook.md
+          test -s StudyDevOps/src/apps/devops09_incident_runbook/docs/sample_incident_report.md
