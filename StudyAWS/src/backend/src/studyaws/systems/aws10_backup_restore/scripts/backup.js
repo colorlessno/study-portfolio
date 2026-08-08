@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const root = path.join(__dirname, "..");
+const root = path.resolve(process.env.STUDYAWS_BACKUP_ROOT || path.join(__dirname, ".."));
 const source = path.join(root, "data", "sample.json");
 const backupDir = path.join(root, "backups");
 fs.mkdirSync(backupDir, { recursive: true });

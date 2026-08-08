@@ -12,7 +12,8 @@
 - StudySecurityは21テーマを4グループに分けた学習導線の初回改善が完了した。
 - StudyDevOpsはdevops01〜09を2つの学習経路に分けた初回改善が完了した。
 - StudyDBは7テーマを3段階の学習経路にまとめ、PostgreSQL教材の自動検証を追加した。
-- 次の改善対象はStudyAWSとする。
+- StudyAWSは10テーマを3段階の学習経路にまとめ、認証情報不要のローカル自動検証を追加した。
+- 次の改善対象はStudyBaseとする。
 - 番号体系外の小規模成果物も除外せず、Study Hubでは`StudyArea`単位の教材として扱う。
 - `StudyXX`以外のディレクトリは自動登録せず、必要なものだけ明示的に追加する。
 
@@ -37,7 +38,7 @@
 | StudyWeb | 52 | 52 | 406 | 0 | 構造監査と初回導線改善済み | 自動テストは別工程で代表テーマから追加する |
 | StudySecurity | 21 | 21 | 82 | 0 | 4つの学習グループで全テーマの初回導線改善済み | 代表テーマから自動テストと保守証跡を追加する |
 | StudyDevOps | 10 | 9 | 64 | 7 | devops01〜09の学習導線と自動CIがある。devops10はarch02への重複導線 | 代表シナリオの保守証跡を継続する |
-| StudyAWS | 10 | 10 | 48 | 0 | ローカル模擬実装と実行手順がある | AWS実環境との差、観察点、費用・安全上の境界を明示する |
+| StudyAWS | 10 | 10 | 48 | 0 | 3段階の学習経路、認証情報不要の10テーマ自動検証、実AWSとの境界がある | 実AWS発展課題はsandbox・予算・削除計画を確認してから個別に行う |
 | StudyDB | 7 | 7 | 36 | 0 | 3段階の学習経路、15分の再開手順、隔離されたPostgreSQL自動検証がある | 学習記録を蓄積し、代表SQLの説明課題を継続改善する |
 | StudyBase | 12 | 11 | 25 | 1 | 文書完結型と小規模実習が混在する。base12はarch01への重複導線 | 他分野の前提として推奨順と到達条件を整理する |
 | StudyAI | 48 | 5 | 574 | 58 | 最大の看板領域。個別アプリと共通ハーネスが混在する | 全件一括ではなく、RAG・AI基礎評価・業務AI・エージェントの経路別に改善する |
@@ -50,7 +51,7 @@
 
 | StudyArea | 現在の成果物 | 位置付け | 次の改善 |
 |---|---|---|---|
-| StudyFabel | IdeaForgeのFastAPI / SQLite / Reactアプリ | ポートフォリオ向けの独立プロダクト | デモ経路、構成図、テスト方針、AIなしで確認できる範囲を整理する |
+| StudyFabel | IdeaForgeのFastAPI / SQLite / Reactアプリ | ポートフォリオ向けの独立プロダクト。StudyHub移行時に`StudyIdeaForge`へ改名予定 | デモ経路、構成図、テスト方針、AIなしで確認できる範囲を整理する |
 | StudyAIIdeaGeneration | 発想法プロンプト、設計まとめ、検証スクリプト | プロンプト設計の実験教材 | 入力、期待する変化、比較方法を1回の演習にする |
 | StudyAICorporateEmployee | 役割別AI社員の設計メモ | 文書完結型の構想教材 | ユースケース、権限境界、評価観点を明示する |
 | StudyAPI | Python標準ライブラリによる最小API | 小規模な通信・中継教材 | 正常系と失敗系のcurl例、セキュリティ上の制約を追加する |
@@ -89,11 +90,17 @@ devops01〜05にはCIとテストの学習導線、devops06〜09には可観測�
 
 全7テーマへ予想、観察、説明、完了条件を追加しました。db02、db04、db05、db06は隔離したPostgreSQL環境でテーマ単位または一括検証でき、GitHub Actionsでも継続確認します。
 
-### 4. StudyAWS（次の改善対象）
+### 4. StudyAWS（初回改善完了）
 
-ローカル模擬とAWS実環境を混同しない説明を追加し、観察点、費用、安全上の境界を明示します。
+| 学習段階 | 対象 | 主な問い |
+|---|---|---|
+| Identity and network | aws01〜03 | 誰に何を許可し、どの通信とサーバーを公開するか |
+| Data and observability | aws04〜06 | 接続情報、保存、ログをどう安全に分離・追跡するか |
+| Serverless and operations | aws07〜10 | requestから実行・公開・復旧までをどう検証するか |
 
-### 5. StudyBaseとStudyAI
+全10テーマへ予想、観察、説明、完了条件を追加しました。標準経路はAWS認証情報と外部通信を使わず、テーマ単位または一括でローカル検証できます。実AWSはsandbox、予算、最小権限、削除確認を伴う発展課題として分離します。
+
+### 5. StudyBase（次の改善対象）とStudyAI
 
 - StudyBaseは、他分野へ進む前の推奨経路を短く整理する。
 - StudyAIは48テーマを一括編集せず、代表経路を選んで段階的に改善する。
@@ -101,7 +108,7 @@ devops01〜05にはCIとテストの学習導線、devops06〜09には可観測�
 
 ### 6. 独立プロダクトと小規模教材
 
-StudyFabelをデモ可能な独立成果として磨いた後、StudyArchitecture、StudyDesktop、StudyAIIdeaGeneration、StudyAICorporateEmployee、StudyAPIをそれぞれの成果物形式に合わせて整理します。
+StudyFabel（StudyHub移行時の名称は`StudyIdeaForge`）をデモ可能な独立成果として磨いた後、StudyArchitecture、StudyDesktop、StudyAIIdeaGeneration、StudyAICorporateEmployee、StudyAPIをそれぞれの成果物形式に合わせて整理します。
 
 ## 更新ルール
 
