@@ -4,6 +4,29 @@
 発想法を**工程(ノード)としてグラフに組み**、AIに順番に実行させ、人間が各ゲートで
 **採用 / 再生成 / 修正** を判断しながら、実行可能なアイディアまで鍛造する。
 
+## このアプリで学ぶこと
+
+- Reactのグラフ編集とFastAPIのCRUDをSQLiteへ保存する流れ
+- ノード、edge、実行状態、分岐した生成案を分けて管理する考え方
+- OpenAI互換APIを使い、ノード単位でLLM設定を切り替える方法
+- AIの自動生成と、人間が採用・再生成・修正を判断するgateの分離
+
+| 段階 | 確認内容 | 必要なもの |
+|---|---|---|
+| 1. 保存層 | schema、初期provider、workflow・session状態 | Python標準libraryのみ |
+| 2. LLMなしデモ | 画面表示、workflow編集、SQLite保存 | IdeaForgeのPython依存package |
+| 3. 完全デモ | ノード実行、gate、再生成、履歴、report | 会話用LLM。検索blockはnetworkまたは検索APIも使用 |
+
+## 15分で再開する（LLMなし）
+
+リポジトリルートから、一時SQLiteだけを使うテストを実行します。`backend/ideaforge.db`は作成・変更しません。
+
+```powershell
+python -m unittest discover -s StudyFabel\ideaforge\backend\tests -v
+```
+
+実行前に、初期化で作られるtableと既定providerを予想します。実行後は、workflowのgraphとsessionのstateを別fieldに保存する理由を説明します。
+
 ## 起動方法
 
 1. **Python 3.10+** をインストール済みであること
@@ -13,6 +36,24 @@
 3. ブラウザで http://localhost:8000 が開く
 
 フロントはビルド済み(`frontend/dist`)なので **Node.js は不要**。
+
+## デモ経路
+
+### LLMなしで確認する
+
+1. `run.bat`または`run.sh`で起動し、`http://localhost:8000`を開く。
+2. `http://localhost:8000/api/health`が`{"ok":true,"app":"IdeaForge"}`を返すことを確認する。
+3. workflowを複製し、名前、node配置、edgeを変更して保存する。
+4. ブラウザを再読み込みし、変更がSQLiteから復元されることを確認する。
+5. この段階では「実行」とLLM接続testを使わない。画面編集と状態保存の確認に限定する。
+
+### 実LLMまで確認する
+
+1. LM Studio等で会話用modelとOpenAI互換serverを起動する。
+2. IdeaForgeの設定でbase URLを登録し、接続testを実行する。
+3. presetを選び、入力blockから実行する。
+4. gateで採用、再生成、修正を行い、複数案が保持されることを確認する。
+5. session履歴から再開し、最後にMarkdown reportを出力する。
 
 ## LLMの設定(⚙ 設定)
 
@@ -63,7 +104,16 @@ npm run dev        # 開発サーバー(要: バックエンド起動済み)
 npm run build      # dist再生成 → run.batで配信
 ```
 
-## 構成
+## 構成と責務
+
+```mermaid
+flowchart LR
+    Browser["React / Vite UI"] -->|"/api"| API["FastAPI"]
+    API --> DB["SQLite\nworkflow・session・設定"]
+    API --> LLM["OpenAI互換API\nLM Studio等"]
+    API --> Search["Web検索\nDDG・Tavily・Brave"]
+    API --> Files["frontend/dist・sounds"]
+```
 
 ```
 ideaforge/
@@ -82,5 +132,19 @@ ideaforge/
         └─ components/    # グラフエディタ / 実行モニタ / 演出
 ```
 
+`IDEAFORGE_DB_PATH`環境変数を指定するとSQLiteの保存先を変更できます。自動テストは一時directoryを指定し、通常の`backend/ideaforge.db`から隔離します。
+
+## テスト方針
+
+| 対象 | 現在の確認方法 | 証明する範囲 |
+|---|---|---|
+| SQLite保存層 | `unittest`、GitHub Actions | schema、初期data、設定、workflow・session JSON保存 |
+| FastAPI・静的配信 | 起動後のhealth、画面、API手動確認 | routeと配信の結合 |
+| フロントエンド | `npm run build` | TypeScript・Vite build |
+| LLM・検索 | local serverまたは各APIで手動確認 | streaming、model応答、検索fallback |
+
+自動テスト合格はLLM応答品質やWeb検索結果を証明しません。完全デモでは、使用model、入力、採用・再生成の判断、最終reportを学習記録へ残します。
+
 ※ APIキーはローカルの `backend/ideaforge.db` に平文保存される(自分専用PC前提)。
+※ 認証機能はなくCORSも全許可のため、localhostでの個人学習用です。外部公開用の構成ではありません。
 ※ プリセットは初回起動時に自動登録される。プロンプトは全ノードでインスペクタから編集可能。

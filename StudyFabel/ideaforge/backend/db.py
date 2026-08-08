@@ -1,7 +1,8 @@
 import os
 import sqlite3
 
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ideaforge.db")
+DEFAULT_DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ideaforge.db")
+DB_PATH = os.environ.get("IDEAFORGE_DB_PATH") or DEFAULT_DB_PATH
 
 
 def conn():
