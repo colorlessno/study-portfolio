@@ -89,16 +89,14 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/validate_portfolio.p
 
 構造が存在するだけでは「理解済み」にしない。学習記録はrootの`LEARNING_LOG_TEMPLATE.md`を使い、最終学習日、観察結果、変更内容、次の行動を残す。
 
-## 9. 次の段階
+## 9. 学習への使い方
 
 1. [web52](../learning_notes/web52_modern_rendering_comparison/README.md)で全体の構成判断を行う。
 2. 代表themeを各groupから1件ずつ選び、実行・説明・改造を記録する。
-3. [Study Hub構想](../../../STUDY_HUB_ROADMAP.md)で使うmetadataを10 themeで試作する。
-4. Study Hub上のlogical groupとsource pathを分離する。
+3. [学習ログ](../../../LEARNING_LOG_TEMPLATE.md)へ観察結果と次回の確認内容を残す。
 
 ## 10. 関連文書
 
 - [StudyWeb README](../../README.md)
 - [学習再開ガイド](../../../LEARNING_GUIDE.md)
 - [全theme catalog](../../../THEME_CATALOG.md)
-- [Study Hub将来構想](../../../STUDY_HUB_ROADMAP.md)
