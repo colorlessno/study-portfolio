@@ -28,6 +28,7 @@ AIコーディング支援を活用して作成したソースを、実際に読
 
 - [プロジェクト概要](./StudyFabel/)
 - [アプリケーション](./StudyFabel/ideaforge/)
+- [LLMなしの再開手順](./StudyFabel/ideaforge/README.md#15分で再開するllmなし)
 
 ### 小さく学べる教材
 
