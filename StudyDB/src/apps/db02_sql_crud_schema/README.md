@@ -1,20 +1,23 @@
-# db02 SQL CRUD とスキーマ基礎
-共通DB構成を使って、CRUD、制約、JOIN、制約違反を確認する教材。
-## 起動
+# db02 SQL CRUDとスキーマ基礎
+
+共通PostgreSQL環境を使って、CRUD、制約、JOIN、制約違反を確認する教材です。すべてリポジトリルートから実行します。
+
+## 起動と実行順
+
 ```cmd
-cd .\src\apps\common
-docker compose up -d db
+docker compose -f StudyDB\src\apps\common\docker-compose.yml up -d --wait --wait-timeout 30 db
+StudyDB\src\apps\common\scripts\run-sql.cmd db02 sql\001_schema.sql
+StudyDB\src\apps\common\scripts\run-sql.cmd db02 sql\002_seed.sql
+StudyDB\src\apps\common\scripts\run-sql.cmd db02 sql\003_crud_examples.sql
+StudyDB\src\apps\common\scripts\run-sql.cmd db02 sql\004_join_examples.sql
 ```
 
-## 実行順
+`005_constraint_errors.sql` は意図的にエラーを起こします。内容を読み、1ケースずつ手動で試して、守られた制約を記録してください。
+
+自動検証だけを実行する場合:
+
 ```cmd
-scripts\run-sql.cmd db02 sql\001_schema.sql
-scripts\run-sql.cmd db02 sql\002_seed.sql
-scripts\run-sql.cmd db02 sql\003_crud_examples.sql
-scripts\run-sql.cmd db02 sql\004_join_examples.sql
+node StudyDB\scripts\validate-studydb.mjs db02
 ```
 
-制約エラーは失敗を観察する教材なので、1ケースずつ内容を見ながら実行する。
-```cmd
-scripts\run-sql.cmd db02 sql\005_constraint_errors.sql
-```
+停止時は `docker compose -f StudyDB\src\apps\common\docker-compose.yml down` を実行します。

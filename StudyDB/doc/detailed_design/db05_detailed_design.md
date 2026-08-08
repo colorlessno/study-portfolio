@@ -31,7 +31,7 @@ doc/learning_notes/db05_index_explain_performance/
 |---|---|
 | DB | PostgreSQL 16 alpine |
 | database | `studydb` |
-| 起動方式 | `StudyDB/src/src/apps/common` の共通DB構成を使う |
+| 起動方式 | `StudyDB/src/apps/common` の共通DB構成を使う |
 | seed方針 | 小規模seedと件数増加seedを分ける |
 | 性能記録 | 絶対値ではなく傾向を記録する |
 

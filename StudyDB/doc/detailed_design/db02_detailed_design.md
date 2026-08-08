@@ -31,8 +31,8 @@ doc/learning_notes/db02_sql_crud_schema/
 | database | `studydb` |
 | user | `postgres` |
 | password | 教材用固定値。実秘密情報は使わない |
-| 起動方式 | `StudyDB/src/src/apps/common` の共通DB構成を使う |
-| SQL実行 | `StudyDB/src/src/apps/common/scripts/run-sql.cmd db02 sql/001_schema.sql` |
+| 起動方式 | `StudyDB/src/apps/common` の共通DB構成を使う |
+| SQL実行 | `StudyDB\src\apps\common\scripts\run-sql.cmd db02 sql\001_schema.sql` |
 
 ## 3. テーブル設計
 | table | column | 制約 |
