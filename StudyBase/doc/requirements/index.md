@@ -20,7 +20,7 @@
 | base05 | RACI / 責任分界表 | `base05_raci_responsibility_matrix_requirements.md` |
 | base06 | Git基本操作 | `base06_git_basic_requirements.md` |
 | base07 | branch / merge / conflict | `base07_branch_merge_conflict_requirements.md` |
-| base08 | Issue -> branch -> PR -> merge | `base08_issue_branch_pr_merge_requirements.md` |
+| base08 | Issue -> branch -> push -> PR -> merge -> sync | `base08_issue_branch_pr_merge_requirements.md` |
 | base09 | npm scripts | `base09_npm_scripts_requirements.md` |
 | base10 | curl API確認 | `base10_curl_api_check_requirements.md` |
 | base11 | Portfolio demo presentation | `base11_portfolio_demo_presentation_requirements.md` |

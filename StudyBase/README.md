@@ -1,51 +1,72 @@
 # StudyBase
 
-`StudyBase` は、他の `StudyXX` に進む前の共通基礎を扱う学習分野です。
-対象:
+他の`StudyXX`へ進む前に、AIが生成した成果物を自分で確認・説明・修正するための共通基礎を学ぶプロジェクトです。要求整理、見積り、テスト前提、責任分界、Git、npm、API確認、ポートフォリオ説明を一続きの経路として扱います。
 
-- 要求分析
-- 防御的ドキュメント
-- Git / branch / PR
-- npm scripts
-- curl API確認
+## まず15分で再開する
+
+リポジトリルートで次を実行します。Node.js 20以上とGitを使い、外部通信や既存リポジトリの変更は行いません。
+
+```powershell
+node StudyBase\scripts\validate-studybase.mjs base01
+```
+
+次に学習ノートの「始める前の問い」へ短く答え、サンプルと記入例の差を1つ説明します。
+
+## 推奨学習経路
+
+| 段階 | テーマ | 学習の証拠 |
+|---|---|---|
+| Clarify and plan | [base01 曖昧依頼ヒアリング](doc/learning_notes/base01_ambiguous_request_hearing/README.md) | 確定・仮定・未確定を分けられる |
+| Clarify and plan | [base02 情報不足時の暫定成果物](doc/learning_notes/base02_incomplete_information_deliverable/README.md) | 書ける範囲と限界を示せる |
+| Clarify and plan | [base03 見積もり根拠](doc/learning_notes/base03_estimate_basis/README.md) | 範囲・分解・リスクから説明できる |
+| Clarify and plan | [base04 テスト成立条件](doc/learning_notes/base04_test_precondition_checklist/README.md) | 実行前提と判定基準を確認できる |
+| Clarify and plan | [base05 RACI / 責任分界](doc/learning_notes/base05_raci_responsibility_matrix/README.md) | 実施・承認・相談・共有を分けられる |
+| Version control | [base06 Git基本操作](doc/learning_notes/base06_git_basic/README.md) | status・diff・commitを説明できる |
+| Version control | [base07 branch・merge・conflict](doc/learning_notes/base07_branch_merge_conflict/README.md) | 競合を再現して解消できる |
+| Version control | [base08 Issue → PR → merge → 同期](doc/learning_notes/base08_issue_branch_pr_merge/README.md) | ローカルGiteaでチーム開発手順を通せる |
+| Execute and explain | [base09 npm scripts](doc/learning_notes/base09_npm_scripts/README.md) | dev・build・test・startを区別できる |
+| Execute and explain | [base10 curl API確認](doc/learning_notes/base10_curl_api_check/README.md) | UIなしで正常系・失敗系を切り分けられる |
+| Execute and explain | [base11 ポートフォリオdemo](doc/learning_notes/base11_portfolio_demo_presentation/README.md) | 主張を証拠と制限付きで説明できる |
+| Architecture route | [base12 System anatomy](../StudyArchitecture/doc/learning_notes/arch01_system_anatomy_walkthrough/README.md) | 正規ルート`StudyArchitecture arch01`で構造を追える |
+
+base01〜05・11は文書演習、base06〜07は一時Gitリポジトリ演習、base08は文書と任意のローカルGitea演習、base09〜10はNode.js実行演習です。base12は重複実装せず、`StudyArchitecture arch01`を正規ルートとします。
+
+## 学習サイクル
+
+1. **入力を読む**: 依頼、サンプル、コード、ログをそのまま確認する。
+2. **予想する**: 不明点、差分、コマンド結果、失敗条件を先に書く。
+3. **手を動かす**: テンプレート記入または隔離された実行を行う。
+4. **証拠を残す**: diff、test結果、API status、文書の対応箇所を示す。
+5. **説明する**: 分かったこと、未確認、次の行動を自分の言葉でまとめる。
+
+## 自動検証
+
+テーマ指定または全件を実行できます。
+
+```powershell
+node StudyBase\scripts\validate-studybase.mjs base07
+node StudyBase\scripts\validate-studybase.mjs
+```
+
+base06〜07はOSの一時領域へ教材をコピーしてGit操作し、終了時に削除します。base08の自動検証は教材構造だけを確認し、Giteaの起動やPR操作は行いません。base10は空いている一時portでAPIを起動し、応答確認後に停止します。CIでも [StudyBase validation](../.github/workflows/studybase-validation.yml) を実行します。
 
 ## 構成
 
-StudyAI 型に合わせて、番号フォルダをトップレベルに置かず、共通領域へ分けています。
+```text
+StudyBase/
+  doc/templates/       記入用テンプレート
+  doc/learning_notes/  再開手順・観察・完了条件
+  doc/requirements/    要件定義
+  doc/basic_design/    基本設計
+  doc/detailed_design/ 詳細設計
+  scripts/             隔離された自動検証
+  src/samples/         問題、記入例、小規模実装
+```
 
-| 領域 | 内容 |
-|---|---|
-| `src/samples/` | 練習用サンプル、実行可能な小さいプロジェクト |
-| `doc/templates/` | 記述用テンプレート |
-| `doc/learning_notes/` | 各テーマの README、学習メモ、コマンド例 |
-| `doc/requirements/` | 要件定義 |
-| `doc/basic_design/` | 基本設計 |
-| `doc/detailed_design/` | 詳細設計 |
-| `doc/reviews/` | 自己レビュー |
+## 安全上の前提
 
-## テーマ一覧
-
-| No | テーマ | サンプル | 学習メモ |
-|---|---|---|---|
-| base01 | 曖昧依頼ヒアリング | `src/samples/base01_ambiguous_request_hearing/` | `doc/learning_notes/base01_ambiguous_request_hearing/` |
-| base02 | 情報不足時の暫定成果物 | `src/samples/base02_incomplete_information_deliverable/` | `doc/learning_notes/base02_incomplete_information_deliverable/` |
-| base03 | 見積もり根拠表 | `src/samples/base03_estimate_basis/` | `doc/learning_notes/base03_estimate_basis/` |
-| base04 | テスト成立条件チェックリスト | `src/samples/base04_test_precondition_checklist/` | `doc/learning_notes/base04_test_precondition_checklist/` |
-| base05 | RACI / 責任分担表 | `src/samples/base05_raci_responsibility_matrix/` | `doc/learning_notes/base05_raci_responsibility_matrix/` |
-| base06 | Git基本操作 | `src/samples/base06_git_basic/` | `doc/learning_notes/base06_git_basic/` |
-| base07 | branch / merge / conflict | `src/samples/base07_branch_merge_conflict/` | `doc/learning_notes/base07_branch_merge_conflict/` |
-| base08 | Issue -> branch -> PR -> merge | `src/samples/base08_issue_branch_pr_merge/` | `doc/learning_notes/base08_issue_branch_pr_merge/` |
-| base09 | npm scripts | `src/samples/base09_npm_scripts/` | `doc/learning_notes/base09_npm_scripts/` |
-| base10 | curl API確認 | `src/samples/base10_curl_api_check/` | `doc/learning_notes/base10_curl_api_check/` |
-
-## 学習の進め方
-
-1. `doc/requirements/` で要件定義を読む
-2. `doc/basic_design/` で基本設計を読む
-3. `doc/detailed_design/` で詳細設計を読む
-4. `doc/learning_notes/baseXX_*/README.md` で手順を確認する
-5. `src/samples/baseXX_*/` や `doc/templates/baseXX_*/` を使って練習する
-6. 実行できるものは npm または Docker で確認し、結果を学習メモに残す
-## 文書完結型テーマについて
-
-`base01`〜`base05`、`base08`、`base11` は、詳細設計の製造対象を**コードではなく文書**（テンプレート・記入例・デモ台本など）として定義した文書完結型テーマです。コード実体があるのは `base06` / `base07`（Git 練習リポジトリ）と `base09` / `base10`（Node サンプル）です。なお `base12` は正規ルートを `StudyArchitecture arch01` とする重複テーマのため、教材成果物は意図的に作成していません。
+- base06〜07で現在のリポジトリや教材原本に`git init`しない。
+- base08のGiteaは`127.0.0.1`だけへ公開し、実サービスのパスワードや実務データを使わない。
+- base08で実GitHubのIssue・PRを作るのは、公開対象と権限を確認した明示的な作業だけにする。
+- base09は外部依存なし、base10はlocalhostだけを使用する。
+- 実行成功を理解済みと同一視せず、予想・証拠・説明を完了条件にする。

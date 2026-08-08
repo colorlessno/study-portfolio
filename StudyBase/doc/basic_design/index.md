@@ -17,7 +17,7 @@
 | base05 | RACI / 責任分界表 | `../requirements/base05_raci_responsibility_matrix_requirements.md` | `base05_basic_design.md` |
 | base06 | Git基本操作 | `../requirements/base06_git_basic_requirements.md` | `base06_basic_design.md` |
 | base07 | branch / merge / conflict | `../requirements/base07_branch_merge_conflict_requirements.md` | `base07_basic_design.md` |
-| base08 | Issue -> branch -> PR -> merge | `../requirements/base08_issue_branch_pr_merge_requirements.md` | `base08_basic_design.md` |
+| base08 | Issue -> branch -> push -> PR -> merge -> sync | `../requirements/base08_issue_branch_pr_merge_requirements.md` | `base08_basic_design.md` |
 | base09 | npm scripts | `../requirements/base09_npm_scripts_requirements.md` | `base09_basic_design.md` |
 | base10 | curl API確認 | `../requirements/base10_curl_api_check_requirements.md` | `base10_basic_design.md` |
 | base11 | Portfolio demo presentation | `../requirements/base11_portfolio_demo_presentation_requirements.md` | `base11_basic_design.md` |
