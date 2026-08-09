@@ -15,10 +15,11 @@
 
 ```powershell
 cd StudyWeb\src\backend\src\studyweb\systems\web48_job_status_api
+npm.cmd test
 npm.cmd start
 ```
 
-APIは`http://localhost:3048`。終了は`Ctrl+C`、構文確認は`npm.cmd run build`。
+自動テストはtimerを待たずにqueued → running → succeededを進め、202、200、404を確認する。APIは`http://localhost:3048`。終了は`Ctrl+C`、構文確認は`npm.cmd run build`。
 
 ## 最初に試す順番
 
@@ -39,7 +40,7 @@ queued、running、succeededと`result=done`を確認する。状態定義は [J
 ## コードを読む順番
 
 1. `jobs` Mapでjobをメモリ管理する構成を見る
-2. `POST /jobs`でID生成とqueued保存を見る
+2. `POST /jobs`で`randomUUID()`によるID生成とqueued保存を見る
 3. 300ms・900ms後の`setTimeout`で状態が変わる箇所を見る
 4. 202 responseが完了結果ではなく受付結果であることを確認する
 5. `GET /jobs/:id`のroute抽出と200 / 404判定を見る
@@ -57,7 +58,7 @@ POST /jobs
 
 - jobは実処理をせず、timerで状態を変更する
 - failed状態・失敗理由は要件にあるが未実装
-- job IDは`Date.now()`由来で、同じmillisecondの衝突対策がない
+- job IDは`randomUUID()`由来だが、外部公開時の推測耐性・保持期間・参照権限は別途設計が必要
 - jobとtimerはプロセス内だけで、再起動すると消える
 - worker、queue、永続化、cancel、進捗率、期限切れはない
 - polling clientは付属せず、APIだけを提供する
@@ -66,7 +67,7 @@ POST /jobs
 
 - 存在しないjob IDを取得し、404を確認する
 - 特定条件でfailedとerror messageへ遷移するtimerを追加する
-- `crypto.randomUUID()`でjob IDを生成する
+- job IDへ所有者を関連付け、他userのjobを取得できないようにする
 - `progress`を0 / 50 / 100として返す
 - polling側に最大回数、間隔、終端状態での停止を追加する
 - サーバー再起動中のjobをどう扱うか設計する
@@ -81,6 +82,7 @@ POST /jobs
 ## 完了条件
 
 - 202とjob IDを確認した
+- 自動テストで状態遷移とunknown jobを確認した
 - queued → running → succeededを確認した
 - unknown jobの404を確認した
 - failedまたはpolling上限制御を1つ以上追加した

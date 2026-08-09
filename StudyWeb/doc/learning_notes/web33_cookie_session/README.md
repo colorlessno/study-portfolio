@@ -15,12 +15,13 @@
 
 ```powershell
 cd StudyWeb\src\backend\src\studyweb\systems\web33_cookie_session
+npm.cmd test
 npm.cmd start
 ```
 
 `http://localhost:3033/` を開き、DevTools の Network タブと Application タブを表示する。終了は `Ctrl+C`。
 
-依存パッケージはなく、`npm install` は不要。構文確認は `npm.cmd run build` で行える。
+依存パッケージはなく、`npm install` は不要。自動テストはephemeral portでlogin → me → logout → meとCookie属性を確認する。構文確認は `npm.cmd run build` で行える。
 
 ## 最初に試す順番
 
@@ -36,7 +37,7 @@ npm.cmd start
 ## コードを読む順番
 
 1. `sessions = new Map()` で Session 本体の保存場所を見る
-2. `POST /login` で session ID の生成、Map への保存、`Set-Cookie` を追う
+2. `POST /login` で `randomUUID()`を使うsession IDの生成、Mapへの保存、`Set-Cookie`を追う
 3. `parseCookie` と `GET /me` で、Cookie から Session を検索する流れを追う
 4. `POST /logout` で、Session の削除と Cookie の期限切れを確認する
 5. HTML 内の `fetch` で、ブラウザが Cookie を送る設定を見る
@@ -67,6 +68,7 @@ npm.cmd start
 
 ## 完了条件
 
+- 自動テストでlogin → me → logout → meを再現した
 - login → me → logout → me の status と Cookie の変化を説明できる
 - `HttpOnly`、`SameSite=Lax`、`Path=/` を DevTools で確認した
 - サーバー再起動後に Cookie だけ残るケースを再現し、401 の理由を説明できる

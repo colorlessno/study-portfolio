@@ -15,6 +15,7 @@
 
 ```powershell
 cd StudyWeb\src\backend\src\studyweb\systems\web42_pagination_sort_filter_api
+npm.cmd test
 npm.cmd start
 ```
 
@@ -25,7 +26,7 @@ curl.exe -i "http://localhost:3042/items"
 curl.exe -i "http://localhost:3042/items?status=open&sort=createdAt&order=desc&limit=5&offset=0"
 ```
 
-構文確認は `npm.cmd run build` で行える。
+自動テストはephemeral portで正常な組合せと不正queryを確認する。構文確認は `npm.cmd run build` で行える。
 
 ## 最初に試す順番
 
@@ -42,8 +43,8 @@ curl.exe -i "http://localhost:3042/items?status=open&sort=createdAt&order=desc&l
 
 1. `items` で30件のデータ構造と生成規則を見る
 2. `url.parse(req.url, true)` でqueryをオブジェクトへ変換する箇所を見る
-3. `limit` と `offset` の初期値・範囲補正を見る
-4. `order` だけを400で拒否するvalidationを見る
+3. `limit` と `offset` の初期値・整数・範囲validationを見る
+4. `status`、`sort`、`order`のallowlistを見る
 5. keywordとstatusのfilter条件を読む
 6. sort方向の計算と、最後の `slice` を追う
 7. `items` と `meta` を同じresponseで返す箇所を見る
@@ -55,31 +56,28 @@ curl.exe -i "http://localhost:3042/items?status=open&sort=createdAt&order=desc&l
 | queryなし | 先頭10件、`total=30` |
 | `keyword` | nameの部分一致、大文字小文字を区別しない |
 | `status` | 完全一致 |
-| `sort` | 指定したpropertyを文字列として比較 |
+| `sort` | `name / status / createdAt`を文字列として比較 |
 | `order` | `asc` / `desc`、それ以外は400 |
-| `limit` | 既定10、1〜50へ補正 |
-| `offset` | 既定0、0未満は0へ補正 |
+| `limit` | 既定10、1〜50の整数以外は400 |
+| `offset` | 既定0、0以上の整数以外は400 |
+| `method` | `GET`だけを許可し、それ以外は405 |
 
-## 実装と要件の差
+## 自動テストで固定する境界
 
-現実装で明示的に拒否する不正queryは `order` だけである。
+次の入力を400として区別し、filter → sort → paginationの順序をresponseで確認する。
 
-- `limit=abc` や `offset=abc` は400にならず、`NaN`がJSONで`null`になる場合がある
-- 未知のstatusは0件として扱われ、入力誤りと区別できない
-- 未知のsort keyも拒否されない
-- `sort` だけ指定した場合のorderは実質ascだが、仕様として明記していない
-- HTTP methodを判定していないため、`POST /items` でも一覧を返す
-- metadataは`total / limit / offset`だけで、page・totalPagesは返さない
+- `limit`と`offset`の形式・範囲違反
+- 未知の`status`と`sort`
+- `asc / desc`以外の`order`
+- `GET`以外のmethodは405
 
-これらはvalidation設計を考えるための発展課題として扱う。
+未知query parameter、keyword長、page・totalPages、実DBのsort・indexは引き続き発展課題とする。
 
 ## 壊して確かめる
 
-- `order=sideways` を送り、400と`invalid_order`を確認する
-- `limit=abc`、`offset=abc`、`sort=unknown`を送り、現在の不十分なvalidationを記録する
-- `status` を `open / closed` のwhitelistで検証する
-- sort keyを `name / status / createdAt` に限定する
-- `limit` と `offset` を整数として検証し、範囲外と形式不正を分ける
+- `order=sideways`、`limit=abc`、`offset=-1`、`sort=unknown`を送り、error codeを比較する
+- 未知query parameterを無視するか拒否するか方針を決める
+- keywordの長さ上限と正規化を追加する
 - `page` と `totalPages` をmetadataへ追加し、0件時の扱いを決める
 
 ## 自分の言葉で説明する
@@ -92,6 +90,6 @@ curl.exe -i "http://localhost:3042/items?status=open&sort=createdAt&order=desc&l
 ## 完了条件
 
 - filter、sort、limit / offsetを単独・組合せで確認した
+- 自動テストで正常系と不正queryを確認した
 - metadataから現在の表示範囲を説明できる
-- 不正なorderの400と、未検証parameterの挙動を比較した
-- status、sort、limit、offsetのvalidationを1つ以上改善した
+- status、sort、order、limit、offsetのvalidation結果を説明できる

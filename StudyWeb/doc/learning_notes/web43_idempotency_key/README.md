@@ -15,10 +15,11 @@
 
 ```powershell
 cd StudyWeb\src\backend\src\studyweb\systems\web43_idempotency_key
+npm.cmd test
 npm.cmd start
 ```
 
-APIは `http://localhost:3043/orders`。終了は `Ctrl+C`、構文確認は `npm.cmd run build`。
+自動テストはephemeral portでkey不足、初回、同一payload再送、異なるpayload、不正JSONを確認する。APIは `http://localhost:3043/orders`。終了は `Ctrl+C`、構文確認は `npm.cmd run build`。
 
 ## 最初に試す順番
 
@@ -44,11 +45,11 @@ curl.exe -i -X POST http://localhost:3043/orders -H "Content-Type: application/j
 
 ## コードを読む順番
 
-1. `results` Mapと`created`配列の役割を分ける
+1. `results` Mapに保存するpayload hash・結果と、`created`配列の役割を分ける
 2. method・URLの判定を見る
 3. header名がNode.js側で小文字の`idempotency-key`になることを見る
-4. keyなし・保存済みkeyの早期returnを追う
-5. body読取と`JSON.parse`を見る
+4. body読取、`JSON.parse`、payload hash生成を見る
+5. keyなし、不正JSON、payload不一致、保存済みkeyの分岐を追う
 6. 初回結果を配列とMapへ保存して201を返す箇所を見る
 
 ## 現在のresponse
@@ -58,15 +59,16 @@ curl.exe -i -X POST http://localhost:3043/orders -H "Content-Type: application/j
 | keyなし | 400 | `idempotency_key_required` |
 | 新しいkey | 201 | `replay: false`、新規result |
 | 保存済みkey | 200 | `replay: true`、初回result |
+| 同じkey・異なるpayload | 409 | `idempotency_payload_conflict` |
+| 不正JSON | 400 | `invalid_json` |
 | その他のroute | 404 | `not_found` |
 
 ## 実装上の重要な限界
 
 - keyと結果はメモリだけにあり、サーバー再起動で消える
 - keyの期限・掃除処理がない
-- 同じkeyで異なるbodyを送っても、初回結果を返してpayload不一致を検出しない
-- key確認後にbodyを非同期で読むため、完全に同時のrequestに対する排他性は保証しない
-- 不正JSONの例外を捕捉せず、安定した400 responseへ変換していない
+- payload hashはparse後のJSONを基にするが、property順序等を正規化するcanonical JSONではない
+- 完全に同時のrequestに対する排他性は保証しない
 - 処理中・成功・失敗を区別して保存する仕組みがない
 
 決済等の厳密な用途を想定した実装ではなく、基本概念を観察するためのサンプルである。
@@ -74,10 +76,10 @@ curl.exe -i -X POST http://localhost:3043/orders -H "Content-Type: application/j
 ## 壊して確かめる
 
 - 新しいkey `order-002` で同じbodyを送り、別注文として登録されることを確認する
-- `order-001` のままbodyのnameを変え、初回結果が返る問題を確認する
+- `order-001` のままbodyのnameを変え、409になることを確認する
 - サーバー再起動後に同じkeyを送り、再登録されることを確認する
-- keyとrequest bodyのhashを保存し、不一致なら409にする
-- `JSON.parse`を`try / catch`し、不正JSONを400へ変換する
+- JSON property順序を変えた場合のhashを比較し、canonicalization方針を決める
+- request bodyのsize上限とContent-Type validationを追加する
 - keyに有効期限を持たせ、期限切れ後の扱いを決める
 
 ## 自分の言葉で説明する
@@ -90,6 +92,7 @@ curl.exe -i -X POST http://localhost:3043/orders -H "Content-Type: application/j
 ## 完了条件
 
 - keyなし、初回、同一key再送、新しいkeyの4ケースを確認した
+- 不正JSONの400と異なるpayloadの409を確認した
 - 再送時にcountとresult.idが増えないことを確認した
 - 再起動でkeyが消えることを説明できる
-- payload一致確認または不正JSON処理を1つ以上改善した
+- payload一致確認と不正JSON処理を自動テストで再現した

@@ -1,15 +1,22 @@
-const http = require('http');
-const sessions = new Map();
+"use strict";
 
-function parseCookie(header = '') {
-  return Object.fromEntries(header.split(';').filter(Boolean).map((v) => {
-    const [key, ...rest] = v.trim().split('=');
-    return [key, rest.join('=')];
-  }));
+const { randomUUID } = require("node:crypto");
+const http = require("node:http");
+
+function parseCookie(header = "") {
+  return Object.fromEntries(
+    header
+      .split(";")
+      .filter(Boolean)
+      .map((value) => {
+        const [key, ...rest] = value.trim().split("=");
+        return [key, rest.join("=")];
+      }),
+  );
 }
 
 function send(res, status, body, headers = {}) {
-  res.writeHead(status, { 'Content-Type': 'application/json', ...headers });
+  res.writeHead(status, { "Content-Type": "application/json", ...headers });
   res.end(JSON.stringify(body));
 }
 
@@ -21,25 +28,39 @@ async function call(path,method='GET'){const r=await fetch(path,{method,credenti
 login.onclick=()=>call('/login','POST'); me.onclick=()=>call('/me'); logout.onclick=()=>call('/logout','POST');
 </script>`;
 
-http.createServer((req, res) => {
-  if (req.url === '/') {
-    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    return res.end(html);
-  }
-  if (req.method === 'POST' && req.url === '/login') {
-    const sid = `sid_${Date.now()}`;
-    sessions.set(sid, { userId: 'user01', name: 'Study User' });
-    return send(res, 200, { ok: true }, { 'Set-Cookie': `sid=${sid}; HttpOnly; SameSite=Lax; Path=/` });
-  }
-  if (req.method === 'GET' && req.url === '/me') {
-    const sid = parseCookie(req.headers.cookie).sid;
-    const session = sessions.get(sid);
-    return session ? send(res, 200, { user: session }) : send(res, 401, { error: 'not_logged_in' });
-  }
-  if (req.method === 'POST' && req.url === '/logout') {
-    const sid = parseCookie(req.headers.cookie).sid;
-    sessions.delete(sid);
-    return send(res, 200, { ok: true }, { 'Set-Cookie': 'sid=; Max-Age=0; HttpOnly; SameSite=Lax; Path=/' });
-  }
-  return send(res, 404, { error: 'not_found' });
-}).listen(3033, () => console.log('web33 http://localhost:3033'));
+function createServer({ sessions = new Map(), createSessionId = () => `sid_${randomUUID()}` } = {}) {
+  return http.createServer((req, res) => {
+    if (req.url === "/") {
+      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+      return res.end(html);
+    }
+    if (req.method === "POST" && req.url === "/login") {
+      const sid = createSessionId();
+      sessions.set(sid, { userId: "user01", name: "Study User" });
+      return send(res, 200, { ok: true }, {
+        "Set-Cookie": `sid=${sid}; HttpOnly; SameSite=Lax; Path=/`,
+      });
+    }
+    if (req.method === "GET" && req.url === "/me") {
+      const sid = parseCookie(req.headers.cookie).sid;
+      const session = sessions.get(sid);
+      return session
+        ? send(res, 200, { user: session })
+        : send(res, 401, { error: "not_logged_in" });
+    }
+    if (req.method === "POST" && req.url === "/logout") {
+      const sid = parseCookie(req.headers.cookie).sid;
+      sessions.delete(sid);
+      return send(res, 200, { ok: true }, {
+        "Set-Cookie": "sid=; Max-Age=0; HttpOnly; SameSite=Lax; Path=/",
+      });
+    }
+    return send(res, 404, { error: "not_found" });
+  });
+}
+
+if (require.main === module) {
+  createServer().listen(3033, () => console.log("web33 http://localhost:3033"));
+}
+
+module.exports = { createServer, parseCookie };
