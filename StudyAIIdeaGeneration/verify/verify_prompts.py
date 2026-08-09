@@ -7,6 +7,7 @@ JSON妥当性・件数・所要時間を自動チェックする。
 
 使い方:
   python verify_prompts.py --check-only         # API接続なしで入力とpromptを静的検証
+  python verify_prompts.py --connection-only    # モデル一覧取得まで確認して終了
   python verify_prompts.py                      # 全5ステップ連結実行
   python verify_prompts.py --steps mindmap,scamper
   python verify_prompts.py --model "qwen2.5-14b-instruct" --temperature 0.4
@@ -286,6 +287,7 @@ def main():
     p.add_argument("--timeout", type=int, default=600, help="1呼び出しのタイムアウト秒")
     p.add_argument("--input", default=str(HERE / "test_input.json"))
     p.add_argument("--check-only", action="store_true", help="API接続なしで入力とprompt構造だけを検証")
+    p.add_argument("--connection-only", action="store_true", help="LM Studioのモデル一覧取得まで確認して終了")
     args = p.parse_args()
 
     try:
@@ -318,6 +320,9 @@ def main():
     if args.model is None:
         args.model = available[0]
     print(f"接続OK: {args.base_url}  モデル: {args.model}")
+    if args.connection_only:
+        print("[OK] LM Studioの接続確認に成功しました。生成処理は実行していません。")
+        return
 
     outdir = RESULT_BASE / datetime.now().strftime("%Y%m%d-%H%M%S")
     outdir.mkdir(parents=True, exist_ok=True)
@@ -407,6 +412,8 @@ def main():
     (outdir / "report.md").write_text("\n".join(lines), encoding="utf-8")
     print(f"\nレポート: {outdir / 'report.md'}")
     print("WARN/NG があれば report.md と *_raw.txt を確認してください。")
+    if any(verdict == "NG" for _, verdict, _, _, _ in report):
+        sys.exit(1)
 
 
 if __name__ == "__main__":

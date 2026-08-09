@@ -30,16 +30,22 @@ python verify\verify_prompts.py --check-only --input exercise\variant_input.json
 ```
 
 2. 生成前に `comparison_template.md` の「予想」を記入する。
-3. LM Studioを利用できる場合は、モデルをロードしてLocal Serverを開始する。揺れを抑えるため同じmodel・temperatureで先頭2stepを実行する。
+3. LM Studioを利用できる場合は、モデルをロードしてLocal Serverを開始し、生成なしの接続確認を行う。portが5858の場合は次のように指定する。
+
+```cmd
+python verify\verify_prompts.py --connection-only --base-url http://localhost:5858/v1
+```
+
+4. 揺れを抑えるため同じmodel・temperatureで先頭2stepを実行する。既定port以外では、両方のコマンドへ同じ `--base-url` を追加する。
 
 ```cmd
 python verify\verify_prompts.py --input exercise\baseline_input.json --steps mindmap,scamper --temperature 0.4
 python verify\verify_prompts.py --input exercise\variant_input.json --steps mindmap,scamper --temperature 0.4
 ```
 
-4. 各実行後に表示された `report.md` と `scamper_parsed.json` を比較する。
-5. 制約に反する案、上位10案の重複数、低コスト・短期・no-codeを反映した案を数える。
-6. `comparison_template.md` に観察と説明を記入する。
+5. 各実行後に表示された `report.md` と `scamper_parsed.json` を比較する。
+6. 制約に反する案、上位10案の重複数、低コスト・短期・no-codeを反映した案を数える。
+7. `comparison_template.md` に観察と説明を記入する。
 
 ## 完了条件
 
