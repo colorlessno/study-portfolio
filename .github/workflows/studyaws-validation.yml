@@ -3,11 +3,11 @@ name: StudyAWS validation
 on:
   push:
     paths:
-      - "StudyAWS/**"
+      - "category/StudyAWS/**"
       - ".github/workflows/studyaws-validation.yml"
   pull_request:
     paths:
-      - "StudyAWS/**"
+      - "category/StudyAWS/**"
       - ".github/workflows/studyaws-validation.yml"
   workflow_dispatch:
 
@@ -31,4 +31,4 @@ jobs:
         with:
           node-version: "20"
       - name: Run StudyAWS validation without AWS credentials
-        run: node StudyAWS/scripts/validate-studyaws.mjs
+        run: node category/StudyAWS/scripts/validate-studyaws.mjs

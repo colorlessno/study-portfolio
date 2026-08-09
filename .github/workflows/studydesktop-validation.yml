@@ -3,11 +3,11 @@ name: StudyDesktop validation
 on:
   push:
     paths:
-      - "StudyDesktop/**"
+      - "category/StudyDesktop/**"
       - ".github/workflows/studydesktop-validation.yml"
   pull_request:
     paths:
-      - "StudyDesktop/**"
+      - "category/StudyDesktop/**"
       - ".github/workflows/studydesktop-validation.yml"
   workflow_dispatch:
 
@@ -25,7 +25,7 @@ jobs:
     timeout-minutes: 5
     defaults:
       run:
-        working-directory: StudyDesktop/src/apps/desktop01_electron_local_environment_automation
+        working-directory: category/StudyDesktop/src/apps/desktop01_electron_local_environment_automation
     steps:
       - name: Checkout
         uses: actions/checkout@v4

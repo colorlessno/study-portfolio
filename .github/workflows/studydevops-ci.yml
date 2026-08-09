@@ -3,11 +3,11 @@ name: StudyDevOps CI
 on:
   push:
     paths:
-      - "StudyDevOps/**"
+      - "category/StudyDevOps/**"
       - ".github/workflows/studydevops-ci.yml"
   pull_request:
     paths:
-      - "StudyDevOps/**"
+      - "category/StudyDevOps/**"
       - ".github/workflows/studydevops-ci.yml"
   workflow_dispatch:
 
@@ -32,23 +32,23 @@ jobs:
           node-version: "20"
           cache: npm
           cache-dependency-path: |
-            StudyDevOps/src/apps/devops01_github_actions_build/app/package-lock.json
-            StudyDevOps/src/apps/devops02_lint_unit_test/package-lock.json
+            category/StudyDevOps/src/apps/devops01_github_actions_build/app/package-lock.json
+            category/StudyDevOps/src/apps/devops02_lint_unit_test/package-lock.json
       - name: Install devops01 dependencies
         run: npm ci
-        working-directory: StudyDevOps/src/apps/devops01_github_actions_build/app
+        working-directory: category/StudyDevOps/src/apps/devops01_github_actions_build/app
       - name: Run devops01 build
         run: npm run build
-        working-directory: StudyDevOps/src/apps/devops01_github_actions_build/app
+        working-directory: category/StudyDevOps/src/apps/devops01_github_actions_build/app
       - name: Install devops02 dependencies
         run: npm ci
-        working-directory: StudyDevOps/src/apps/devops02_lint_unit_test
+        working-directory: category/StudyDevOps/src/apps/devops02_lint_unit_test
       - name: Run devops02 lint
         run: npm run lint
-        working-directory: StudyDevOps/src/apps/devops02_lint_unit_test
+        working-directory: category/StudyDevOps/src/apps/devops02_lint_unit_test
       - name: Run devops02 unit tests
         run: npm test
-        working-directory: StudyDevOps/src/apps/devops02_lint_unit_test
+        working-directory: category/StudyDevOps/src/apps/devops02_lint_unit_test
 
   api-integration:
     name: API integration test
@@ -59,15 +59,15 @@ jobs:
         uses: actions/checkout@v4
       - name: Build API and run tests
         run: docker compose up --build --abort-on-container-exit --exit-code-from test
-        working-directory: StudyDevOps/src/apps/devops03_api_test
+        working-directory: category/StudyDevOps/src/apps/devops03_api_test
       - name: Show container logs after failure
         if: failure()
         run: docker compose logs
-        working-directory: StudyDevOps/src/apps/devops03_api_test
+        working-directory: category/StudyDevOps/src/apps/devops03_api_test
       - name: Remove API containers
         if: always()
         run: docker compose down --volumes
-        working-directory: StudyDevOps/src/apps/devops03_api_test
+        working-directory: category/StudyDevOps/src/apps/devops03_api_test
 
   browser-e2e:
     name: Playwright E2E test
@@ -81,16 +81,16 @@ jobs:
         with:
           node-version: "20"
           cache: npm
-          cache-dependency-path: StudyDevOps/src/apps/devops04_playwright_e2e/package-lock.json
+          cache-dependency-path: category/StudyDevOps/src/apps/devops04_playwright_e2e/package-lock.json
       - name: Install dependencies
         run: npm ci
-        working-directory: StudyDevOps/src/apps/devops04_playwright_e2e
+        working-directory: category/StudyDevOps/src/apps/devops04_playwright_e2e
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-        working-directory: StudyDevOps/src/apps/devops04_playwright_e2e
+        working-directory: category/StudyDevOps/src/apps/devops04_playwright_e2e
       - name: Run browser tests
         run: npm run test:e2e
-        working-directory: StudyDevOps/src/apps/devops04_playwright_e2e
+        working-directory: category/StudyDevOps/src/apps/devops04_playwright_e2e
       - name: Upload failure artifacts
         if: failure()
         uses: actions/upload-artifact@v4
@@ -98,8 +98,8 @@ jobs:
           name: devops04-playwright-failure
           if-no-files-found: ignore
           path: |
-            StudyDevOps/src/apps/devops04_playwright_e2e/playwright-report/
-            StudyDevOps/src/apps/devops04_playwright_e2e/test-results/
+            category/StudyDevOps/src/apps/devops04_playwright_e2e/playwright-report/
+            category/StudyDevOps/src/apps/devops04_playwright_e2e/test-results/
 
   database-integration:
     name: PostgreSQL integration test
@@ -110,15 +110,15 @@ jobs:
         uses: actions/checkout@v4
       - name: Start PostgreSQL and run tests
         run: docker compose up --build --abort-on-container-exit --exit-code-from test
-        working-directory: StudyDevOps/src/apps/devops05_db_ci
+        working-directory: category/StudyDevOps/src/apps/devops05_db_ci
       - name: Show container logs after failure
         if: failure()
         run: docker compose logs
-        working-directory: StudyDevOps/src/apps/devops05_db_ci
+        working-directory: category/StudyDevOps/src/apps/devops05_db_ci
       - name: Remove database containers and volumes
         if: always()
         run: docker compose down --volumes
-        working-directory: StudyDevOps/src/apps/devops05_db_ci
+        working-directory: category/StudyDevOps/src/apps/devops05_db_ci
 
   operations-signals:
     name: Logging, health, and incident evidence
@@ -133,19 +133,19 @@ jobs:
           node-version: "20"
           cache: npm
           cache-dependency-path: |
-            StudyDevOps/src/apps/devops06_request_id_logging/app/package-lock.json
-            StudyDevOps/src/apps/devops07_health_check_endpoint/app/package-lock.json
-            StudyDevOps/src/apps/devops08_docker_logs_investigation/app/package-lock.json
+            category/StudyDevOps/src/apps/devops06_request_id_logging/app/package-lock.json
+            category/StudyDevOps/src/apps/devops07_health_check_endpoint/app/package-lock.json
+            category/StudyDevOps/src/apps/devops08_docker_logs_investigation/app/package-lock.json
       - name: Test request ID logging
         run: npm ci && npm test
-        working-directory: StudyDevOps/src/apps/devops06_request_id_logging/app
+        working-directory: category/StudyDevOps/src/apps/devops06_request_id_logging/app
       - name: Test health and readiness
         run: npm ci && npm test
-        working-directory: StudyDevOps/src/apps/devops07_health_check_endpoint/app
+        working-directory: category/StudyDevOps/src/apps/devops07_health_check_endpoint/app
       - name: Test investigation signals
         run: npm ci && npm test
-        working-directory: StudyDevOps/src/apps/devops08_docker_logs_investigation/app
+        working-directory: category/StudyDevOps/src/apps/devops08_docker_logs_investigation/app
       - name: Verify incident response artifacts
         run: |
-          test -s StudyDevOps/src/apps/devops09_incident_runbook/docs/runbook.md
-          test -s StudyDevOps/src/apps/devops09_incident_runbook/docs/sample_incident_report.md
+          test -s category/StudyDevOps/src/apps/devops09_incident_runbook/docs/runbook.md
+          test -s category/StudyDevOps/src/apps/devops09_incident_runbook/docs/sample_incident_report.md

@@ -3,11 +3,11 @@ name: StudyDB validation
 on:
   push:
     paths:
-      - "StudyDB/**"
+      - "category/StudyDB/**"
       - ".github/workflows/studydb-validation.yml"
   pull_request:
     paths:
-      - "StudyDB/**"
+      - "category/StudyDB/**"
       - ".github/workflows/studydb-validation.yml"
   workflow_dispatch:
 
@@ -31,4 +31,4 @@ jobs:
         with:
           node-version: "20"
       - name: Run isolated StudyDB validation
-        run: node StudyDB/scripts/validate-studydb.mjs
+        run: node category/StudyDB/scripts/validate-studydb.mjs

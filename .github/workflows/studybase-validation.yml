@@ -3,13 +3,13 @@ name: StudyBase validation
 on:
   push:
     paths:
-      - "StudyBase/**"
-      - "StudyArchitecture/doc/learning_notes/arch01_system_anatomy_walkthrough/**"
+      - "category/StudyBase/**"
+      - "category/StudyArchitecture/doc/learning_notes/arch01_system_anatomy_walkthrough/**"
       - ".github/workflows/studybase-validation.yml"
   pull_request:
     paths:
-      - "StudyBase/**"
-      - "StudyArchitecture/doc/learning_notes/arch01_system_anatomy_walkthrough/**"
+      - "category/StudyBase/**"
+      - "category/StudyArchitecture/doc/learning_notes/arch01_system_anatomy_walkthrough/**"
       - ".github/workflows/studybase-validation.yml"
   workflow_dispatch:
 
@@ -33,4 +33,4 @@ jobs:
         with:
           node-version: "20"
       - name: Run isolated StudyBase validation
-        run: node StudyBase/scripts/validate-studybase.mjs
+        run: node category/StudyBase/scripts/validate-studybase.mjs
