@@ -32,7 +32,7 @@ venv/
 node_modules/
 coverage/
 *.tsbuildinfo
-StudyAIIdeaGeneration/verify/results/
+category/StudyAIIdeaGeneration/verify/results/
 .env
 .env.*
 !.env.example
@@ -43,3 +43,4 @@ Thumbs.db
 .vscode/
 .idea/
 *.log
+category/StudyAI/src/samples/audio_generation/*.mp3

@@ -79,9 +79,9 @@ try {
         "LEARNING_GUIDE.md",
         "LEARNING_LOG_TEMPLATE.md",
         "THEME_CATALOG.md",
-        "StudyWeb/doc/learning_notes/web01_static_first_page/README.md",
-        "StudySecurity/doc/learning_notes/security01_session_auth/README.md",
-        "StudyAI/doc/learning_notes/system03_project_document_qa/README.md"
+        "category/StudyWeb/doc/learning_notes/web01_static_first_page/README.md",
+        "category/StudySecurity/doc/learning_notes/security01_session_auth/README.md",
+        "category/StudyAI/doc/learning_notes/system03_project_document_qa/README.md"
     )
     foreach ($requiredFile in $requiredFiles) {
         if (-not (Test-Path -LiteralPath (Join-Path $repoRoot $requiredFile))) {

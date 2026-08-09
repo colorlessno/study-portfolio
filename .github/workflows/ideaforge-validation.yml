@@ -3,11 +3,11 @@ name: IdeaForge validation
 on:
   push:
     paths:
-      - "StudyFabel/**"
+      - "category/StudyIdeaForge/**"
       - ".github/workflows/ideaforge-validation.yml"
   pull_request:
     paths:
-      - "StudyFabel/**"
+      - "category/StudyIdeaForge/**"
       - ".github/workflows/ideaforge-validation.yml"
 
 permissions:
@@ -31,4 +31,4 @@ jobs:
           python-version: "3.12"
 
       - name: Test isolated SQLite storage
-        run: python -m unittest discover -s StudyFabel/ideaforge/backend/tests -v
+        run: python -m unittest discover -s category/StudyIdeaForge/ideaforge/backend/tests -v

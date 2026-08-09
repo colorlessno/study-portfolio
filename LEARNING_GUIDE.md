@@ -12,7 +12,7 @@
 
 どの分野を選ぶか迷った場合は、[テーマカタログ](./THEME_CATALOG.md)の「目的別の入口」から選びます。
 
-迷った場合は、最初の学習ハブである [web01](./StudyWeb/doc/learning_notes/web01_static_first_page/README.md) から始めます。
+迷った場合は、最初の学習ハブである [web01](./category/StudyWeb/doc/learning_notes/web01_static_first_page/README.md) から始めます。
 
 ## 到達度
 
@@ -91,8 +91,8 @@ AIは回答を受け取るためだけでなく、自分の理解を検証する
 
 ## 最初の学習ハブ
 
-- [web01: HTML / CSS / JavaScriptの役割分担](./StudyWeb/doc/learning_notes/web01_static_first_page/README.md)
-- [security01: Cookie + Session認証](./StudySecurity/doc/learning_notes/security01_session_auth/README.md)
-- [system03: プロジェクト文書のRAG Q&A](./StudyAI/doc/learning_notes/system03_project_document_qa/README.md)
+- [web01: HTML / CSS / JavaScriptの役割分担](./category/StudyWeb/doc/learning_notes/web01_static_first_page/README.md)
+- [security01: Cookie + Session認証](./category/StudySecurity/doc/learning_notes/security01_session_auth/README.md)
+- [system03: プロジェクト文書のRAG Q&A](./category/StudyAI/doc/learning_notes/system03_project_document_qa/README.md)
 
 この3テーマで形式を検証した後、使いやすかった項目をほかのテーマへ段階的に展開します。

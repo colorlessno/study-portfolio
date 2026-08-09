@@ -3,11 +3,11 @@ name: StudyAIIdeaGeneration validation
 on:
   push:
     paths:
-      - "StudyAIIdeaGeneration/**"
+      - "category/StudyAIIdeaGeneration/**"
       - ".github/workflows/study-ai-idea-generation-validation.yml"
   pull_request:
     paths:
-      - "StudyAIIdeaGeneration/**"
+      - "category/StudyAIIdeaGeneration/**"
       - ".github/workflows/study-ai-idea-generation-validation.yml"
   workflow_dispatch:
 
@@ -31,10 +31,10 @@ jobs:
         with:
           python-version: "3.11"
       - name: Validate inputs and prompt structure
-        run: python StudyAIIdeaGeneration/verify/verify_prompts.py --check-only
+        run: python category/StudyAIIdeaGeneration/verify/verify_prompts.py --check-only
       - name: Validate comparison inputs
         run: |
-          python StudyAIIdeaGeneration/verify/verify_prompts.py --check-only --input StudyAIIdeaGeneration/exercise/baseline_input.json
-          python StudyAIIdeaGeneration/verify/verify_prompts.py --check-only --input StudyAIIdeaGeneration/exercise/variant_input.json
+          python category/StudyAIIdeaGeneration/verify/verify_prompts.py --check-only --input category/StudyAIIdeaGeneration/exercise/baseline_input.json
+          python category/StudyAIIdeaGeneration/verify/verify_prompts.py --check-only --input category/StudyAIIdeaGeneration/exercise/variant_input.json
       - name: Run standard-library tests
-        run: python -m unittest discover -s StudyAIIdeaGeneration/verify -p "test_*.py"
+        run: python -m unittest discover -s category/StudyAIIdeaGeneration/verify -p "test_*.py"

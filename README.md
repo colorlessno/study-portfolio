@@ -1,4 +1,4 @@
-# 学習・開発ポートフォリオ
+# StudyHub 学習・開発ポートフォリオ
 
 AIコーディング支援を活用して作成したソースを、実際に読み、動かし、変更し、自分の知識へ変えていくための学習ポートフォリオです。163の番号付きテーマを通して、ソフトウェア開発を「要件定義 → 基本設計 → 詳細設計 → 製造 → 検証」の一連の工程（SDLC）で扱っています。
 
@@ -17,23 +17,23 @@ AIコーディング支援を活用して作成したソースを、実際に読
 
 文書登録、チャンキング、Embedding、ハイブリッド検索、根拠付き回答、フィードバック記録を扱うRAGシステムです。要件、設計、FastAPI実装、React画面、pytestを横断できます。
 
-- [学習ハブ](./StudyAI/doc/learning_notes/system03_project_document_qa/README.md)
-- [要件定義](./StudyAI/doc/requirements/system03_requirements.md)
-- [バックエンド実装](./StudyAI/src/backend/src/studyai/systems/system03/)
-- [テスト](./StudyAI/src/backend/tests/systems/system03/test_chunk_service.py)
+- [学習ハブ](./category/StudyAI/doc/learning_notes/system03_project_document_qa/README.md)
+- [要件定義](./category/StudyAI/doc/requirements/system03_requirements.md)
+- [バックエンド実装](./category/StudyAI/src/backend/src/studyai/systems/system03/)
+- [テスト](./category/StudyAI/src/backend/tests/systems/system03/test_chunk_service.py)
 
-### StudyFabel / IdeaForge
+### StudyIdeaForge / IdeaForge
 
 発想法をグラフとして組み立て、AIの生成結果を人間が採用・修正・再生成しながら案を育てるローカルWebアプリです。
 
-- [プロジェクト概要](./StudyFabel/)
-- [アプリケーション](./StudyFabel/ideaforge/)
-- [LLMなしの再開手順](./StudyFabel/ideaforge/README.md#15分で再開するllmなし)
+- [プロジェクト概要](./category/StudyIdeaForge/)
+- [アプリケーション](./category/StudyIdeaForge/ideaforge/)
+- [LLMなしの再開手順](./category/StudyIdeaForge/ideaforge/README.md#15分で再開するllmなし)
 
 ### 小さく学べる教材
 
-- [web01: HTML / CSS / JavaScriptの役割分担](./StudyWeb/doc/learning_notes/web01_static_first_page/README.md)
-- [security01: Cookie + Session認証](./StudySecurity/doc/learning_notes/security01_session_auth/README.md)
+- [web01: HTML / CSS / JavaScriptの役割分担](./category/StudyWeb/doc/learning_notes/web01_static_first_page/README.md)
+- [security01: Cookie + Session認証](./category/StudySecurity/doc/learning_notes/security01_session_auth/README.md)
 
 ## 学習方針
 
@@ -45,7 +45,7 @@ AIコーディング支援を活用して作成したソースを、実際に読
 
 到達度は「再現できる」「説明できる」「改造できる」「応用できる」で記録します。詳しい進め方は [学習再開ガイド](./LEARNING_GUIDE.md) にまとめています。
 
-将来は、各`StudyXX`を横断してテーマ検索、進捗、復習、実行手順を管理する統合学習ツールへの発展を想定しています。
+各`StudyXX`は独立して利用でき、[StudyAreaカタログ](./catalog/)に検証方法と実行上の種別をまとめています。将来の管理画面は[`study-hub/`](./study-hub/)へ追加し、既存教材へ依存を持ち込まない構成です。
 
 ## プロジェクト一覧
 
@@ -53,38 +53,39 @@ AIコーディング支援を活用して作成したソースを、実際に読
 
 | プロジェクト | 内容 | 主な技術 |
 |---|---|---|
-| [StudyAI](./StudyAI/) | AIを組み込んだ業務システム群（system01〜48）。データ抽出、RAG、エージェント等 | Python / FastAPI / PostgreSQL (pgvector) / LangGraph / React / Docker |
-| [StudyWeb](./StudyWeb/) | Web開発の体系学習（web01〜52）。静的ページからNext.js、Prisma、Compose構成まで | TypeScript / React / Next.js / NestJS / Prisma / Docker |
-| [StudySecurity](./StudySecurity/) | セキュリティ実装教材（security01〜21）。認証、認可、Web攻撃対策、AI安全 | Node.js（依存ゼロ実装） |
-| [StudyDevOps](./StudyDevOps/) | CI/CD、テスト、ログ、運用、障害対応の教材 | GitHub Actions / Playwright / Docker |
-| [StudyAWS](./StudyAWS/) | AWSの主要概念をローカルで模擬する教材（aws01〜10） | Node.js / Docker |
-| [StudyFabel](./StudyFabel/) | IdeaForge — AIと人間の協働による発想支援Webアプリ | FastAPI / SQLite / React / Vite |
+| [StudyAI](./category/StudyAI/) | AIを組み込んだ業務システム群（system01〜48）。データ抽出、RAG、エージェント等 | Python / FastAPI / PostgreSQL (pgvector) / LangGraph / React / Docker |
+| [StudyWeb](./category/StudyWeb/) | Web開発の体系学習（web01〜52）。静的ページからNext.js、Prisma、Compose構成まで | TypeScript / React / Next.js / NestJS / Prisma / Docker |
+| [StudySecurity](./category/StudySecurity/) | セキュリティ実装教材（security01〜21）。認証、認可、Web攻撃対策、AI安全 | Node.js（依存ゼロ実装） |
+| [StudyDevOps](./category/StudyDevOps/) | CI/CD、テスト、ログ、運用、障害対応の教材 | GitHub Actions / Playwright / Docker |
+| [StudyAWS](./category/StudyAWS/) | AWSの主要概念をローカルで模擬する教材（aws01〜10） | Node.js / Docker |
+| [StudyIdeaForge](./category/StudyIdeaForge/) | IdeaForge — AIと人間の協働による発想支援Webアプリ | FastAPI / SQLite / React / Vite |
 
 ### 学習ノート・設計中心のプロジェクト
 
 | プロジェクト | 内容 |
 |---|---|
-| [StudyDB](./StudyDB/) | データベース教材（SQL実習と設計文書） |
-| [StudyBase](./StudyBase/) | 開発の基礎作法（ヒアリング、見積、Git、npm等） |
-| [StudyArchitecture](./StudyArchitecture/) | アーキテクチャ分析・設計レビューの文書教材 |
-| [StudyDesktop](./StudyDesktop/) | Electronによるデスクトップアプリ教材 |
-| [StudyAIIdeaGeneration](./StudyAIIdeaGeneration/) | AI発想支援のプロンプト集 |
-| [StudyAICorporateEmployee](./StudyAICorporateEmployee/) | ローカルPC上に役割別「AI社員」を構築する設計メモ |
+| [StudyDB](./category/StudyDB/) | データベース教材（SQL実習と設計文書） |
+| [StudyBase](./category/StudyBase/) | 開発の基礎作法（ヒアリング、見積、Git、npm等） |
+| [StudyArchitecture](./category/StudyArchitecture/) | アーキテクチャ分析・設計レビューの文書教材 |
+| [StudyDesktop](./category/StudyDesktop/) | Electronによるデスクトップアプリ教材 |
+| [StudyAIIdeaGeneration](./category/StudyAIIdeaGeneration/) | AI発想支援のプロンプト集 |
+| [StudyAICorporateEmployee](./category/StudyAICorporateEmployee/) | ローカルPC上に役割別「AI社員」を構築する設計メモ |
+| [StudyAPI](./category/StudyAPI/) | Python標準ライブラリによる最小Web APIとmock upstreamの教材 |
 
 ## リポジトリ構成
 
 各プロジェクトでは、工程別の文書と実装を対応付けています。
 
 ```text
-StudyXX/
-  doc/requirements/       要件定義
-  doc/basic_design/       基本設計
-  doc/detailed_design/    詳細設計
-  doc/learning_notes/     テーマごとの学習入口
-  src/                    実装、SQL、テンプレート等
+study-hub repository
+├─ category/
+│  └─ StudyXX/            独立利用できる教材・実装
+├─ study-hub/             将来の管理画面
+├─ catalog/               StudyAreaのmetadataと検証契約
+└─ scripts/               構造検証・起動支援
 ```
 
-一部のテーマは、コードではなくチェックリスト、設計レビュー、運用手順などを成果物とする「文書完結型」です。
+各`StudyXX`は必要に応じて`doc/requirements/`、`doc/basic_design/`、`doc/detailed_design/`、`doc/learning_notes/`、`src/`を持ちます。一部のテーマは、コードではなくチェックリスト、設計レビュー、運用手順などを成果物とする「文書完結型」です。
 
 ## AIコーディング支援について
 
@@ -98,6 +99,8 @@ StudyXX/
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/validate_portfolio.ps1
+node scripts/validate-study-catalog.mjs
+node scripts/run-study-check.mjs --list
 ```
 
 PowerShell 7 (`pwsh`) を使用する場合は、`pwsh -File scripts/validate_portfolio.ps1` でも実行できます。

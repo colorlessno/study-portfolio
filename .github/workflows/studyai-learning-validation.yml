@@ -3,11 +3,11 @@ name: StudyAI learning validation
 on:
   push:
     paths:
-      - "StudyAI/**"
+      - "category/StudyAI/**"
       - ".github/workflows/studyai-learning-validation.yml"
   pull_request:
     paths:
-      - "StudyAI/**"
+      - "category/StudyAI/**"
       - ".github/workflows/studyai-learning-validation.yml"
 
 permissions:
@@ -31,7 +31,7 @@ jobs:
           python-version: "3.12"
 
       - name: Run dependency-free AI learning validation
-        run: python StudyAI/scripts/validate-ai-learning.py
+        run: python category/StudyAI/scripts/validate-ai-learning.py
 
       - name: Run dependency-free system03 RAG validation
-        run: python StudyAI/scripts/validate-system03-rag-learning.py
+        run: python category/StudyAI/scripts/validate-system03-rag-learning.py

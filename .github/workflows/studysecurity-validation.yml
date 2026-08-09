@@ -5,11 +5,11 @@ on:
     branches:
       - main
     paths:
-      - "StudySecurity/**"
+      - "category/StudySecurity/**"
       - ".github/workflows/studysecurity-validation.yml"
   pull_request:
     paths:
-      - "StudySecurity/**"
+      - "category/StudySecurity/**"
       - ".github/workflows/studysecurity-validation.yml"
 
 jobs:
@@ -29,4 +29,4 @@ jobs:
         with:
           node-version: 22
       - name: Test ${{ matrix.theme }}
-        run: npm --prefix StudySecurity/src/backend/src/studysecurity/systems/${{ matrix.theme }} test
+        run: npm --prefix category/StudySecurity/src/backend/src/studysecurity/systems/${{ matrix.theme }} test

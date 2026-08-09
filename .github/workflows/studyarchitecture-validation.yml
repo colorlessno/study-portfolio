@@ -3,11 +3,11 @@ name: StudyArchitecture validation
 on:
   push:
     paths:
-      - "StudyArchitecture/**"
+      - "category/StudyArchitecture/**"
       - ".github/workflows/studyarchitecture-validation.yml"
   pull_request:
     paths:
-      - "StudyArchitecture/**"
+      - "category/StudyArchitecture/**"
       - ".github/workflows/studyarchitecture-validation.yml"
 
 permissions:
@@ -31,4 +31,4 @@ jobs:
           python-version: "3.12"
 
       - name: Validate architecture learning artifacts
-        run: python StudyArchitecture/scripts/validate-architecture-learning.py
+        run: python category/StudyArchitecture/scripts/validate-architecture-learning.py

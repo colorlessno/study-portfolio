@@ -3,11 +3,11 @@ name: StudyAPI validation
 on:
   push:
     paths:
-      - "StudyAPI/**"
+      - "category/StudyAPI/**"
       - ".github/workflows/studyapi-validation.yml"
   pull_request:
     paths:
-      - "StudyAPI/**"
+      - "category/StudyAPI/**"
       - ".github/workflows/studyapi-validation.yml"
   workflow_dispatch:
 
@@ -31,4 +31,4 @@ jobs:
         with:
           python-version: "3.11"
       - name: Run standard-library tests
-        run: python -m unittest discover -s StudyAPI/tests -p "test_*.py"
+        run: python -m unittest discover -s category/StudyAPI/tests -p "test_*.py"
