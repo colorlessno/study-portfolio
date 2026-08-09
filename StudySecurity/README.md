@@ -101,6 +101,24 @@ StudySecurity/
 npm.cmd --prefix StudySecurity/src/backend/src/studysecurity/systems/security01_session_auth run check
 ```
 
+## 代表テーマの自動テスト
+
+4つの学習グループから1テーマずつ選び、外部serviceや追加packageを使わずに実装境界を検証します。各テーマは単独で実行できます。
+
+```powershell
+npm.cmd --prefix StudySecurity/src/backend/src/studysecurity/systems/security03_rbac test
+npm.cmd --prefix StudySecurity/src/backend/src/studysecurity/systems/security05_input_validation test
+npm.cmd --prefix StudySecurity/src/backend/src/studysecurity/systems/security11_webhook_signature test
+npm.cmd --prefix StudySecurity/src/backend/src/studysecurity/systems/security21_ai_content_moderation test
+```
+
+| 学習グループ | 代表テーマ | 検出するずれ |
+|---|---|---|
+| 認証・認可 | security03 | 401・403・200とrole別permission |
+| 入力・browser攻撃 | security05 | 型・長さ・数値・CSV列数の境界 |
+| 連携・運用防御 | security11 | raw body署名・5分期限・replay |
+| AI・data安全 | security21 | category・context・decision・reason code |
+
 Docker 対応済みの番号は、各実装ディレクトリをビルドコンテキストにして確認します。
 ```powershell
 docker build -t studysecurity-security01 .

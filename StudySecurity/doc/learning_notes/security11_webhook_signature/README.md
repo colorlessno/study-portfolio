@@ -29,8 +29,11 @@ raw body、timestamp、HMAC署名、event IDを検証し、改ざん検知とrep
 
 ```powershell
 npm.cmd --prefix StudySecurity/src/backend/src/studysecurity/systems/security11_webhook_signature run check
+npm.cmd --prefix StudySecurity/src/backend/src/studysecurity/systems/security11_webhook_signature test
 npm.cmd --prefix StudySecurity/src/backend/src/studysecurity/systems/security11_webhook_signature run demo
 ```
+
+自動テストは署名対象の変更、5分ちょうどと1ms超過、event ID不足、署名不一致、replayを固定時刻で確認します。
 
 | case | 期待status | 観察する判断 |
 |---|---:|---|
@@ -75,6 +78,7 @@ HTTP serverを確認する場合は`npm.cmd --prefix StudySecurity/src/backend/s
 - 外部Webhook providerへ接続しない
 - event IDはmemoryだけに保存し、再起動・複数instanceへ対応しない
 - default secretは明確なdummyでproduction利用不可
+- 自動テストはpure functionの境界を扱い、providerからの実HTTP deliveryは検証しない
 
 ## 学習完了の目安
 
