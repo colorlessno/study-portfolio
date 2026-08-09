@@ -80,3 +80,23 @@ web29（README template）、web30（error log note）、web31（Issue / PR styl
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/validate_portfolio.ps1
 ```
+
+追加packageや固定portを使わない最初の代表自動テストとして、次の5テーマを個別に検証できます。
+
+```powershell
+npm.cmd --prefix StudyWeb/src/backend/src/studyweb/systems/web28_env_config/backend test
+npm.cmd --prefix StudyWeb/src/backend/src/studyweb/systems/web33_cookie_session test
+npm.cmd --prefix StudyWeb/src/backend/src/studyweb/systems/web42_pagination_sort_filter_api test
+npm.cmd --prefix StudyWeb/src/backend/src/studyweb/systems/web43_idempotency_key test
+npm.cmd --prefix StudyWeb/src/backend/src/studyweb/systems/web48_job_status_api test
+```
+
+| テーマ | 自動検証する境界 |
+|---|---|
+| web28 | 必須環境変数、port範囲、公開設定と非公開設定 |
+| web33 | login、Cookie属性、Session参照、logout |
+| web42 | filter、sort、pagination、query validation |
+| web43 | 初回処理、同一requestの再送、payload衝突、不正JSON |
+| web48 | 202受付、queued・running・succeeded、unknown job |
+
+これはbackend HTTP境界の最初の保守証跡です。Browser UI、React、Next.js、Docker、DBを含む代表テストは別の段階で追加します。

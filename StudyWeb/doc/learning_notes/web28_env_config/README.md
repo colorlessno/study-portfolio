@@ -26,10 +26,17 @@ Docker Compose、Vite、Node.jsで環境変数を受け渡し、公開可能な�
 
 ## 15分で再開する
 
-1. `.env.example`を指定してComposeを起動する。
-2. Webと`/config-check`を開く。
-3. Browserへ見える値と見えない値を分ける。
-4. APP_MESSAGEを別値にして再起動し、反映を確認する。
+1. backend単体テストで必須値、port範囲、responseへの公開範囲を確認する。
+2. `.env.example`を指定してComposeを起動する。
+3. Webと`/config-check`を開く。
+4. Browserへ見える値と見えない値を分ける。
+5. APP_MESSAGEを別値にして再起動し、反映を確認する。
+
+```powershell
+npm.cmd --prefix StudyWeb/src/backend/src/studyweb/systems/web28_env_config/backend test
+```
+
+テストはephemeral portを使い、DockerやDB接続なしで実行できます。
 
 ## 起動方法
 
@@ -64,7 +71,7 @@ BackendはDATABASE_URLの有無だけを`hasDatabaseUrl`として返し、接続
 - API_INTERNAL_PORTとAPP_MESSAGEは既定値を持つか
 - VITE_API_URLが画面とBrowser bundleへ公開されるか
 - DATABASE_URLの内容がAPIレスポンスに出ないか
-- PORTが正の整数でない場合にbackendが終了するか
+- PORTが1〜65535の整数でない場合にbackendが終了するか
 
 ## 壊して直す演習
 
@@ -88,6 +95,7 @@ BackendはDATABASE_URLの有無だけを`hasDatabaseUrl`として返し、接続
 ## 学習完了の目安
 
 - [ ] sample envでWebとAPIを起動した
+- [ ] backend単体テストが成功した
 - [ ] 必須値不足と不正PORTを観察した
 - [ ] VITE公開値とbackend専用値を分類した
 - [ ] APP_MESSAGEを環境変数だけで切り替えた
