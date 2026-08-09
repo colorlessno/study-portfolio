@@ -32,6 +32,7 @@ venv/
 node_modules/
 coverage/
 *.tsbuildinfo
+StudyAIIdeaGeneration/verify/results/
 .env
 .env.*
 !.env.example

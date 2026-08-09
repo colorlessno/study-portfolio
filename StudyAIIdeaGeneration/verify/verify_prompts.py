@@ -6,6 +6,8 @@ LM Studio プロンプト検証スクリプト(標準ライブラリのみ、pip
 JSON妥当性・件数・所要時間を自動チェックする。
 
 使い方:
+  python verify_prompts.py --check-only         # API接続なしで入力とpromptを静的検証
+  python verify_prompts.py --connection-only    # モデル一覧取得まで確認して終了
   python verify_prompts.py                      # 全5ステップ連結実行
   python verify_prompts.py --steps mindmap,scamper
   python verify_prompts.py --model "qwen2.5-14b-instruct" --temperature 0.4
@@ -33,6 +35,15 @@ SIX_HATS_KEYS = ["idea_id", "white", "red", "black", "yellow", "green", "blue", 
 SCORE_KEYS = ["feasibility", "market_need", "uniqueness", "profitability", "risk"]
 PLAN_KEYS = ["idea_id", "final_goal", "milestones", "day1_actions", "week1_actions",
              "requirements", "first_hypothesis", "failure_points", "alternatives"]
+BASE_INPUT_KEYS = ["theme", "background", "purpose", "constraints"]
+EXPECTED_PLACEHOLDERS = {
+    "mindmap": {"theme", "background", "purpose", "constraints"},
+    "scamper": {"theme", "constraints", "mindmap_output"},
+    "persona": {"theme", "constraints", "scamper_ideas"},
+    "six_hats": {"theme", "constraints", "item"},
+    "reverse_plan": {"theme", "constraints", "item"},
+}
+REQUIRED_PROMPT_SECTIONS = ["## 入力", "## 指示", "## 出力形式"]
 
 
 # ---------- HTTP ----------
@@ -189,6 +200,56 @@ def render(step, variables):
     return text, leftover
 
 
+def parse_steps(value):
+    steps = STEP_ORDER if value == "all" else [s.strip() for s in value.split(",") if s.strip()]
+    invalid = [s for s in steps if s not in STEP_ORDER]
+    if invalid:
+        raise ValueError(f"不明なステップ: {', '.join(invalid)} (有効: {', '.join(STEP_ORDER)})")
+    if not steps:
+        raise ValueError("ステップが指定されていません")
+    positions = [STEP_ORDER.index(step) for step in steps]
+    if len(positions) != len(set(positions)) or positions != sorted(positions):
+        raise ValueError("ステップは重複させず、上流から順に指定してください")
+    return steps
+
+
+def validate_assets(input_path, steps):
+    issues = []
+    path = Path(input_path)
+    try:
+        base_vars = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as e:
+        return {}, [f"入力JSONを読めません: {path}: {e}"]
+
+    if not isinstance(base_vars, dict):
+        return {}, [f"入力JSONのルートはobjectにしてください: {path}"]
+
+    for key in BASE_INPUT_KEYS:
+        value = base_vars.get(key)
+        if not isinstance(value, str) or not value.strip():
+            issues.append(f"入力項目 {key} は空でない文字列にしてください")
+
+    for step in steps:
+        prompt_path = PROMPT_DIR / f"{step}.md"
+        try:
+            text = prompt_path.read_text(encoding="utf-8")
+        except (OSError, UnicodeError) as e:
+            issues.append(f"promptを読めません: {prompt_path}: {e}")
+            continue
+
+        placeholders = set(re.findall(r"\{\{(\w+)\}\}", text))
+        expected = EXPECTED_PLACEHOLDERS[step]
+        if placeholders != expected:
+            issues.append(
+                f"{step}: placeholder差異 expected={sorted(expected)} actual={sorted(placeholders)}"
+            )
+        missing_sections = [section for section in REQUIRED_PROMPT_SECTIONS if section not in text]
+        if missing_sections:
+            issues.append(f"{step}: section欠落 {missing_sections}")
+
+    return base_vars, issues
+
+
 def jdump(obj):
     return json.dumps(obj, ensure_ascii=False, indent=2)
 
@@ -225,7 +286,25 @@ def main():
     p.add_argument("--max-tokens", type=int, default=8192)
     p.add_argument("--timeout", type=int, default=600, help="1呼び出しのタイムアウト秒")
     p.add_argument("--input", default=str(HERE / "test_input.json"))
+    p.add_argument("--check-only", action="store_true", help="API接続なしで入力とprompt構造だけを検証")
+    p.add_argument("--connection-only", action="store_true", help="LM Studioのモデル一覧取得まで確認して終了")
     args = p.parse_args()
+
+    try:
+        steps = parse_steps(args.steps)
+    except ValueError as e:
+        print(f"[NG] {e}")
+        sys.exit(1)
+
+    base_vars, asset_issues = validate_assets(args.input, steps)
+    if asset_issues:
+        print("[NG] 入力またはpromptの静的検証に失敗しました。")
+        for issue in asset_issues:
+            print(f"     - {issue}")
+        sys.exit(1)
+    if args.check_only:
+        print(f"[OK] 入力JSONとprompt {len(steps)}件の静的検証に成功しました。")
+        return
 
     # 接続確認 & モデル決定
     try:
@@ -241,14 +320,10 @@ def main():
     if args.model is None:
         args.model = available[0]
     print(f"接続OK: {args.base_url}  モデル: {args.model}")
+    if args.connection_only:
+        print("[OK] LM Studioの接続確認に成功しました。生成処理は実行していません。")
+        return
 
-    steps = STEP_ORDER if args.steps == "all" else [s.strip() for s in args.steps.split(",")]
-    for s in steps:
-        if s not in STEP_ORDER:
-            print(f"[NG] 不明なステップ: {s}(有効: {', '.join(STEP_ORDER)})")
-            sys.exit(1)
-
-    base_vars = json.loads(Path(args.input).read_text(encoding="utf-8"))
     outdir = RESULT_BASE / datetime.now().strftime("%Y%m%d-%H%M%S")
     outdir.mkdir(parents=True, exist_ok=True)
 
@@ -325,6 +400,7 @@ def main():
     # レポート出力
     lines = ["# プロンプト検証レポート", "",
              f"- 日時: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+             f"- 入力: {Path(args.input).resolve()}",
              f"- モデル: {args.model}",
              f"- temperature: {args.temperature} / max_tokens: {args.max_tokens}", "",
              "| ステップ | 判定 | 所要 | トークン | 問題点 |",
@@ -336,6 +412,8 @@ def main():
     (outdir / "report.md").write_text("\n".join(lines), encoding="utf-8")
     print(f"\nレポート: {outdir / 'report.md'}")
     print("WARN/NG があれば report.md と *_raw.txt を確認してください。")
+    if any(verdict == "NG" for _, verdict, _, _, _ in report):
+        sys.exit(1)
 
 
 if __name__ == "__main__":
