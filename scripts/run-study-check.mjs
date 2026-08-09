@@ -3,29 +3,29 @@ import { access, readFile } from 'node:fs/promises'
 import path from 'node:path'
 
 const root = path.resolve(import.meta.dirname, '..')
-const catalog = JSON.parse(await readFile(path.join(root, 'catalog', 'study-areas.json'), 'utf8'))
+const catalog = JSON.parse(await readFile(path.join(root, 'catalog', 'fields.json'), 'utf8'))
 const args = process.argv.slice(2)
 
 if (args.length === 1 && args[0] === '--list') {
-  for (const area of catalog.areas) {
-    console.log(`${area.name}\t${area.unitKind}\t${area.lifecycle.mode}`)
+  for (const field of catalog.fields) {
+    console.log(`${field.name}\t${field.unitKind}\t${field.lifecycle.mode}`)
   }
   process.exit(0)
 }
 
-if (args.length !== 2 || args[0] !== '--area') {
-  console.error('Usage: node scripts/run-study-check.mjs --list | --area <name-or-id>')
+if (args.length !== 2 || args[0] !== '--field') {
+  console.error('Usage: node scripts/run-study-check.mjs --list | --field <name-or-id>')
   process.exit(2)
 }
 
 const requested = args[1].toLowerCase()
-const area = catalog.areas.find((candidate) => candidate.id.toLowerCase() === requested || candidate.name.toLowerCase() === requested)
-if (!area) {
-  console.error(`Unknown StudyArea: ${args[1]}`)
+const field = catalog.fields.find((candidate) => candidate.id.toLowerCase() === requested || candidate.name.toLowerCase() === requested)
+if (!field) {
+  console.error(`Unknown field: ${args[1]}`)
   process.exit(2)
 }
 
-const check = area.lifecycle.check
+const check = field.lifecycle.check
 
 async function resolveCommand(commandName) {
   if (commandName !== 'python') return commandName
@@ -49,7 +49,7 @@ const command = await resolveCommand(check.command)
 const useShell = process.platform === 'win32' && check.command === 'npm'
 const timeoutMs = check.timeoutSeconds * 1000
 
-console.log(`Checking ${area.name}: ${check.command} ${check.args.join(' ')}`)
+console.log(`Checking ${field.name}: ${check.command} ${check.args.join(' ')}`)
 const child = spawn(command, check.args, {
   cwd: root,
   env: { ...process.env, PYTHONUTF8: process.env.PYTHONUTF8 ?? '1' },
@@ -72,12 +72,12 @@ child.on('error', (error) => {
 child.on('exit', (code, signal) => {
   clearTimeout(timeout)
   if (timedOut) {
-    console.error(`${area.name} timed out after ${check.timeoutSeconds} seconds`)
+    console.error(`${field.name} timed out after ${check.timeoutSeconds} seconds`)
     process.exitCode = 124
     return
   }
   if (signal) {
-    console.error(`${area.name} stopped by signal ${signal}`)
+    console.error(`${field.name} stopped by signal ${signal}`)
     process.exitCode = 1
     return
   }

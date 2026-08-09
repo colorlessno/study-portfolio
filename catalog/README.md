@@ -1,15 +1,15 @@
-# Study area catalog
+# 分野カタログ
 
-[`study-areas.json`](./study-areas.json) is the machine-readable index for the learning areas under [`../category/`](../category/). It gives StudyHub a stable boundary without coupling the existing projects to a management application.
+[`fields.json`](./fields.json)は、[`../category/`](../category/)配下の学習分野を扱う機械可読カタログです。既存プロジェクトを管理画面へ依存させず、StudyHubとの安定した境界を提供します。
 
-Each area defines:
+各分野では次を定義します。
 
 - a stable ID, display name, directory, and learning entry file;
 - its numbered-theme count;
 - a unit kind: `document`, `exercise`, `implementation`, `application`, `shared-environment`, or `mixed`;
 - one bounded check command and timeout;
 - whether the check manages a temporary shared environment and its cleanup;
-- a start guide when the area is a manually operated application.
+- a start guide when the field is a manually operated application.
 
 Lifecycle modes:
 
@@ -23,9 +23,9 @@ Validate the catalog structure:
 node scripts/validate-study-catalog.mjs
 ```
 
-List or run an area check:
+List or run a field check:
 
 ```powershell
 node scripts/run-study-check.mjs --list
-node scripts/run-study-check.mjs --area StudyDevOps
+node scripts/run-study-check.mjs --field StudyDevOps
 ```

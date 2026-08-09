@@ -45,7 +45,7 @@ AIコーディング支援を活用して作成したソースを、実際に読
 
 到達度は「再現できる」「説明できる」「改造できる」「応用できる」で記録します。詳しい進め方は [学習再開ガイド](./LEARNING_GUIDE.md) にまとめています。
 
-各`StudyXX`は独立して利用でき、[StudyAreaカタログ](./catalog/)に検証方法と実行上の種別をまとめています。将来の管理画面は[`study-hub/`](./study-hub/)へ追加し、既存教材へ依存を持ち込まない構成です。
+各`StudyXX`は独立して利用でき、[分野カタログ](./catalog/)に検証方法と実行上の種別をまとめています。将来の管理画面は[`study-hub/`](./study-hub/)へ追加し、既存教材へ依存を持ち込まない構成です。
 
 ## プロジェクト一覧
 
@@ -81,7 +81,7 @@ study-hub repository
 ├─ category/
 │  └─ StudyXX/            独立利用できる教材・実装
 ├─ study-hub/             将来の管理画面
-├─ catalog/               StudyAreaのmetadataと検証契約
+├─ catalog/               分野のmetadataと検証契約
 └─ scripts/               構造検証・起動支援
 ```
 

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "repository": "study-hub",
   "numberedThemeCount": 163,
-  "areas": [
+  "fields": [
     {
       "id": "study-web",
       "name": "StudyWeb",
