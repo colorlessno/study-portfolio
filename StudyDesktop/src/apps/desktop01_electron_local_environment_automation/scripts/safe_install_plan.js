@@ -44,9 +44,14 @@ function main() {
     return;
   }
 
+  if (mode === "--mock-wait") {
+    console.log("mock wait started; cancel this task from the UI");
+    setTimeout(() => console.log("mock wait completed"), 5000);
+    return;
+  }
+
   console.error(`unknown mode: ${mode}`);
   process.exit(1);
 }
 
 main();
-

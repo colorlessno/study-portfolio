@@ -30,13 +30,23 @@ function startTask(taskId, onEvent) {
     env: { ...process.env, DESKTOP01_RUN_ID: runId }
   });
 
-  running.set(runId, child);
+  const runningTask = { child, cancelRequested: false };
+  running.set(runId, runningTask);
   onEvent(createEvent(runId, "running", `Started ${taskId}`));
 
   child.stdout.on("data", (chunk) => onEvent(createEvent(runId, "stdout", chunk.toString().trim())));
   child.stderr.on("data", (chunk) => onEvent(createEvent(runId, "stderr", chunk.toString().trim(), "warn")));
   child.on("close", (code) => {
+    const finishedTask = running.get(runId);
     running.delete(runId);
+
+    if (finishedTask?.cancelRequested) {
+      onEvent(createEvent(runId, "cleaning", "Cleaning cancelled run"));
+      const cleanupSummary = cleanupRun(runId);
+      onEvent(createEvent(runId, "cancelled", JSON.stringify(cleanupSummary)));
+      return;
+    }
+
     const status = code === 0 ? "completed" : "failed";
     onEvent(createEvent(runId, status, `${taskId} exited with ${code}`, code === 0 ? "info" : "error"));
   });
@@ -45,16 +55,21 @@ function startTask(taskId, onEvent) {
 }
 
 function cancelTask(runId, onEvent) {
-  const child = running.get(runId);
-  if (!child) {
+  const runningTask = running.get(runId);
+  if (!runningTask) {
     return { cancelled: false, reason: "not running" };
   }
+
+  runningTask.cancelRequested = true;
   onEvent(createEvent(runId, "cancelling", "Cancellation requested"));
-  child.kill();
-  const cleanupSummary = cleanupRun(runId);
-  onEvent(createEvent(runId, "cancelled", JSON.stringify(cleanupSummary)));
-  return { cancelled: true, cleanupSummary };
+  const signalSent = runningTask.child.kill();
+
+  if (!signalSent) {
+    runningTask.cancelRequested = false;
+    return { cancelled: false, reason: "termination signal was not sent" };
+  }
+
+  return { cancelled: true };
 }
 
 module.exports = { startTask, cancelTask };
-

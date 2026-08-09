@@ -12,6 +12,6 @@
 ## 共通実装方針
 - UIから任意コマンドを入力・実行できる設計にしない。
 - main processだけがOSコマンド実行を担当し、rendererはIPCで定義済みtask idを送る。
-- 作業対象は `StudyDesktop/src/src/apps/desktop01_electron_local_environment_automation/workspace/` 配下に限定する。
+- 作業対象は `StudyDesktop/src/apps/desktop01_electron_local_environment_automation/workspace/` 配下に限定する。
 - 実秘密情報、実認証情報、個人情報をログに出さない。
 - 作成・更新するテキストファイルは UTF-8 BOMなしとする。

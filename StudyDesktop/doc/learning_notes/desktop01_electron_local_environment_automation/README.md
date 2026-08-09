@@ -6,14 +6,28 @@ MVPは mock task に限定する。実際の clone / install / build を入れ�
 ## 学習順
 1. `docs/ipc_flow.md` を読み、main / preload / renderer の責務を確認する。
 2. `docs/command_allowlist.md` を読み、renderer入力がshell commandにならないことを確認する。
-3. アプリまたは script から mock plan task を実行する。
-4. `docs/state_transition.md` と task log を比較する。
-5. 実setup taskを追加する前に `docs/failure_cleanup.md` を確認する。
+3. アプリのディレクトリで `npm run verify` を実行し、安全境界を自動検証する。
+4. アプリまたは script から mock plan task を実行する。
+5. デスクトップ環境が使える場合はElectron UIを起動する。
+6. `docs/state_transition.md` と task log を比較する。
+7. 実setup taskを追加する前に `docs/failure_cleanup.md` を確認する。
+
+## 再開用チェックポイント
+
+```cmd
+cd StudyDesktop\src\apps\desktop01_electron_local_environment_automation
+npm run verify
+```
+
+- GUIなしでもallowlist、mock書き込み先、cleanup境界、task状態遷移を確認できる。
+- GUI確認へ進むときだけ `npm ci` と `npm run start` を実行する。
+- 失敗時はアプリREADMEの「失敗時の復旧」に戻り、workspace外を操作しない。
 ## ファイル
 
 | ファイル | 目的 |
 | --- | --- |
 | `src/apps/desktop01_electron_local_environment_automation/` | Electron MVP |
+| `src/apps/desktop01_electron_local_environment_automation/test/` | GUIなし安全境界テスト |
 | `docs/ipc_flow.md` | main/preload/renderer 境界 |
 | `docs/command_allowlist.md` | 許可taskモデル |
 | `docs/state_transition.md` | task状態モデル |

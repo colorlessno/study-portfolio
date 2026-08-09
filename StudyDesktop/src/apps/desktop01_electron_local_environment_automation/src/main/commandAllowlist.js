@@ -22,6 +22,11 @@ const tasks = {
     command: process.execPath,
     args: [path.join(rootDir, "scripts", "safe_install_plan.js"), "--mock-install"],
     description: "Write mock install log under workspace."
+  },
+  "mock-wait": {
+    command: process.execPath,
+    args: [path.join(rootDir, "scripts", "safe_install_plan.js"), "--mock-wait"],
+    description: "Wait long enough to practise task cancellation."
   }
 };
 
@@ -41,4 +46,3 @@ if (require.main === module) {
 }
 
 module.exports = { getTask, listTasks };
-

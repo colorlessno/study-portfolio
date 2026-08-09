@@ -16,4 +16,4 @@
 - 実秘密情報、実認証情報、破壊的コマンドを教材に含めない。
 - 作成・更新するテキストファイルは UTF-8 BOMなしとする。
 ## 後続工程
-2026-05-07 に `StudyDesktop/doc/basic_design/` へ `desktop01` の基本設計を作成した。同日に `StudyDesktop/doc/detailed_design/` へ `desktop01` の詳細設計を作成した。同日に `StudyDesktop/src/src/apps/desktop01_electron_local_environment_automation/` と学習メモを作成した。
+2026-05-07 に `StudyDesktop/doc/basic_design/` へ `desktop01` の基本設計を作成した。同日に `StudyDesktop/doc/detailed_design/` へ `desktop01` の詳細設計を作成した。同日に `StudyDesktop/src/apps/desktop01_electron_local_environment_automation/` と学習メモを作成した。
