@@ -38,10 +38,11 @@
 
 ```powershell
 npm.cmd --prefix StudySecurity/src/backend/src/studysecurity/systems/security03_rbac run check
+npm.cmd --prefix StudySecurity/src/backend/src/studysecurity/systems/security03_rbac test
 npm.cmd --prefix StudySecurity/src/backend/src/studysecurity/systems/security03_rbac run start
 ```
 
-別のターミナルで未認証、viewer、operatorを比較します。
+自動テストはephemeral portで401、403、200と未知routeを確認します。続いて手動確認する場合は、別のターミナルで未認証、viewer、operatorを比較します。
 
 ```powershell
 curl.exe -i http://localhost:4103/orders
@@ -86,6 +87,7 @@ curl.exe -i -X POST -H "X-User: o-operator" http://localhost:4103/orders/o-100/c
 - `X-User`を送れる人が任意の固定ユーザーを選べるため、認証機能ではない
 - user、role、注文はメモリ上の固定データで、変更を保存しない
 - roleの階層、複数role、組織境界、監査ログは扱わない
+- 自動テストは固定user・注文だけを使い、本物の認証基盤や永続化は検証しない
 
 ## 学習完了の目安
 

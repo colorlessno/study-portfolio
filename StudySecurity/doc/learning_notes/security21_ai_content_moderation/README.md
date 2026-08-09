@@ -33,10 +33,11 @@
 
 ```powershell
 npm.cmd --prefix StudySecurity/src/backend/src/studysecurity/systems/security21_ai_content_moderation run check
+npm.cmd --prefix StudySecurity/src/backend/src/studysecurity/systems/security21_ai_content_moderation test
 npm.cmd --prefix StudySecurity/src/backend/src/studysecurity/systems/security21_ai_content_moderation run demo
 ```
 
-M-001〜M-006が全て期待decisionと一致して`ALL CASES PASSED`になることを確認します。その後のaudit recordに意図本文がなく、category、reason、短いhash、review要否だけがあることを確認します。
+自動テストで安全、self-harm、privacy、harassment、classification、教育context、illegalのruleを確認します。続いてM-001〜M-006が全て期待decisionと一致して`ALL CASES PASSED`になることを確認します。その後のaudit recordに意図本文がなく、category、reason、短いhash、review要否だけがあることを確認します。
 
 ## コードを読む順番
 
@@ -73,6 +74,7 @@ M-001〜M-006が全て期待decisionと一致して`ALL CASES PASSED`になる�
 - 抽象caseとkeyword ruleだけで実content moderation modelではない
 - 不適切内容の詳細本文を扱わない
 - 外部API、実user data、実escalation窓口へ接続しない
+- 自動テストはpolicy分岐の回帰を検出するもので、安全性やmodel品質を証明しない
 
 ## 学習完了の目安
 

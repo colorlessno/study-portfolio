@@ -29,10 +29,11 @@
 
 ```powershell
 npm.cmd --prefix StudySecurity/src/backend/src/studysecurity/systems/security05_input_validation run check
+npm.cmd --prefix StudySecurity/src/backend/src/studysecurity/systems/security05_input_validation test
 npm.cmd --prefix StudySecurity/src/backend/src/studysecurity/systems/security05_input_validation run demo
 ```
 
-固定サンプルに対し、正常商品は空のエラー配列、空の商品名と負数価格は2件のエラー、正常なCSV行は空配列、1列だけのCSV行は`column_count`になります。
+自動テストで価格0・1,000,000、商品名40文字、文字列価格、CSV列数、row numberを確認します。demoの固定サンプルでは、正常商品は空のエラー配列、空の商品名と負数価格は2件のエラー、正常なCSV行は空配列、1列だけのCSV行は`column_count`になります。
 
 ## コードを読む順番
 
@@ -66,7 +67,7 @@ npm.cmd --prefix StudySecurity/src/backend/src/studysecurity/systems/security05_
 
 - HTTP request、実CSV file、DB保存は扱わない
 - 文字の正規化、使用可能文字、localeは扱わない
-- 固定サンプルを標準出力へ表示するだけで、自動testではない
+- 自動テストは関数へ直接入力し、HTTP requestや実CSV fileの読み込みは検証しない
 
 ## 学習完了の目安
 
