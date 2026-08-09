@@ -6,8 +6,10 @@
 | --- | --- | --- |
 | `idle` | 実行中taskなし | `queued` |
 | `queued` | task IDを受理した | `running`, `rejected` |
-| `running` | child process起動済み | `succeeded`, `failed`, `cancelled` |
-| `succeeded` | exit code が0 | `idle` |
+| `running` | child process起動済み | `completed`, `failed`, `cancelling` |
+| `cancelling` | userの停止要求を受理した | `cleaning` |
+| `cleaning` | child process停止後にrun単位の後片付けを実行中 | `cancelled` |
+| `completed` | exit code が0 | `idle` |
 | `failed` | exit codeが非0、またはspawn失敗 | `idle` |
 | `cancelled` | userが停止した | `idle` |
 | `rejected` | task IDがallowlistにない | `idle` |
@@ -18,7 +20,7 @@
 | --- | --- |
 | `taskId` | `safe-install-plan` |
 | `runId` | `20260507-143000-safe-install-plan` |
-| `status` | `succeeded` |
+| `status` | `completed` |
 | `startedAt` | ISO timestamp |
 | `finishedAt` | ISO timestamp |
 | `exitCode` | `0` |

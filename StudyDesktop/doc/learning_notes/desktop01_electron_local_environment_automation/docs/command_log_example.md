@@ -4,7 +4,7 @@
 {
   "taskId": "safe-install-plan",
   "runId": "20260507-143000-safe-install-plan",
-  "status": "succeeded",
+  "status": "completed",
   "startedAt": "2026-05-07T14:30:00.000Z",
   "finishedAt": "2026-05-07T14:30:01.200Z",
   "exitCode": 0,

@@ -10,7 +10,9 @@
     "mock:clone": "node scripts/safe_install_plan.js --mock-clone",
     "mock:venv": "node scripts/safe_install_plan.js --mock-venv",
     "mock:install": "node scripts/safe_install_plan.js --mock-install",
-    "check:allowlist": "node src/main/commandAllowlist.js"
+    "mock:wait": "node scripts/safe_install_plan.js --mock-wait",
+    "check:allowlist": "node src/main/commandAllowlist.js",
+    "verify": "node --test"
   },
   "devDependencies": {
     "electron": "^42.0.0"
